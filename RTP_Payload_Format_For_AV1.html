@@ -1,0 +1,2591 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><style>dfn{cursor:pointer}.dfn-panel{position:absolute;z-index:35;min-width:300px;max-width:500px;padding:.5em .75em;margin-top:.6em;font:small Helvetica Neue,sans-serif,Droid Sans Fallback;background:#fff;color:#000;box-shadow:0 1em 3em -.4em rgba(0,0,0,.3),0 0 1px 1px rgba(0,0,0,.05);border-radius:2px}.dfn-panel:not(.docked)>.caret{position:absolute;top:-9px}.dfn-panel:not(.docked)>.caret::after,.dfn-panel:not(.docked)>.caret::before{content:"";position:absolute;border:10px solid transparent;border-top:0;border-bottom:10px solid #fff;top:0}.dfn-panel:not(.docked)>.caret::before{border-bottom:9px solid #a2a9b1}.dfn-panel *{margin:0}.dfn-panel b{display:block;color:#000;margin-top:.25em}.dfn-panel ul a[href]{color:#333}.dfn-panel a.self-link{font-weight:700}.dfn-panel .dfn-exported{float:right;padding:.1em;border-radius:.2em;text-align:center;white-space:nowrap;font-size:90%;background:#d1edfd;color:#040b1c;box-shadow:0 0 0 .125em #1ca5f940}.dfn-panel a:not(:hover){text-decoration:none!important;border-bottom:none!important}.dfn-panel a[href]:hover{border-bottom-width:1px}.dfn-panel ul{padding:0}.dfn-panel li{margin-left:1em}.dfn-panel.docked{position:fixed;left:.5em;top:unset;bottom:2em;margin:0 auto;max-width:calc(100vw - .75em * 2 - .5em - .2em * 2);max-height:30vh;overflow:auto}</style><link rel="preconnect" crossorigin="anonymous" href="https://www.w3.org/" class="removeOnSave"><link rel="preload" as="script" href="RTP_Payload_Format_For_AV1_files/fixup.js" class="removeOnSave"><link rel="preload" as="style" href="RTP_Payload_Format_For_AV1_files/base.css" class="removeOnSave"><link rel="preload" as="image" href="RTP_Payload_Format_For_AV1_files/W3C.svg" class="removeOnSave"><link rel="stylesheet" href="RTP_Payload_Format_For_AV1_files/base.css" class="removeOnSave">
+  <meta charset="utf-8">
+  <title>RTP Payload Format For AV1</title>
+  <!--
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+  -->
+  <link rel="stylesheet" href="RTP_Payload_Format_For_AV1_files/av1-rtp-spec.css">
+  <link rel="stylesheet" href="RTP_Payload_Format_For_AV1_files/syntax-tango.css">
+  <link rel="apple-touch-icon" sizes="57x57" href="http://127.0.0.1:4000/assets/images/icons/apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="http://127.0.0.1:4000/assets/images/icons/apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="http://127.0.0.1:4000/assets/images/icons/apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="http://127.0.0.1:4000/assets/images/icons/apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="http://127.0.0.1:4000/assets/images/icons/apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="http://127.0.0.1:4000/assets/images/icons/apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="http://127.0.0.1:4000/assets/images/icons/apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="http://127.0.0.1:4000/assets/images/icons/apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="http://127.0.0.1:4000/assets/images/icons/apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="http://127.0.0.1:4000/assets/images/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="http://127.0.0.1:4000/assets/images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="http://127.0.0.1:4000/assets/images/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="http://127.0.0.1:4000/assets/images/icons/favicon-16x16.png">
+  <link rel="manifest" href="http://127.0.0.1:4000/manifest.json">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="assets/images/icons/ms-icon-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+ 
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script> -->
+  <!-- <script src="assets/js/anchor.min.js"></script> -->
+  <!-- Helper script for the table of contents -->
+  <!-- <script src="assets/js/toc.js"></script> -->
+
+  
+  
+<link rel="dns-prefetch" crossorigin="anonymous" href="https://specref.herokuapp.com/" class="removeOnSave"><link rel="preconnect" crossorigin="anonymous" href="https://respec.org/" class="removeOnSave"><link rel="preload" as="script" href="https://www.w3.org/Tools/respec/respec-highlight" class="removeOnSave"><style id="respec-ui-styles" class="removeOnSave">.respec-modal .close-button{position:absolute;z-index:inherit;padding:.2em;font-weight:700;cursor:pointer;margin-left:5px;border:none;background:0 0}#respec-ui{position:fixed;display:flex;flex-direction:row-reverse;top:20px;right:20px;width:202px;text-align:right;z-index:9000}#respec-pill,.respec-info-button{background:#fff;height:2.5em;color:#787878;border:1px solid #ccc;box-shadow:1px 1px 8px 0 rgba(100,100,100,.5)}.respec-info-button{border:none;opacity:.75;border-radius:2em;margin-right:1em;min-width:3.5em}.respec-info-button:focus,.respec-info-button:hover{opacity:1;transition:opacity .2s}#respec-pill:disabled{font-size:2.8px;text-indent:-9999em;border-top:1.1em solid rgba(40,40,40,.2);border-right:1.1em solid rgba(40,40,40,.2);border-bottom:1.1em solid rgba(40,40,40,.2);border-left:1.1em solid #fff;transform:translateZ(0);animation:respec-spin .5s infinite linear;box-shadow:none}#respec-pill:disabled,#respec-pill:disabled:after{border-radius:50%;width:10em;height:10em}@keyframes respec-spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}.respec-hidden{visibility:hidden;opacity:0;transition:visibility 0s .2s,opacity .2s linear}.respec-visible{visibility:visible;opacity:1;transition:opacity .2s linear}#respec-pill:focus,#respec-pill:hover{color:#000;background-color:#f5f5f5;transition:color .2s}#respec-menu{position:absolute;margin:0;padding:0;font-family:sans-serif;background:#fff;box-shadow:1px 1px 8px 0 rgba(100,100,100,.5);width:200px;display:none;text-align:left;margin-top:32px;font-size:.8em}#respec-menu:not([hidden]){display:block}#respec-menu li{list-style-type:none;margin:0;padding:0}.respec-save-buttons{display:grid;grid-template-columns:repeat(auto-fill,minmax(47%,2fr));grid-gap:.5cm;padding:.5cm}.respec-save-button:link{padding-top:16px;color:#f0f0f0;background:#2a5aa8;justify-self:stretch;height:1cm;text-decoration:none;text-align:center;font-size:inherit;border:none;border-radius:.2cm}.respec-save-button:link:hover{color:#fff;background:#2a5aa8;padding:0;margin:0;border:0;padding-top:16px}.respec-save-button:link:focus{background:#193766}#respec-pill:focus,#respec-ui button:focus,.respec-option:focus{outline:0;outline-style:none}#respec-pill-error{background-color:red;color:#fff}#respec-pill-warning{background-color:orange;color:#fff}.respec-error-list,.respec-warning-list{margin:0;padding:0;list-style:none;font-family:sans-serif;background-color:#fffbe6;font-size:.85em}.respec-error-list>li,.respec-warning-list>li{padding:.4em .7em}.respec-warning-list>li::before{content:"⚠️";padding-right:.5em}.respec-error-list p,.respec-warning-list p{padding:0;margin:0}.respec-warning-list li{color:#5c3b00;border-bottom:thin solid #fff5c2}.respec-error-list,.respec-error-list li{background-color:#fff0f0}.respec-error-list li::before{content:"💥";padding-right:.5em}.respec-error-list li{padding:.4em .7em;color:#5c3b00;border-bottom:thin solid #ffd7d7}.respec-error-list li>p{margin:0;padding:0;display:inline-block}.respec-error-list li>p:first-child,.respec-warning-list li>p:first-child{display:inline}.respec-error-list>li li,.respec-warning-list>li li{margin:0;list-style:disc}#respec-overlay{display:block;position:fixed;z-index:10000;top:0;left:0;height:100%;width:100%;background:#000}.respec-show-overlay{transition:opacity .2s linear;opacity:.5}.respec-hide-overlay{transition:opacity .2s linear;opacity:0}.respec-modal{display:block;position:fixed;z-index:11000;margin:auto;top:10%;background:#fff;border:5px solid #666;min-width:20%;width:79%;padding:0;max-height:80%;overflow-y:auto;margin:0 -.5cm}@media screen and (min-width:78em){.respec-modal{width:62%}}.respec-modal h3{margin:0;padding:.2em;text-align:center;color:#000;background:linear-gradient(to bottom,#eee 0,#eee 50%,#ccc 100%);font-size:1em}.respec-modal .inside div p{padding-left:1cm}#respec-menu button.respec-option{background:#fff;padding:0 .2cm;border:none;width:100%;text-align:left;font-size:inherit;padding:1.2em 1.2em}#respec-menu button.respec-option:hover,#respec-menu button:focus{background-color:#eee}.respec-cmd-icon{padding-right:.5em}#respec-ui button.respec-option:last-child{border:none;border-radius:inherit}.respec-button-copy-paste{position:absolute;height:28px;width:40px;cursor:pointer;background-image:linear-gradient(#fcfcfc,#eee);border:1px solid #90b8de;border-left:0;border-radius:0 0 3px 0;-webkit-user-select:none;user-select:none;-webkit-appearance:none;top:0;left:127px}#specref-ui{margin:0 2%;margin-bottom:.5cm}#specref-ui header{font-size:.7em;background-color:#eee;text-align:center;padding:.2cm;margin-bottom:.5cm;border-radius:0 0 .2cm .2cm}#specref-ui header h1{padding:0;margin:0;color:#000}#specref-ui p{padding:0;margin:0;font-size:.8em;text-align:center}#specref-ui p.state{margin:1cm}#specref-ui .searchcomponent{font-size:16px;display:grid;grid-template-columns:auto 2cm}#specref-ui button,#specref-ui input{border:0;padding:6px 12px}#specref-ui label{font-size:.6em;grid-column-end:3;text-align:right;grid-column-start:1}#specref-ui input[type=search]{-webkit-appearance:none;font-size:16px;border-radius:.1cm 0 0 .1cm;border:1px solid #ccc}#specref-ui button[type=submit]{color:#fff;border-radius:0 .1cm .1cm 0;background-color:#337ab7}#specref-ui button[type=submit]:hover{background-color:#286090;border-color:#204d74}#specref-ui .result-stats{margin:0;padding:0;color:grey;font-size:.7em;font-weight:700}#specref-ui .specref-results{font-size:.8em}#specref-ui .specref-results dd+dt{margin-top:.51cm}#specref-ui .specref-results a{text-transform:capitalize}#specref-ui .specref-results .authors{display:block;color:#006621}@media print{#respec-ui{display:none}}#xref-ui{width:100%;min-height:550px;height:100%;overflow:hidden;padding:0;margin:0;border:0}#xref-ui:not(.ready){background:url(https://respec.org/xref/loader.gif) no-repeat center}.respec-dfn-list .dfn-status{margin-left:.5em;padding:.1em;text-align:center;white-space:nowrap;font-size:90%;border-radius:.2em}.respec-dfn-list .exported{background:#d1edfd;color:#040b1c;box-shadow:0 0 0 .125em #1ca5f940}.respec-dfn-list .unused{background:#fde0e6;color:#9d0c29;box-shadow:0 0 0 .125em #f1466840}#xref-ui+a[href]{font-size:.9rem;float:right;margin:0 .5em .5em;border-bottom-width:1px}</style><style id="respec-mainstyle">@keyframes pop{0%{transform:scale(1,1)}25%{transform:scale(1.25,1.25);opacity:.75}100%{transform:scale(1,1)}}.hljs{background:0 0!important}a abbr,h1 abbr,h2 abbr,h3 abbr,h4 abbr,h5 abbr,h6 abbr{border:none}dfn{font-weight:700}a.internalDFN{color:inherit;border-bottom:1px solid #99c;text-decoration:none}a.externalDFN{color:inherit;border-bottom:1px dotted #ccc;text-decoration:none}a.bibref{text-decoration:none}.respec-offending-element:target{animation:pop .25s ease-in-out 0s 1}.respec-offending-element,a[href].respec-offending-element{text-decoration:red wavy underline}@supports not (text-decoration:red wavy underline){.respec-offending-element:not(pre){display:inline-block}.respec-offending-element{background:url(data:image/gif;base64,R0lGODdhBAADAPEAANv///8AAP///wAAACwAAAAABAADAEACBZQjmIAFADs=) bottom repeat-x}}#references :target{background:#eaf3ff;animation:pop .4s ease-in-out 0s 1}cite .bibref{font-style:normal}code{color:#c63501}th code{color:inherit}a[href].orcid{padding-left:4px;padding-right:4px}a[href].orcid>svg{margin-bottom:-2px}.toc a,.tof a{text-decoration:none}a .figno,a .secno{color:#000}ol.tof,ul.tof{list-style:none outside none}.caption{margin-top:.5em;font-style:italic}table.simple{border-spacing:0;border-collapse:collapse;border-bottom:3px solid #005a9c}.simple th{background:#005a9c;color:#fff;padding:3px 5px;text-align:left}.simple th a{color:#fff;padding:3px 5px;text-align:left}.simple th[scope=row]{background:inherit;color:inherit;border-top:1px solid #ddd}.simple td{padding:3px 10px;border-top:1px solid #ddd}.simple tr:nth-child(even){background:#f0f6ff}.section dd>p:first-child{margin-top:0}.section dd>p:last-child{margin-bottom:0}.section dd{margin-bottom:1em}.section dl.attrs dd,.section dl.eldef dd{margin-bottom:0}#issue-summary>ul,.respec-dfn-list{column-count:2}#issue-summary li,.respec-dfn-list li{list-style:none}details.respec-tests-details{margin-left:1em;display:inline-block;vertical-align:top}details.respec-tests-details>*{padding-right:2em}details.respec-tests-details[open]{z-index:999999;position:absolute;border:thin solid #cad3e2;border-radius:.3em;background-color:#fff;padding-bottom:.5em}details.respec-tests-details[open]>summary{border-bottom:thin solid #cad3e2;padding-left:1em;margin-bottom:1em;line-height:2em}details.respec-tests-details>ul{width:100%;margin-top:-.3em}details.respec-tests-details>li{padding-left:1em}a[href].self-link:hover{opacity:1;text-decoration:none;background-color:transparent}h2,h3,h4,h5,h6{position:relative}aside.example .marker>a.self-link{color:inherit}h2>a.self-link,h3>a.self-link,h4>a.self-link,h5>a.self-link,h6>a.self-link{border:none;color:inherit;font-size:83%;height:2em;left:-1.6em;opacity:.5;position:absolute;text-align:center;text-decoration:none;top:0;transition:opacity .2s;width:2em}h2>a.self-link::before,h3>a.self-link::before,h4>a.self-link::before,h5>a.self-link::before,h6>a.self-link::before{content:"§";display:block}@media (max-width:767px){dd{margin-left:0}h2>a.self-link,h3>a.self-link,h4>a.self-link,h5>a.self-link,h6>a.self-link{left:auto;top:auto}}@media print{.removeOnSave{display:none}}</style><link rel="stylesheet" href="RTP_Payload_Format_For_AV1_files/W3C-WD.css"><meta name="description" content="This is required."><link rel="canonical" href="https://www.w3.org/TR/dahut/"><style>.hljs{display:block;overflow-x:auto;padding:.5em;color:#383a42;background:#fafafa}.hljs-comment,.hljs-quote{color:#717277;font-style:italic}.hljs-doctag,.hljs-formula,.hljs-keyword{color:#a626a4}.hljs-deletion,.hljs-name,.hljs-section,.hljs-selector-tag,.hljs-subst{color:#ca4706;font-weight:700}.hljs-literal{color:#0b76c5}.hljs-addition,.hljs-attribute,.hljs-meta-string,.hljs-regexp,.hljs-string{color:#42803c}.hljs-built_in,.hljs-class .hljs-title{color:#9a6a01}.hljs-attr,.hljs-number,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-pseudo,.hljs-template-variable,.hljs-type,.hljs-variable{color:#986801}.hljs-bullet,.hljs-link,.hljs-meta,.hljs-selector-id,.hljs-symbol,.hljs-title{color:#336ae3}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:700}.hljs-link{text-decoration:underline}</style><style class="removeOnSave">var:hover{text-decoration:underline;cursor:pointer}var.respec-hl{color:var(--color,#000);background-color:var(--bg-color);box-shadow:0 0 0 2px var(--bg-color)}var.respec-hl-c1{--bg-color:#f4d200}var.respec-hl-c2{--bg-color:#ff87a2}var.respec-hl-c3{--bg-color:#96e885}var.respec-hl-c4{--bg-color:#3eeed2}var.respec-hl-c5{--bg-color:#eacfb6}var.respec-hl-c6{--bg-color:#82ddff}var.respec-hl-c7{--bg-color:#ffbcf2}@media print{var.respec-hl{background:0 0;color:#000;box-shadow:unset}}</style><style>var{position:relative;cursor:pointer}var[data-type]::after,var[data-type]::before{position:absolute;left:50%;top:-6px;opacity:0;transition:opacity .4s;pointer-events:none}var[data-type]::before{content:"";transform:translateX(-50%);border-width:4px 6px 0 6px;border-style:solid;border-color:transparent;border-top-color:#000}var[data-type]::after{content:attr(data-type);transform:translateX(-50%) translateY(-100%);background:#000;text-align:center;font-family:"Dank Mono","Fira Code",monospace;font-style:normal;padding:6px;border-radius:3px;color:#daca88;text-indent:0;font-weight:400}var[data-type]:hover::after,var[data-type]:hover::before{opacity:1}</style><script id="initialUserConfig" type="application/json">{
+  "specStatus": "FPWD",
+  "editors": [
+    {
+      "name": "Your Name",
+      "url": "https://your-site.com"
+    }
+  ],
+  "gitHub": "some-org/mySpec",
+  "shortName": "dahut",
+  "xref": "web-platform",
+  "testSuiteURI": "https://test-site.com/",
+  "noTOC": true,
+  "publishISODate": "2020-08-27T00:00:00.000Z",
+  "generatedSubtitle": "First Public Working Draft 27 August 2020"
+}</script></head>
+<body class="h-entry" data-cite="HTML INFRA URL WEBIDL DOM FETCH"><div id="respec-ui" class="removeOnSave"><button id="respec-pill" aria-controls="respec-menu" aria-expanded="false" aria-haspopup="true" aria-label="ReSpec Menu">ReSpec</button><ul id="respec-menu" role="menu" aria-labelledby="respec-pill" hidden=""><li role="menuitem"><button class="respec-option" id="respec-button-export" title="Ctrl+Shift+Alt+S">
+      <span class="respec-cmd-icon" aria-hidden="true">💾<!---0.134451%--></span> Export<!---0.134451%-->…
+    </button><!---0.134451%--></li><li role="menuitem"><button class="respec-option" id="respec-button-search-specref" title="Ctrl+Shift+Alt+space">
+      <span class="respec-cmd-icon" aria-hidden="true">🔎<!---0.134451%--></span> Search Specref<!---0.134451%-->…
+    </button><!---0.134451%--></li><li role="menuitem"><button class="respec-option" id="respec-button-search-definitions" title="Ctrl+Shift+Alt+x">
+      <span class="respec-cmd-icon" aria-hidden="true">📚<!---0.134451%--></span> Search definitions<!---0.134451%-->…
+    </button><!---0.134451%--></li><li role="menuitem"><button class="respec-option" id="respec-button-definitions" title="Ctrl+Shift+Alt+D">
+      <span class="respec-cmd-icon" aria-hidden="true">📔<!---0.134451%--></span> Definitions<!---0.134451%-->…
+    </button><!---0.134451%--></li><li role="menuitem"><button class="respec-option" id="respec-button-about-25.14.0" title="Ctrl+Shift+Alt+A">
+      <span class="respec-cmd-icon" aria-hidden="true">ℹ️<!---0.134451%--></span> About 25.14.0<!---0.134451%-->…
+    </button><!---0.134451%--></li></ul><button class="respec-info-button" id="respec-pill-warning" aria-expanded="false" aria-haspopup="true" aria-controls="respec-pill-warning-modal" aria-label="1 ReSpec Warning">1</button></div><div class="head">
+    <a class="logo" href="https://www.w3.org/"><img alt="W3C" src="RTP_Payload_Format_For_AV1_files/W3C.svg" width="72" height="48"></a><!---0.134451%--> <h1 id="title" class="title">RTP Payload Format For AV1</h1><!---0.134451%-->
+    <!---0.134451%-->
+    <h2>
+      W3C <!---0.134451%-->First Public Working Draft<!---0.134451%-->
+      <time class="dt-published" datetime="2020-08-27">27 August 2020<!---0.134451%--></time><!---0.134451%-->
+    </h2>
+    <dl>
+      <dt>This version:<!---0.134451%--></dt><dd>
+              <a class="u-url" href="https://www.w3.org/TR/2020/WD-dahut-20200827/">https://www.w3.org/TR/2020/WD-dahut-20200827/<!---0.134451%--></a>
+            </dd><dt>Latest published version:<!---0.134451%--></dt><dd>
+              <a href="https://www.w3.org/TR/dahut/">https://www.w3.org/TR/dahut/<!---0.134451%--></a><!---0.134451%-->
+            </dd><!---0.134451%-->
+      <!---0.134451%-->
+      <dt>Test suite:<!---0.134451%--></dt><dd><a href="https://test-site.com/">https://test-site.com/<!---0.134451%--></a></dd><!---0.134451%-->
+      <!---0.134451%-->
+      <!---0.134451%-->
+      <!---0.134451%-->
+      <!---0.134451%-->
+      <dt>Editor:<!---0.134451%--></dt>
+      <dd class="p-author h-card vcard"><a class="u-url url p-name fn" href="https://your-site.com/">Your Name<!---0.134451%--></a><!---0.134451%--></dd><!---0.134451%-->
+      <!---0.134451%-->
+      <!---0.134451%-->
+      <!---0.134451%-->
+    </dl>
+    <!---0.134451%-->
+    <!---0.134451%-->
+    <!---0.134451%-->
+    <p class="copyright">
+    <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a>
+    ©
+    <!---0.134451%-->2020<!---0.134451%-->
+    <!---0.134451%-->
+    <a href="https://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> (<a href="https://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>,
+    <a href="https://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>, <a href="https://www.keio.ac.jp/">Keio</a>,
+    <a href="https://ev.buaa.edu.cn/">Beihang</a>). <!---0.134451%-->
+    W3C <a href="https://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+    <a href="https://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a rel="license" href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document">permissive document license<!---0.134451%--></a><!---0.134451%--> rules
+    apply.
+  </p><!---0.134451%-->
+    <hr title="Separator for header">
+  </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+  <section id="abstract" class="introductory"><h2>Abstract</h2>
+    <p>
+      This is required.
+    </p>
+  </section>
+  <section id="sotd" class="introductory"><h2>Status of This Document<!---0.134451%--></h2><!---0.134451%--><p><em>This section describes the status of this
+      document at the time of its publication. Other documents may supersede
+      this document. A list of current <abbr title="World Wide Web Consortium">W3C<!---0.134451%--></abbr> publications and the latest revision
+      of this technical report can be found in the
+      <a href="https://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C<!---0.134451%--></abbr> technical reports index</a> at
+      https://www.w3.org/TR/.<!---0.134451%--></em></p>
+    <p>
+      This is required.
+    </p>
+  <!---0.134451%--><!---0.134451%--><!---0.134451%--><!---0.134451%--><!---0.134451%--><!---0.134451%--><!---0.134451%--><p>
+    Publication as a<!---0.134451%--> First Public Working Draft<!---0.134451%--> does not imply endorsement by the <abbr title="World Wide Web Consortium">W3C<!---0.134451%--></abbr>
+    Membership. This is a draft document and may be updated, replaced or
+    obsoleted by other documents at any time. It is inappropriate to cite this
+    document as other than work in progress.
+  </p><!---0.134451%--><p>
+    
+        This document was produced by a group<!---0.134451%-->
+        operating under the
+        <a href="https://www.w3.org/Consortium/Patent-Policy/"><abbr title="World Wide Web Consortium">W3C<!---0.134451%--></abbr> Patent Policy</a>.
+      <!---0.134451%--> <!---0.134451%-->
+    
+                <abbr title="World Wide Web Consortium">W3C<!---0.134451%--></abbr> maintains a
+                <a rel="disclosure" href="">public list of any patent disclosures</a><!---0.134451%-->
+          made in connection with the deliverables of
+          the group; that page also includes<!---0.134451%-->
+          instructions for disclosing a patent. An individual who has actual
+          knowledge of a patent which the individual believes contains
+          <a href="https://www.w3.org/Consortium/Patent-Policy/#def-essential">Essential Claim(s)</a>
+          must disclose the information in accordance with
+          <a href="https://www.w3.org/Consortium/Patent-Policy/#sec-Disclosure">section 6 of the <abbr title="World Wide Web Consortium">W3C<!---0.134451%--></abbr> Patent Policy</a>.
+        <!---0.134451%-->
+    <!---0.134451%-->
+  </p><!---0.134451%--><p>
+                  This document is governed by the
+                  <a id="w3c_process_revision" href="https://www.w3.org/2019/Process-20190301/">1 March 2019 <abbr title="World Wide Web Consortium">W3C<!---0.134451%--></abbr> Process Document</a>.
+                </p><!---0.134451%--><!---0.134451%--><!---0.134451%--><!---0.134451%--><!---0.134451%--></section>
+  <section id="conformance"><h2 id="conformance-0">Conformance<!---0.134451%--><a class="self-link" aria-label="§" href="#conformance"></a></h2><p>
+      As well as sections marked as non-normative, all authoring 
+guidelines, diagrams, examples, and notes in this specification are 
+non-normative. Everything else in this specification is normative.<!---0.134451%-->
+    </p><p>
+        The key words<!---0.134451%--> <em class="rfc2119">MAY<!---0.134451%--></em><!---0.134451%-->, <em class="rfc2119">MUST<!---0.134451%--></em><!---0.134451%-->, <em class="rfc2119">MUST NOT<!---0.134451%--></em><!---0.134451%-->, <em class="rfc2119">OPTIONAL<!---0.134451%--></em><!---0.134451%-->, <em class="rfc2119">RECOMMENDED<!---0.134451%--></em><!---0.134451%-->, <em class="rfc2119">REQUIRED<!---0.134451%--></em><!---0.134451%-->, <em class="rfc2119">SHALL<!---0.134451%--></em><!---0.134451%-->, <em class="rfc2119">SHALL NOT<!---0.134451%--></em><!---0.134451%-->, <!---0.134451%--><em class="rfc2119">SHOULD<!---0.134451%--></em><!---0.134451%--><!---0.134451%-->, and <!---0.134451%--><em class="rfc2119">SHOULD NOT<!---0.134451%--></em><!---0.134451%--><!---0.134451%--> in this document
+        are<!---0.134451%--> to be interpreted as described in
+        <a href="https://tools.ietf.org/html/bcp14">BCP 14</a>
+        [<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc2119" title="Key words for use in RFCs to Indicate Requirement Levels">RFC2119<!---0.134451%--></a></cite><!---0.134451%-->]<!---0.134451%--> [<cite><a class="bibref" data-link-type="biblio" href="#bib-rfc8174" title="Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words">RFC8174<!---0.134451%--></a></cite><!---0.134451%-->]<!---0.134451%-->
+        when, and only when, they appear in all capitals, as shown here.
+      </p><!---0.134451%-->
+    <p>
+      This is required for specifications that contain normative material.
+    </p>
+  </section>
+  
+<section>
+<h2 class="no_toc" id="rtp-payload-format-for-av1-v05">RTP Payload Format For AV1 (v0.5)<a class="self-link" aria-label="§" href="#rtp-payload-format-for-av1-v05"></a></h2>
+
+<p><strong>Status:</strong> The Alliance for Open Media AV1 Real-Time Communications Subgroup Working Draft (WD)</p>
+
+<section>
+<h3 class="no_toc" id="abstract">Abstract<a class="self-link" aria-label="§" href="#abstract"></a></h3>
+
+<p>This document describes an RTP payload format for the <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1 video codec</a>.
+ The payload format has wide applicability, from low bit-rate 
+peer-to-peer usage, to high bit-rate multi-party video conferences. It 
+includes provisions for temporal and spatial scalability.</p>
+
+</section>
+
+<section>
+<h3 class="no_toc" id="status-of-this-document">Status of this Document<a class="self-link" aria-label="§" href="#status-of-this-document"></a></h3>
+
+<p>This document is a working draft of the Real-Time Communications Subgroup.</p>
+
+</section>
+
+<section>
+<h3 class="no_toc" id="contents">Contents<a class="self-link" aria-label="§" href="#contents"></a></h3>
+
+<ul id="markdown-toc">
+  <li><a href="#introduction" id="markdown-toc-introduction">1. Introduction</a></li>
+  <li><a href="#conventions-definitions-and-acronyms" id="markdown-toc-conventions-definitions-and-acronyms">2. Conventions, Definitions and Acronyms</a></li>
+  <li><a href="#media-format-description" id="markdown-toc-media-format-description">3. Media Format Description</a></li>
+  <li><a href="#payload-format" id="markdown-toc-payload-format">4. Payload Format</a>    <ul>
+      <li><a href="#rtp-header-usage" id="markdown-toc-rtp-header-usage">4.1 RTP Header Usage</a></li>
+      <li><a href="#rtp-header-marker-bit-m" id="markdown-toc-rtp-header-marker-bit-m">4.2  RTP Header Marker Bit (M)</a></li>
+      <li><a href="#dependency-descriptor-rtp-header-extension" id="markdown-toc-dependency-descriptor-rtp-header-extension">4.3  Dependency Descriptor RTP Header Extension</a></li>
+      <li><a href="#av1-aggregation-header" id="markdown-toc-av1-aggregation-header">4.4 AV1 Aggregation Header</a></li>
+      <li><a href="#payload-structure" id="markdown-toc-payload-structure">4.5 Payload Structure</a></li>
+    </ul>
+  </li>
+  <li><a href="#packetization-rules" id="markdown-toc-packetization-rules">5. Packetization Rules</a>    <ul>
+      <li><a href="#examples" id="markdown-toc-examples">5.1 Examples</a></li>
+    </ul>
+  </li>
+  <li><a href="#mane-and-sfm-behavior" id="markdown-toc-mane-and-sfm-behavior">6. MANE and SFM Behavior</a>    <ul>
+      <li><a href="#simulcast" id="markdown-toc-simulcast">6.1. Simulcast</a></li>
+      <li><a href="#example" id="markdown-toc-example">6.1.1 Example</a></li>
+    </ul>
+  </li>
+  <li><a href="#payload-format-parameters" id="markdown-toc-payload-format-parameters">7. Payload Format Parameters</a>    <ul>
+      <li><a href="#media-type-definition" id="markdown-toc-media-type-definition">7.1. Media Type Definition</a></li>
+      <li><a href="#sdp-parameters" id="markdown-toc-sdp-parameters">7.2 SDP Parameters</a>        <ul>
+          <li><a href="#mapping-of-media-subtype-parameters-to-sdp" id="markdown-toc-mapping-of-media-subtype-parameters-to-sdp">7.2.1 Mapping of Media Subtype Parameters to SDP</a></li>
+        </ul>
+      </li>
+      <li><a href="#rid-restrictions-mapping-for-av1" id="markdown-toc-rid-restrictions-mapping-for-av1">7.2.2 RID restrictions mapping for AV1</a>        <ul>
+          <li><a href="#usage-with-the-sdp-offeranswer-model" id="markdown-toc-usage-with-the-sdp-offeranswer-model">7.2.3  Usage with the SDP Offer/Answer Model</a></li>
+          <li><a href="#usage-in-declarative-session-descriptions" id="markdown-toc-usage-in-declarative-session-descriptions">7.2.4  Usage in Declarative Session Descriptions</a></li>
+        </ul>
+      </li>
+      <li><a href="#examples-1" id="markdown-toc-examples-1">7.3 Examples</a>        <ul>
+          <li><a href="#level-upgrading" id="markdown-toc-level-upgrading">7.3.1 Level upgrading</a></li>
+          <li><a href="#simulcast-with-payload-multiplexing" id="markdown-toc-simulcast-with-payload-multiplexing">7.3.2 Simulcast with payload multiplexing</a></li>
+          <li><a href="#simulcast-with-ssrc-multiplexing" id="markdown-toc-simulcast-with-ssrc-multiplexing">7.3.3 Simulcast with SSRC multiplexing</a></li>
+          <li><a href="#single-stream-simulcast" id="markdown-toc-single-stream-simulcast">7.3.4 Single stream simulcast</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#feedback-messages" id="markdown-toc-feedback-messages">8. Feedback Messages</a></li>
+  <li><a href="#full-intra-request-fir" id="markdown-toc-full-intra-request-fir">8.1.  Full Intra Request (FIR)</a></li>
+  <li><a href="#layer-refresh-request-lrr" id="markdown-toc-layer-refresh-request-lrr">8.2.  Layer Refresh Request (LRR)</a></li>
+  <li><a href="#iana-considerations" id="markdown-toc-iana-considerations">9. IANA Considerations</a></li>
+  <li><a href="#security-considerations" id="markdown-toc-security-considerations">10. Security Considerations</a></li>
+  <li><a href="#references" id="markdown-toc-references">11. References</a>    <ul>
+      <li><a href="#normative-references" id="markdown-toc-normative-references">11.1 Normative References</a></li>
+      <li><a href="#informative-references" id="markdown-toc-informative-references">11.2 Informative References</a></li>
+    </ul>
+  </li>
+  <li><a href="#appendix" id="markdown-toc-appendix">Appendix</a>    <ul>
+      <li><a href="#dependency-descriptor-rtp-header-extension-1" id="markdown-toc-dependency-descriptor-rtp-header-extension-1">Dependency Descriptor RTP Header Extension</a>        <ul>
+          <li><a href="#a1-introduction" id="markdown-toc-a1-introduction">A.1 Introduction</a></li>
+          <li><a href="#a2-conventions-definitions-and-acronyms" id="markdown-toc-a2-conventions-definitions-and-acronyms">A.2 Conventions, Definitions and Acronyms</a></li>
+          <li><a href="#a3-media-stream-requirements" id="markdown-toc-a3-media-stream-requirements">A.3 Media Stream Requirements</a></li>
+          <li><a href="#a4-dependency-descriptor-format" id="markdown-toc-a4-dependency-descriptor-format">A.4 Dependency Descriptor Format</a>            <ul>
+              <li><a href="#a41-syntax" id="markdown-toc-a41-syntax">A.4.1 Syntax</a></li>
+              <li><a href="#a42-semantics" id="markdown-toc-a42-semantics">A.4.2 Semantics</a></li>
+              <li><a href="#a43-deciding-decodability-using-chains" id="markdown-toc-a43-deciding-decodability-using-chains">A.4.3 Deciding Decodability using Chains</a></li>
+              <li><a href="#a44-switching" id="markdown-toc-a44-switching">A.4.4 Switching</a></li>
+              <li><a href="#a45-templates" id="markdown-toc-a45-templates">A.4.5 Templates</a></li>
+            </ul>
+          </li>
+          <li><a href="#a5-signaling-setup-information" id="markdown-toc-a5-signaling-setup-information">A.5 Signaling (Setup) Information</a></li>
+          <li><a href="#a6-examples" id="markdown-toc-a6-examples">A.6 Examples</a></li>
+          <li><a href="#a61-decode-targets-decode-target-indications-and-chains" id="markdown-toc-a61-decode-targets-decode-target-indications-and-chains">A.6.1 Decode targets, Decode Target Indications, and Chains</a></li>
+          <li><a href="#a62-scalability-structure-examples" id="markdown-toc-a62-scalability-structure-examples">A.6.2 Scalability structure examples</a>            <ul>
+              <li><a href="#a621-l1t3-single-spatial-layer-with-3-temporal-layers" id="markdown-toc-a621-l1t3-single-spatial-layer-with-3-temporal-layers">A.6.2.1 L1T3 Single Spatial Layer with 3 Temporal Layers</a></li>
+              <li><a href="#a622-l2t1-full-svc-with-occasional-switch" id="markdown-toc-a622-l2t1-full-svc-with-occasional-switch">A.6.2.2 L2T1 Full SVC with Occasional Switch</a></li>
+              <li><a href="#a623-l3t3-full-svc" id="markdown-toc-a623-l3t3-full-svc">A.6.2.3 L3T3 Full SVC</a></li>
+              <li><a href="#a624-l3t3-k-svc-with-temporal-shift" id="markdown-toc-a624-l3t3-k-svc-with-temporal-shift">A.6.2.4 L3T3 K-SVC with Temporal Shift</a></li>
+            </ul>
+          </li>
+          <li><a href="#a7-references" id="markdown-toc-a7-references">A.7 References</a>            <ul>
+              <li><a href="#a71-normative-references" id="markdown-toc-a71-normative-references">A.7.1 Normative References</a></li>
+              <li><a href="#a72-informative-references" id="markdown-toc-a72-informative-references">A.7.2 Informative References</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+</section>
+
+<section>
+<h3 id="introduction">1. Introduction<a class="self-link" aria-label="§" href="#introduction"></a></h3>
+
+<p>This document describes an RTP payload specification applicable to the transmission of video streams encoded using the <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1 video codec</a>.
+ In AV1, the smallest individual video encoder entity presented for 
+transport is the Open Bitstream Unit (OBU). This specification allows 
+both for fragmentation and aggregation of OBUs in the same RTP packet, 
+but explicitly disallows doing so across frame boundaries.</p>
+
+<p>Appendix A of this document describes the Dependency Descriptor (DD) 
+RTP Header extension, which conveys information about individual video 
+frames and the dependencies between them. This allows forwarding of 
+video frames in situations where an intermediary does not wish to 
+examine the RTP payload or does not have access to it, such as when the 
+RTP payload is encrypted end-to-end. While the DD RTP Header extension 
+was designed for use with AV1, it may prove useful for other codecs as 
+well.</p>
+
+<p>This specification also provides several mechanisms through which 
+scalability structures are described. AV1 uses the concept of predefined
+ scalability structures. These are a set of commonly used picture 
+prediction structures that can be referenced simply via an indicator 
+value (scalability_mode_idc, residing in the sequence header). For cases
+ that do not fall in any of the predefined cases, there is a mechanism 
+for describing the scalability structure. These bitstream parameters 
+greatly simplify the organization of the corresponding data at the RTP 
+payload format level.</p>
+
+</section>
+
+<section>
+<h3 id="conventions-definitions-and-acronyms">2. Conventions, Definitions and Acronyms<a class="self-link" aria-label="§" href="#conventions-definitions-and-acronyms"></a></h3>
+
+<p>The key words “<em class="rfc2119">MUST<!---0.134451%--></em>”, “<em class="rfc2119">MUST NOT<!---0.134451%--></em>”, “<em class="rfc2119">REQUIRED<!---0.134451%--></em>”, “<em class="rfc2119">SHALL<!---0.134451%--></em>”, “<em class="rfc2119">SHALL NOT<!---0.134451%--></em>”, “<em class="rfc2119">SHOULD<!---0.134451%--></em>”, “<em class="rfc2119">SHOULD NOT<!---0.134451%--></em>”, “<em class="rfc2119">RECOMMENDED<!---0.134451%--></em>”, “<em class="rfc2119">MAY<!---0.134451%--></em>”, and “<em class="rfc2119">OPTIONAL<!---0.134451%--></em>” in this document are to be interpreted as described in <a href="https://tools.ietf.org/html/rfc2119">RFC2119</a>.</p>
+
+<dl>
+  <dt>Coded frame</dt>
+  <dd>The representation of one frame before the decoding process.</dd>
+  <dt>Frame</dt>
+  <dd>A frame in this document is synonymous to a Coded frame.</dd>
+</dl>
+
+<p class="alert alert-info"><strong>Note:</strong> In contrast, in AV1, Frame is defined as the representation of video signals in the spatial domain.</p>
+
+<p class="alert alert-info"><strong>Note:</strong> Multiple frames may be present at the same instant in time.</p>
+
+<dl>
+  <dt>Media-Aware Network Element (MANE)</dt>
+  <dd>A middlebox that relays streams among transmitting and receiving 
+clients by selectively forwarding packets and which may have access to 
+the media (<a href="https://tools.ietf.org/html/rfc6184">RFC6184</a>).</dd>
+  <dt>OBU element</dt>
+  <dd>An OBU, or a fragment of an OBU, contained in an RTP packet.</dd>
+  <dt>Open Bitstream Unit (OBU)</dt>
+  <dd>The smallest bitstream data framing unit in AV1. All AV1 bitstream structures are packetized in OBUs.</dd>
+  <dt>“S” Mode</dt>
+  <dd>A scalability mode in which multiple encodings are sent on the 
+same SSRC.  This includes the S2T1, S2T1h, S2T2, S2T2h, S2T3, S2T3h, 
+S3T1, S3T1h, S3T2, S3T2h, S3T3 and S3T3h scalability modes defined in 
+Section 6.7.5 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.</dd>
+  <dt>Selective Forwarding Middlebox (SFM)</dt>
+  <dd>A middlebox that relays streams among transmitting and receiving 
+clients by selectively forwarding packets without requiring access to 
+the media (<a href="https://tools.ietf.org/html/rfc7667">RFC7667</a>).</dd>
+  <dt>Temporal unit</dt>
+  <dd>Defined by the AV1 specification: A temporal unit consists of all 
+the OBUs that are associated with a specific, distinct time instant.</dd>
+</dl>
+
+</section>
+
+<section>
+<h3 id="media-format-description">3. Media Format Description<a class="self-link" aria-label="§" href="#media-format-description"></a></h3>
+
+<p>The AV1 codec can maintain up to eight reference frames, of which up 
+to seven can be referenced by any new frame. AV1 also allows a frame to 
+use another frame of a different spatial resolution as a reference 
+frame. This allows internal resolution changes without requiring the use
+ of key frames. These features together enable an AV1 encoder to 
+implement various forms of coarse-grained scalability, including 
+temporal, spatial, and quality scalability modes, as well as 
+combinations of these, without the need for explicit scalable coding 
+tools.</p>
+
+<p>Spatial and quality layers define different and possibly dependent 
+representations of a single input frame. For a given spatial layer, 
+temporal layers define different frame rates of video. Spatial layers 
+allow a frame to be encoded at different spatial resolutions, whereas 
+quality layers allow a frame to be encoded at the same spatial 
+resolution but at different qualities (and thus with different amounts 
+of coding error). AV1 supports quality layers as spatial layers without 
+any resolution changes; hereinafter, the term “spatial layer” is used to
+ represent both spatial and quality layers.</p>
+
+<p>This payload format specification provides for specific mechanisms 
+through which such temporal and spatial scalability layers can be 
+described and communicated.</p>
+
+<p>Temporal and spatial scalability layers are associated with 
+non-negative integer IDs. The lowest layer of either type has an ID 
+equal to 0.</p>
+
+<p class="alert alert-info"><strong>Note:</strong> Layer dependencies 
+are constrained by the AV1 specification such that a temporal layer with
+ temporal_id T and spatial layer with spatial_id S are only allowed to 
+reference previously coded video data having temporal_id T’ and 
+spatial_id S’, where T’ &lt;= T and S’ &lt;= S.</p>
+
+</section>
+
+<section>
+<h3 id="payload-format">4. Payload Format<a class="self-link" aria-label="§" href="#payload-format"></a></h3>
+
+<p>This section describes how the encoded AV1 bitstream is encapsulated 
+in RTP. All integer fields in this specification are encoded as unsigned
+ integers in network byte order.</p>
+
+<section>
+<h4 id="rtp-header-usage">4.1 RTP Header Usage<a class="self-link" aria-label="§" href="#rtp-header-usage"></a></h4>
+
+<p>The general RTP payload format follows the RTP header format <a href="https://tools.ietf.org/html/rfc3550">RFC3550</a> and generic RTP header extensions <a href="https://tools.ietf.org/html/rfc8285">RFC8285</a>, and is shown below.</p>
+
+<p>The Dependency Descriptor and AV1 aggregation header are described in
+ this document. The payload itself is a series of OBU elements, preceded
+ by length information as detailed later in this document. An OBU 
+element is either an entire OBU or an OBU fragment.</p>
+
+<pre><code aria-busy="false" class="hljs">
+ 0                   1                   2                   3
+ 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|V=2|P|X|  CC   |M|     PT      |       sequence number         |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                           timestamp                           |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|           synchronization source (SSRC) identifier            |
++=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+|            contributing source (CSRC) identifiers             |
+|                             ....                              |
++=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+|         0x100         |  0x0  |       extensions length       |
++=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+|   0x1(ID)     |  hdr_length   |                               |
++=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+                               |
+|                                                               |
+|          dependency descriptor (hdr_length #bytes)            |
+|                                                               |
+|                               +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                               | Other rtp header extensions...|
++=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+| AV1 aggr hdr  |                                               |
++-+-+-+-+-+-+-+-+                                               |
+|                                                               |
+|                   Bytes 2..N of AV1 payload                   |
+|                                                               |
+|                               +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                               :    OPTIONAL RTP padding       |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre>
+
+</section>
+
+<section>
+<h4 id="rtp-header-marker-bit-m">4.2  RTP Header Marker Bit (M)<a class="self-link" aria-label="§" href="#rtp-header-marker-bit-m"></a></h4>
+
+<p>The RTP header Marker bit <em class="rfc2119">MUST<!---0.134451%--></em> be set equal to 0 if the packet is not the last packet of the temporal unit, it <em class="rfc2119">SHOULD<!---0.134451%--></em> be set equal to 1 otherwise.</p>
+
+<p class="alert alert-info"><strong>Note:</strong> It is possible for a 
+receiver to receive the last packet of a temporal unit without the 
+marker bit being set equal to 1, and a receiver should be able to handle
+ this case. The last packet of a temporal unit is also indicated by the 
+next packet, in RTP sequence number order, having an incremented 
+timestamp.</p>
+
+</section>
+
+<section>
+<h4 id="dependency-descriptor-rtp-header-extension">4.3  Dependency Descriptor RTP Header Extension<a class="self-link" aria-label="§" href="#dependency-descriptor-rtp-header-extension"></a></h4>
+
+<p>To facilitate the work of selectively forwarding portions of a 
+scalable video bitstream, as is done by a Selective Forwarding Middlebox
+ (SFM), certain information needs to be provided for each packet. 
+Appendix A of this specification defines how this information is 
+communicated.</p>
+
+</section>
+
+<section>
+<h4 id="av1-aggregation-header">4.4 AV1 Aggregation Header<a class="self-link" aria-label="§" href="#av1-aggregation-header"></a></h4>
+
+<p>The aggregation header is carried in the first byte of the RTP 
+payload and is used to indicate if the first and/or last OBU element in 
+the payload is a fragment of an OBU.  The aggregation header is not part
+ of the AV1 bitstream and <em class="rfc2119">MUST NOT<!---0.134451%--></em> be presented to an AV1 decoder.</p>
+
+<p>The structure is as follows.</p>
+
+<pre><code aria-busy="false" class="hljs">
+ 0 1 2 3 4 5 6 7
++-+-+-+-+-+-+-+-+
+|Z|Y| W |N|-|-|-|
++-+-+-+-+-+-+-+-+
+</code></pre>
+
+<p data-tests="webrtc/VideoRtpDepacketizerAv1Test/ParseTreatsContinuationFlagAsNotBeginningOfFrame">Z: <em class="rfc2119">MUST<!---0.134451%--></em>
+ be set to 1 if the first OBU element is an OBU fragment that is a 
+continuation of an OBU fragment from the previous packet, and <em class="rfc2119">MUST<!---0.134451%--></em> be set to 0 otherwise.<details class="respec-tests-details removeOnSave">
+      <summary>
+        tests: 1<!---0.134451%-->
+      </summary>
+      <ul>
+        <li>
+      <a href="https://test-site.com/webrtc/VideoRtpDepacketizerAv1Test/ParseTreatsContinuationFlagAsNotBeginningOfFrame">
+        ParseTreatsContinuationFlagAsNotBeginningOfFrame<!---0.134451%-->
+      </a>
+      <!---0.134451%-->
+    </li><!---0.134451%-->
+      </ul>
+    </details></p>
+
+<p>Y: <em class="rfc2119">MUST<!---0.134451%--></em> be set to 1 if the last OBU element is an OBU fragment that will continue in the next packet, and <em class="rfc2119">MUST<!---0.134451%--></em> be set to 0 otherwise.</p>
+
+<p>W: two bit field that describes the number of OBU elements in the packet. This field <em class="rfc2119">MUST<!---0.134451%--></em> be set equal to 0 or equal to the number of OBU elements contained in the packet. If set to 0, each OBU element <em class="rfc2119">MUST<!---0.134451%--></em> be preceded by a length field. If not set to 0 (i.e., W = 1, 2 or 3) the last OBU element <em class="rfc2119">MUST NOT<!---0.134451%--></em>
+ be preceded by a length field. Instead, the length of the last OBU 
+element contained in the packet can be calculated as follows:</p>
+
+<pre><code aria-busy="false" class="hljs">
+Length of the last OBU element = 
+   length of the RTP payload
+ - length of aggregation header
+ - length of previous OBU elements including length fields
+</code></pre>
+
+<p>N: <em class="rfc2119">MUST<!---0.134451%--></em> be set to 1 if the packet is the first packet of a coded video sequence, and <em class="rfc2119">MUST<!---0.134451%--></em> be set to 0 otherwise.</p>
+
+<p class="alert alert-info"><strong>Note:</strong> if N equals 1 then Z must equal 0.</p>
+
+</section>
+
+<section>
+<h4 id="payload-structure">4.5 Payload Structure<a class="self-link" aria-label="§" href="#payload-structure"></a></h4>
+
+<p>The smallest high-level syntax unit in AV1 is the OBU. All AV1 
+bitstream structures are packetized in OBUs. Each OBU has a header, 
+which provides identifying information for the contained data (payload).</p>
+
+<p>The payload contains a series of one or more OBU elements. The design
+ allows for a combination of aggregation and fragmentation of OBUs, 
+i.e., a set of OBU elements in which the first and/or last element is a 
+fragment of an OBU.</p>
+
+<p>The length field is encoded using leb128. Leb128 is defined in the 
+AV1 specification, and provides for a variable-sized, byte-oriented 
+encoding of non-negative integers where the first bit of each 
+(little-endian) byte indicates whether or not additional bytes are used 
+in the representation (AV1, Section 4.10.5).</p>
+
+<p>Whether or not the first and/or last OBU element is a fragment of an 
+OBU is signaled in the aggregation header. Fragmentation may occur 
+regardless of how the W field is set.</p>
+
+<p>The AV1 specification allows OBUs to have an optional size field 
+called obu_size (also leb128 encoded), signaled by the 
+obu_has_size_field flag in the OBU header. To minimize overhead, the 
+obu_has_size_field flag <em class="rfc2119">SHOULD<!---0.134451%--></em> be set to zero in all OBUs.</p>
+
+<p>The following figure shows an example payload where the length field 
+is shown as taking two bytes for the first and second OBU elements and 
+one byte for the last (N) OBU element.</p>
+
+<pre><code aria-busy="false" class="hljs">
+0                   1                   2                   3
+0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|Z|Y|0 0|N|-|-|-|  OBU element 1 size (leb128)  |               |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+               |
+:                                                               :
+:                      OBU element 1 data                       :
+:                                                               :
+|                                                               |
+|                               +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                               |  OBU element 2 size (leb128)  |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+:                                                               :
+:                       OBU element 2 data                      :
+:                                                               :
+|                                                               |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+:                                                               :
+:                              ...                              :
+:                                                               :
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|OBU e... N size|                                               |
++-+-+-+-+-+-+-+-+       OBU element N data      +-+-+-+-+-+-+-+-+
+|                                               |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre>
+
+<p>The following figure shows an example payload containing two OBU 
+elements where the last OBU element omits the length field (and the W 
+field is set to 2). The size of the last OBU element can be calculated 
+given the formula described in Section 4.4.</p>
+
+<pre><code aria-busy="false" class="hljs">
+OBU element example size calculation:
+Total RTP payload size    = 303 bytes
+AV1 aggregation header    = 1 byte
+OBU element 1 size        = 2 bytes
+OBU element 1 data        = 200 bytes
+OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
+
+0                   1                   2                   3
+0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|Z|Y|1 0|N|-|-|-|  OBU element 1 size (leb128)  |               |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+               |
+|                                                               |
+:                                                               :
+:                      OBU element 1 data                       :
+:                                                               :
+|                                                               |
+|                               +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                               |                               |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               |
+|                                                               |
+:                                                               :
+:                      OBU element 2 data                       :
+:                                                               :
+|                                                               |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code></pre>
+
+</section>
+
+</section>
+
+<section>
+<h3 id="packetization-rules">5. Packetization Rules<a class="self-link" aria-label="§" href="#packetization-rules"></a></h3>
+
+<p>Each RTP packet <em class="rfc2119">MUST NOT<!---0.134451%--></em> contain OBUs that belong to different temporal units.</p>
+
+<p>The temporal delimiter OBU, if present, <em class="rfc2119">SHOULD<!---0.134451%--></em> be removed when transmitting, and <em class="rfc2119">MUST<!---0.134451%--></em> be ignored by receivers. Tile list OBUs are not supported. They <em class="rfc2119">SHOULD<!---0.134451%--></em> be removed when transmitted, and <em class="rfc2119">MUST<!---0.134451%--></em> be ignored by receivers.</p>
+
+<p>If a sequence header OBU is present in an RTP packet and 
+operating_points_cnt_minus_1 &gt; 0 then for any number i where 0 &lt;= i
+ &lt; operating_points_cnt_minus_1 the following <em class="rfc2119">MUST<!---0.134451%--></em> be true: (operating_point_idc[i] &amp; operating_point_idc[i+1]) == operating_point_idc[i+1].</p>
+
+<p>A sender <em class="rfc2119">MAY<!---0.134451%--></em> produce a 
+sequence header with operating_points_cnt_minus_1 = 0 and 
+operating_point_idc[0] = 0xFFF and seq_level_idx[0] = 0. In such case, 
+seq_level_idx[0] does not reflect the level of the operating point.</p>
+
+<p class="alert alert-info"><strong>Note:</strong> The intent is to 
+disable OBU dropping in the AV1 decoder. To ensure a decoder’s 
+capabilities are not exceeded, OBU filtering should instead be 
+implemented at the system level (e.g., in a MANE).</p>
+
+<p>If more than one OBU contained in an RTP packet has an OBU extension header, then the values of the temporal_id and spatial_id <em class="rfc2119">MUST<!---0.134451%--></em> be the same in all such OBUs in the RTP packet.</p>
+
+<p>If a sequence header OBU is present in an RTP packet, then it	<em class="rfc2119">SHOULD<!---0.134451%--></em>
+ be the first OBU in the packet. OBUs that are not associated with a 
+particular layer (and thus do not have an OBU extension header) <em class="rfc2119">SHOULD<!---0.134451%--></em> be in the beginning of a packet, following the sequence header OBU if present.</p>
+
+<p>A sequence header OBU <em class="rfc2119">SHOULD<!---0.134451%--></em>
+ be included in the base layer when scalable encoding is used. When 
+simulcast encodings are transported on the same SSRC (an “S” mode), a 
+sequence header OBU <em class="rfc2119">SHOULD<!---0.134451%--></em> be 
+aggregated with each spatial layer. This ensures that if an intermediary
+ removes simulcast encodings from the bitstream before forwarding, the 
+modified bitstream will still be decodable.</p>
+
+<section>
+<h4 id="examples">5.1 Examples<a class="self-link" aria-label="§" href="#examples"></a></h4>
+
+<p>The following are example packetizations of OBU sequences. A 
+two-letter notation is used to identify the OBU type: FH - frame header,
+ TG - tile group, FR - frame, SH - sequence header, TD - temporal 
+delimitered, MD - metadata. Parentheses after the type indicate the 
+temporal_id and spatial_id combination. For example “TG(0,1)” indicates a
+ tile group OBU with temporal_id equal to 0 and spatial_id equal to 1.</p>
+
+<p>The following is an example coded video sequence:</p>
+<pre><code aria-busy="false" class="hljs">
+    TD SH MD MD(0,0) FH(0,0) TG0(0,0) MD(0,1) FH(0,1) TG(0,1)
+</code></pre>
+
+<p>This sequence could be packetized as follows. First, the TD OBU is 
+dropped. Then, the following packetization grouping (indicated using 
+square brackets) may be used:</p>
+<pre><code aria-busy="false" class="hljs json">
+    [ SH MD MD(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>) FH(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>) TG(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>) ] [ MD(<span class="hljs-number">0</span>,<span class="hljs-number">1</span>) FH(<span class="hljs-number">0</span>,<span class="hljs-number">1</span>) TG(<span class="hljs-number">0</span>,<span class="hljs-number">1</span>) ]
+</code></pre>
+
+<p>It is also possible to send each OBU in its own RTP packet:</p>
+<pre><code aria-busy="false" class="hljs css">
+    <span class="hljs-selector-attr">[ SH ]</span> <span class="hljs-selector-attr">[ MD ]</span> <span class="hljs-selector-attr">[ MD(0,0) ]</span> <span class="hljs-selector-attr">[ FH(0,0) ]</span> <span class="hljs-selector-attr">[ TG(0,0) ]</span> ...
+</code></pre>
+
+<p>The following packetization grouping would not be allowed, since it 
+combines data from different spatial layers in the same packet:</p>
+<pre><code aria-busy="false" class="hljs json">
+    [ SH MD MD(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>) FH(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>) TG(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>) MD(<span class="hljs-number">0</span>,<span class="hljs-number">1</span>) FH(<span class="hljs-number">0</span>,<span class="hljs-number">1</span>) TG(<span class="hljs-number">0</span>,<span class="hljs-number">1</span>) ]
+</code></pre>
+
+</section>
+
+</section>
+
+<section>
+<h3 id="mane-and-sfm-behavior">6. MANE and SFM Behavior<a class="self-link" aria-label="§" href="#mane-and-sfm-behavior"></a></h3>
+
+<p>If a packet contains an OBU with an OBU extension header then the 
+entire packet is considered associated with the layer identified by the 
+temporal_id and spatial_id combination that are indicated in the 
+extension header. If a packet does not contain any OBU with an OBU 
+extension header, then it is considered to be associated with all 
+operating points.</p>
+
+<p>The general function of a MANE or SFM is to selectively forward 
+packets to receivers. To make forwarding decisions a MANE may inspect 
+the media payload, so that it may need to be able to parse the AV1 
+bitstream and if so, cannot function when end-to-end encryption is 
+enabled. An SFM does not parse the AV1 bitstream and therefore needs to 
+obtain the information relevant to selective forwarding by other means, 
+such as the Dependency Descriptor described in Appendix A. In addition 
+to enabling bitstream-independent forwarding and support for end-to-end 
+encryption, the Dependency Descriptor also enables forwarding where the 
+metadata OBU provided in the AV1 bitstream is not sufficient to express 
+the structure of the stream.</p>
+
+<section>
+<h4 id="simulcast">6.1. Simulcast<a class="self-link" aria-label="§" href="#simulcast"></a></h4>
+
+<p>The RTP payload defined in this specification supports two distinct 
+modes for transport of simulcast encodings. In either mode, simulcast 
+transport <em class="rfc2119">MUST<!---0.134451%--></em> only be used to convey multiple encodings from the same source. Also, in either mode, a sequence header OBU <em class="rfc2119">SHOULD<!---0.134451%--></em> be aggregated with each spatial layer. Both modes <em class="rfc2119">MUST<!---0.134451%--></em> be supported by implementations of this specification.</p>
+
+<p>When simulcast encodings are transported each on a separate RTP 
+stream, each simulcast encoding utilizes a distinct bitstream containing
+ its own distinct Sequence Header and Scalability Metadata OBUs. This 
+mode utilizes distinct SSRCs and Restriction Identifiers (RIDs) for each
+ encoding as described in <a href="https://tools.ietf.org/html/draft-ietf-avtext-rid">I-D.ietf-avtext-rid</a> and, as a result, RTCP feedback can be provided for each simulcast encoding. This mode of simulcast transport, which <em class="rfc2119">MUST<!---0.134451%--></em> be supported by SFMs, utilizes Session Description Protocol (SDP) signaling as described in <a href="https://tools.ietf.org/html/draft-ietf-mmusic-sdp-simulcast">I-D.ietf-mmusic-sdp-simulcast</a> and <a href="https://tools.ietf.org/html/draft-ietf-mmusic-rid">I-D.ietf-mmusic-rid</a>.</p>
+
+<p>When simulcast encodings are transported on a single RTP stream, RIDs
+ are not used and the Sequence Header and Scalability Metadata OBUs 
+(utilizing an ‘S’ mode) convey information relating to all encodings. 
+This simulcast transport mode is possible since AV1 enables multiple 
+simulcast encodings to be provided within a single bitstream. However, 
+in this mode, RTCP feedback cannot be provided for each simulcast 
+encoding, but only for the aggregate, since only a single SSRC is used. 
+This mode of simulcast transport <em class="rfc2119">MAY<!---0.134451%--></em> be supported by SFMs.</p>
+
+</section>
+
+<section>
+<h4 id="example">6.1.1 Example<a class="self-link" aria-label="§" href="#example"></a></h4>
+
+<p>In this example, it is desired to send three simulcast encodings, 
+each containing three temporal layers. When sending all encodings on a 
+single SSRC, scalability mode ‘S3T3’ would be indicated within the 
+scalability metadata OBU, and the Dependency Descriptor describes the 
+dependency structure of all encodings.</p>
+
+<p>When sending each simulcast encoding on a distinct SSRC, the 
+scalability mode ‘L1T3’ would be indicated within the scalability 
+metadata OBU of each bitstream, and the Dependency Descriptor in each 
+stream describes only the dependency structure for that individual 
+encoding.  A distinct spatial_id (e.g. 0, 1, 2) could be used for each 
+stream (if a single AV1 encoder is used to produce the three simulcast 
+encodings), but if distinct AV1 encoders are used, the spatial_id values
+ may not be distinct.</p>
+
+</section>
+
+</section>
+
+<section>
+<h3 id="payload-format-parameters">7. Payload Format Parameters<a class="self-link" aria-label="§" href="#payload-format-parameters"></a></h3>
+
+<p>This section specifies the parameters that <em class="rfc2119">MAY<!---0.134451%--></em> be used to select optional features of the payload format and certain features of the bitstream.</p>
+
+<section>
+<h4 id="media-type-definition">7.1. Media Type Definition<a class="self-link" aria-label="§" href="#media-type-definition"></a></h4>
+
+<ul>
+  <li>Type name:
+    <ul>
+      <li><strong>video</strong></li>
+    </ul>
+  </li>
+  <li>Subtype name:
+    <ul>
+      <li><strong>AV1</strong></li>
+    </ul>
+  </li>
+  <li>Required parameters:
+    <ul>
+      <li>None.</li>
+    </ul>
+  </li>
+  <li>Optional parameters:
+    <ul>
+      <li>These parameters are used to signal the capabilities of a 
+receiver implementation. If the implementation is willing to receive 
+media, <strong>profile</strong> and <strong>level-idx</strong> parameters <em class="rfc2119">MUST<!---0.134451%--></em> be provided. These parameters <em class="rfc2119">MUST NOT<!---0.134451%--></em> be used for any other purpose.
+        <ul>
+          <li><strong>profile</strong>: The value of <strong>profile</strong> is an integer indicating the highest AV1 profile supported by the receiver. The range of possible values is identical to the <strong>seq_profile</strong> syntax element specified in <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a></li>
+          <li><strong>level-idx</strong>: The value of <strong>level-idx</strong> is an integer indicating the highest AV1 level supported by the receiver. The range of possible values is identical to the <strong>seq_level_idx</strong> syntax element specified in <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a></li>
+          <li><strong>tier</strong>: The value of <strong>tier</strong> is an integer indicating tier of the indicated level.  The range of possible values is identical to the <strong>seq_tier</strong> syntax element specified in <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>. If parameter is not present, level’s tier is to be assumed equal to 0</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Encoding considerations:
+    <ul>
+      <li>This media type is framed in RTP and contains binary data; see Section 4.8 of <a href="https://tools.ietf.org/html/rfc6838">RFC6838</a>.</li>
+    </ul>
+  </li>
+  <li>Security considerations:
+    <ul>
+      <li>See Section 10.</li>
+    </ul>
+  </li>
+  <li>Interoperability considerations:
+    <ul>
+      <li>None.</li>
+    </ul>
+  </li>
+  <li>Published specification:
+    <ul>
+      <li><a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1 video codec</a></li>
+    </ul>
+  </li>
+  <li>Applications which use this media type:
+    <ul>
+      <li>Video over IP, video conferencing.</li>
+    </ul>
+  </li>
+  <li>Fragment identifier considerations:
+    <ul>
+      <li>N/A.</li>
+    </ul>
+  </li>
+  <li>Additional information:
+    <ul>
+      <li>None.</li>
+    </ul>
+  </li>
+  <li>Person &amp; email address to contact for further information:
+    <ul>
+      <li>TODO</li>
+    </ul>
+  </li>
+  <li>Intended usage:
+    <ul>
+      <li>COMMON</li>
+    </ul>
+  </li>
+  <li>Restrictions on usage:
+    <ul>
+      <li>This media type depends on RTP framing, and hence is only defined for transfer via RTP <a href="https://tools.ietf.org/html/rfc3550">RFC3550</a>.</li>
+    </ul>
+  </li>
+  <li>Author:
+    <ul>
+      <li>TODO</li>
+    </ul>
+  </li>
+  <li>Change controller:
+    <ul>
+      <li>AoMedia Codec Group, RTC sub-group</li>
+    </ul>
+  </li>
+</ul>
+
+</section>
+
+<section>
+<h4 id="sdp-parameters">7.2 SDP Parameters<a class="self-link" aria-label="§" href="#sdp-parameters"></a></h4>
+<p>The receiver <em class="rfc2119">MUST<!---0.134451%--></em> ignore any fmtp parameter not specified in this document.</p>
+
+<section>
+<h5 id="mapping-of-media-subtype-parameters-to-sdp">7.2.1 Mapping of Media Subtype Parameters to SDP<a class="self-link" aria-label="§" href="#mapping-of-media-subtype-parameters-to-sdp"></a></h5>
+<p>The media type video/AV1 string is mapped to fields in the Session Description Protocol (SDP) per <a href="https://tools.ietf.org/html/rfc4566">RFC4566</a> as follows:
+* The media name in the “m=” line of SDP <em class="rfc2119">MUST<!---0.134451%--></em> be video.
+* The encoding name in the “a=rtpmap” line of SDP <em class="rfc2119">MUST<!---0.134451%--></em> be AV1 (the media subtype).
+* The clock rate in the “a=rtpmap” line <em class="rfc2119">MUST<!---0.134451%--></em> be 90000.
+* The parameters “<strong>profile</strong>”, and “<strong>level-idx</strong>”, <em class="rfc2119">MUST<!---0.134451%--></em>
+ be included in the “a=fmtp” line of SDP if SDP is used to declare 
+receiver capabilities. These parameters are expressed as a media subtype
+ string, in the form of a semicolon separated list of parameter=value 
+pairs.
+* Parameter “<strong>tier</strong>” <em class="rfc2119">MAY<!---0.134451%--></em> be included alongside “<strong>profile</strong>” and “<strong>level-idx</strong> parameters in “a=fmtp” line if the indicated level supports a non-zero tier.</p>
+
+</section>
+
+</section>
+
+<section>
+<h4 id="rid-restrictions-mapping-for-av1">7.2.2 RID restrictions mapping for AV1<a class="self-link" aria-label="§" href="#rid-restrictions-mapping-for-av1"></a></h4>
+
+<p>The RID specification declares the set of codec-agnostic restrictions
+ for media streams. All the restrictions are optional and are subject to
+ negotiation based on the SDP Offer/Answer rules described in Section 6 
+in <a href="https://tools.ietf.org/html/draft-ietf-mmusic-rid">I-D.ietf-mmusic-rid</a>. When these restrictions are applied to the AV1 codec, they <em class="rfc2119">MUST<!---0.134451%--></em> have the following interpretation:
+* <strong>max-width</strong>, maximum width of the frame in units of samples. The meaning of the restriction is the same as variable <strong>MaxHSize</strong> of the levels table from Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.
+* <strong>max-height</strong>, maximum height of the frame in units of samples. The meaning of the restriction is the same as variable <strong>MaxVSize</strong> of the levels table from Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.
+* <strong>max-fps</strong>, maximum number of temporal units per second.
+* <strong>max-fs</strong>, maximum size of the frame in units of samples. The meaning of the restriction is the same as variable <strong>MaxPicSize</strong> of the levels table from Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.
+* <strong>max-br</strong>, maximum bit rate in units bits per second. The meaning of the restriction is the same as variable <strong>MaxBitrate</strong> defined in Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>. 
+* <strong>max-pps</strong>, maximum decode rate in units of samples per second. The meaning of the restriction is the same as variable <strong>MaxDecodeRate</strong> of the levels table from Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.
+* <strong>max-bpp</strong>, maximum number of bits per pixel of any given coded frame, calculated as a ratio between <strong>CompressedSize</strong> variable defined Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a> and expressed in bits, and number of samples in frame.</p>
+
+<p>If during the SDP negotiation process both parties acknowledge restrictions, then the transported media stream <em class="rfc2119">MUST<!---0.134451%--></em> have at least one operating point with the negotiated restrictions.</p>
+
+<section>
+<h5 id="usage-with-the-sdp-offeranswer-model">7.2.3  Usage with the SDP Offer/Answer Model<a class="self-link" aria-label="§" href="#usage-with-the-sdp-offeranswer-model"></a></h5>
+
+<p>When AV1 is offered over RTP using SDP in an Offer/Answer model as described in <a href="https://tools.ietf.org/html/rfc3264">RFC3264</a> for negotiation for unicast usage, the following limitations and rules apply:
+* The media format configuration is identified by <strong>level-idx</strong>, <strong>profile</strong> and <strong>tier</strong>.  The answerer <em class="rfc2119">SHOULD<!---0.134451%--></em> maintain all parameters. These media configuration parameters are asymmetrical and the answerer <em class="rfc2119">MAY<!---0.134451%--></em> declare its own media configuration if the answerer capabilities are different from the offerer.
+  * The profile to use in the offerer-to-answerer direction <em class="rfc2119">MUST<!---0.134451%--></em>
+ be lesser or equal to the profile the answerer supports for receiving, 
+and the profile to use in the answerer-to-offerer direction <em class="rfc2119">MUST<!---0.134451%--></em> be lesser or equal to the profile the offerer supports for receiving.
+  * The level to use in the offerer-to-answerer direction <em class="rfc2119">MUST<!---0.134451%--></em> be lesser or equal to the level the answerer supports for receiving, and the level to use in the answerer-to-offerer direction <em class="rfc2119">MUST<!---0.134451%--></em> be lesser or equal to the level the offerer supports for receiving.
+  * The tier to use in the offerer-to-answerer direction <em class="rfc2119">MUST<!---0.134451%--></em> be lesser or equal to the tier the answerer supports for receiving, and the tier to use in the answerer-to-offerer direction <em class="rfc2119">MUST<!---0.134451%--></em> be lesser or equal to the tier the offerer supports for receiving.</p>
+
+</section>
+
+<section>
+<h5 id="usage-in-declarative-session-descriptions">7.2.4  Usage in Declarative Session Descriptions<a class="self-link" aria-label="§" href="#usage-in-declarative-session-descriptions"></a></h5>
+
+<p>When AV1 over RTP is offered with SDP in a declarative style, as in Real Time Streaming Protocol (RTSP) <a href="https://tools.ietf.org/html/rfc2326">RFC2326</a> or Session Announcement Protocol (SAP) <a href="https://tools.ietf.org/html/rfc2974">RFC2974</a>,
+ the following considerations apply.
+* All parameters capable of indicating both stream properties and 
+receiver capabilities are used to indicate only stream properties. In 
+this case, the parameters <strong>profile</strong>, <strong>level-idx</strong> and <strong>tier</strong> declare only the values used by the stream, not the capabilities for receiving streams.
+* A receiver of the SDP is required to support all parameters and values of the parameters provided; otherwise, the receiver <em class="rfc2119">MUST<!---0.134451%--></em>
+ reject (RTSP) or not participate in (SAP) the session. It falls on the 
+creator of the session to use values that are expected to be supported 
+by the receiving application.</p>
+
+</section>
+
+</section>
+
+<section>
+<h4 id="examples-1">7.3 Examples<a class="self-link" aria-label="§" href="#examples-1"></a></h4>
+<p>An example of media representation in SDP is as follows:</p>
+
+<ul>
+  <li>m=video 49170 RTP/AVPF 98</li>
+  <li>a=rtpmap:98 AV1/90000</li>
+  <li>a=fmtp:98 profile=2; level-idx=8; tier=1;</li>
+</ul>
+
+<section>
+<h5 id="level-upgrading">7.3.1 Level upgrading<a class="self-link" aria-label="§" href="#level-upgrading"></a></h5>
+<p>In the following example the offer is accepted with level upgrading. 
+The level to use in the offerer-to-answerer direction is Level 2.0, and 
+the level to use in the answerer-to-offerer direction is Level 3.0/Tier 
+1.  The answerer is allowed to send at any level up to and including 
+Level 2.0, and the offerer is allowed to send at any level up to and 
+including Level 3.0/Tier 1:</p>
+
+<p>Offer SDP:
+* m=video 49170 RTP/AVPF 98
+* a=rtpmap:98 AV1/90000
+* a=fmtp:98 profile=0; level-idx=0;</p>
+
+<p>Answer SDP:
+* m=video 49170 RTP/AVPF 98
+* a=rtpmap:98 AV1/90000
+* a=fmtp:98 profile=0; level-idx=4; tier=1;</p>
+
+</section>
+
+<section>
+<h5 id="simulcast-with-payload-multiplexing">7.3.2 Simulcast with payload multiplexing<a class="self-link" aria-label="§" href="#simulcast-with-payload-multiplexing"></a></h5>
+<p>In the following example an offer is made by a conferencing server to
+ receive 3 simulcast streams with payload multiplexing.  The answerer 
+agrees to send 3 simulcast streams at different resolutions.</p>
+
+<p>Offer SDP:
+* m=video 49170 UDP/TLS/RTP/SAVPF 98
+* a=mid:0
+* a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid
+* a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
+* a=extmap:3 urn:3gpp:video-orientation
+* a=extmap:4 https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension
+* a=sendrecv
+* a=rtcp-mux
+* a=rtcp-rsize
+* a=rtpmap:98 AV1/90000
+* a=rtpmap:99 AV1/90000
+* a=rtpmap:100 AV1/90000
+* a=fmtp:98 profile=2; level-idx=8; tier=1;
+* a=fmtp:99 profile=2; level-idx=8; tier=1;
+* a=fmtp:100 profile=2; level-idx=8; tier=1;
+* a=rtcp-fb:98 ccm fir
+* a=rtcp-fb:98 nack
+* a=rtcp-fb:98 nack pli
+* a=rtcp-fb:99 ccm fir
+* a=rtcp-fb:99 nack
+* a=rtcp-fb:99 nack pli
+* a=rtcp-fb:100 ccm fir
+* a=rtcp-fb:100 nack
+* a=rtcp-fb:100 nack pli
+* a=rid:q recv pt=98;max-width=640;max-height=480
+* a=rid:h recv pt=99;max-width=1280;max-height=720
+* a=rid:f recv pt=100;max-width=1920;max-height=1080
+* a=simulcast:recv q;h;f</p>
+
+<p>Answer SDP:
+* m=video 48120 UDP/TLS/RTP/SAVPF 98
+* a=mid:0
+* a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid
+* a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
+* a=extmap:3 urn:3gpp:video-orientation
+* a=extmap:4 https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension
+* a=sendrecv
+* a=rtcp-mux
+* a=rtcp-rsize
+* a=rtpmap:98 AV1/90000
+* a=fmtp:98 profile=2; level-idx=8; tier=1;
+* a=fmtp:99 profile=2; level-idx=8; tier=1;
+* a=fmtp:100 profile=2; level-idx=8; tier=1;
+* a=rtcp-fb:98 ccm fir
+* a=rtcp-fb:98 nack
+* a=rtcp-fb:98 nack pli
+* a=rtcp-fb:99 ccm fir
+* a=rtcp-fb:99 nack
+* a=rtcp-fb:99 nack pli
+* a=rtcp-fb:100 ccm fir
+* a=rtcp-fb:100 nack
+* a=rtcp-fb:100 nack pli
+* a=rid:q send pt=98;max-width=640;max-height=480
+* a=rid:h send pt=99;max-width=1280;max-height=720
+* a=rid:f send pt=100;max-width=1920;max-height=1080
+* a=simulcast:send q;h;f</p>
+
+</section>
+
+<section>
+<h5 id="simulcast-with-ssrc-multiplexing">7.3.3 Simulcast with SSRC multiplexing<a class="self-link" aria-label="§" href="#simulcast-with-ssrc-multiplexing"></a></h5>
+<p>In the following example an offer is made by a conferencing server to
+ receive 3 simulcast streams with SSRC multiplexing.  The answerer 
+agrees to send 3 simulcast streams at different resolutions.</p>
+
+<p>Offer SDP:
+* m=video 49170 UDP/TLS/RTP/SAVPF 98
+* a=mid:0
+* a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid
+* a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
+* a=extmap:3 urn:3gpp:video-orientation
+* a=extmap:4 https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension
+* a=sendrecv
+* a=rtcp-mux
+* a=rtcp-rsize
+* a=rtpmap:98 AV1/90000
+* a=fmtp:98 profile=2; level-idx=8; tier=1;
+* a=rtcp-fb:98 ccm fir
+* a=rtcp-fb:98 nack
+* a=rtcp-fb:98 nack pli
+* a=rid:q recv
+* a=rid:h recv
+* a=rid:f recv
+* a=simulcast:recv q;h;f</p>
+
+<p>Answer SDP:
+* m=video 48120 UDP/TLS/RTP/SAVPF 98
+* a=mid:0
+* a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid
+* a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
+* a=extmap:3 urn:3gpp:video-orientation
+* a=extmap:4 https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension
+* a=sendrecv
+* a=rtcp-mux
+* a=rtcp-rsize
+* a=rtpmap:98 AV1/90000
+* a=fmtp:98 profile=2; level-idx=8; tier=1;
+* a=rtcp-fb:98 ccm fir
+* a=rtcp-fb:98 nack
+* a=rtcp-fb:98 nack pli
+* a=rid:q send
+* a=rid:h send
+* a=rid:f send
+* a=simulcast:send q;h;f</p>
+
+</section>
+
+<section>
+<h5 id="single-stream-simulcast">7.3.4 Single stream simulcast<a class="self-link" aria-label="§" href="#single-stream-simulcast"></a></h5>
+<p>In the following example an offer is made to send a single RTP stream
+ to a conferencing server. This single stream might include any AV1 
+dependency structure, including “S” scalability modes.</p>
+
+<p>Offer SDP:
+* m=video 49170 UDP/TLS/RTP/SAVPF 98
+* a=mid:0
+* a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid
+* a=extmap:3 urn:3gpp:video-orientation
+* a=extmap:4 https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension
+* a=sendrecv
+* a=rtcp-mux
+* a=rtcp-rsize
+* a=rtpmap:98 AV1/90000
+* a=fmtp:98 profile=2; level-idx=8; tier=1;
+* a=rtcp-fb:98 ccm fir
+* a=rtcp-fb:98 nack
+* a=rtcp-fb:98 nack pli</p>
+
+<p>Answer SDP:
+* m=video 48120 UDP/TLS/RTP/SAVPF 98
+* a=mid:0
+* a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid
+* a=extmap:3 urn:3gpp:video-orientation
+* a=extmap:4 https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension
+* a=sendrecv
+* a=rtcp-mux
+* a=rtcp-rsize
+* a=rtpmap:98 AV1/90000
+* a=fmtp:98 profile=2; level-idx=8; tier=1;
+* a=rtcp-fb:98 ccm fir
+* a=rtcp-fb:98 nack
+* a=rtcp-fb:98 nack pli</p>
+
+</section>
+
+</section>
+
+</section>
+
+<section>
+<h3 id="feedback-messages">8. Feedback Messages<a class="self-link" aria-label="§" href="#feedback-messages"></a></h3>
+
+</section>
+
+<section>
+<h3 id="full-intra-request-fir">8.1.  Full Intra Request (FIR)<a class="self-link" aria-label="§" href="#full-intra-request-fir"></a></h3>
+
+<p>The Full Intra Request (FIR) RTCP feedback message defined in <a href="https://tools.ietf.org/html/rfc5104">RFC5104</a> allows a
+receiver to request a Decoder Refresh Point of an encoded stream.
+Section 3 of <a href="https://tools.ietf.org/html/rfc8082">RFC8082</a> updates the definition of the Decoder Refresh
+Point.</p>
+
+<p>Upon reception of an FIR, for every SSRC indicated in the FIR message,
+the AV1 sender <em class="rfc2119">MUST<!---0.134451%--></em> send a new coded video sequence as soon as possible.
+See section 7.5 of the <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1 video codec</a> for the definition
+of a new coded video sequence.</p>
+
+<p>If simulcast encodings of the same source are transported on distinct SSRCs,
+then in addition to sending a new coded video sequence for each encoding
+corresponding to an SSRC in the FIR message, the AV1 sender <em class="rfc2119">MAY<!---0.134451%--></em> also send
+new coded video sequences for other encodings from the same source(s).</p>
+
+</section>
+
+<section>
+<h3 id="layer-refresh-request-lrr">8.2.  Layer Refresh Request (LRR)<a class="self-link" aria-label="§" href="#layer-refresh-request-lrr"></a></h3>
+
+<p>The Layer Refresh Request specified in <a href="https://tools.ietf.org/html/draft-ietf-avtext-lrr-07">I-D.ietf-avtext-lrr</a>
+ is designed to allow a receiver of a layered media stream to request 
+that one or more of its substreams be refreshed, such that it can then 
+be decoded by an endpoint which previously was not receiving those 
+layers, without requiring that the entire stream be refreshed (as it 
+would be if the receiver sent a Full Intra Request (FIR) per <a href="https://tools.ietf.org/html/rfc5104">RFC5104</a>).</p>
+
+<pre><code aria-busy="false" class="hljs">       +---------------+---------------+
+       |0|1|2|3|4|5|6|7|0|1|2|3|4|5|6|7|
+       +---------------+---------+-+---+
+       |   RES   | TID |   RES   |0|SID|
+       +---------------+---------+-+---+
+
+                         Figure 4
+</code></pre>
+
+<p>AV1 streams <em class="rfc2119">MUST<!---0.134451%--></em> use the Layer Refresh Request format defined for VP9 in Section 5.3 of <a href="https://tools.ietf.org/html/draft-ietf-payload-vp9">I-D.ietf-payload-vp9</a>,
+ with the high order bit of its three-bit SID field set to 0. Figure 4 
+shows the format for AV1 streams. Notice that SID here is two bits.  SID
+ is associated with AV1’s spatial_id and TID is associated with AV1’s 
+temporal_id. See Sections 2, 5.3.3, and 6.2.3 of the AV1 bitstream 
+specification <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a> for details on the temporal_id and spatial_id fields.</p>
+
+<p>Identification of a layer refresh frame may be performed by examining
+ the coding dependency structure of the coded video sequence it belongs 
+to. This may be provided by the scalability metadata (Sections 5.8.5 and
+ 6.7.5 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>), either in the form of a pre-defined scalability mode or through a scalability structure (Sections 5.8.6 and 6.7.6 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>). Alternatively, the Dependency Descriptor RTP header extension that is specified in Appendix A of this document may be used.</p>
+
+</section>
+
+<section>
+<h3 id="iana-considerations">9. IANA Considerations<a class="self-link" aria-label="§" href="#iana-considerations"></a></h3>
+
+<p>Upon publication, a new media type, as specified in Section 7.1 of this document, will be registered with IANA.</p>
+
+</section>
+
+<section>
+<h3 id="security-considerations">10. Security Considerations<a class="self-link" aria-label="§" href="#security-considerations"></a></h3>
+
+<p>RTP packets using the payload format defined in this document are 
+subject to the security considerations discussed in the RTP 
+specification <a href="https://tools.ietf.org/html/rfc3550">RFC3550</a> 
+and in any appropriate RTP profile. This implies that confidentiality of
+ the media streams is achieved by encryption, for example, through the 
+application of SRTP <a href="https://tools.ietf.org/html/rfc3711">RFC3711</a>.
+ A potential denial-of-service threat exists for data encodings using 
+compression techniques that have non-uniform receiver-end computational 
+load. The attacker can inject pathological datagrams into the stream 
+that are complex to decode and that cause the receiver to be overloaded.
+ Therefore, the usage of data origin authentication and data integrity 
+protection of at least the RTP packet is <em class="rfc2119">RECOMMENDED<!---0.134451%--></em>, for example, with SRTP <a href="https://tools.ietf.org/html/rfc3711">RFC3711</a>. Encryption of RTP Header Extensions such as the Dependency Descriptor is also <em class="rfc2119">RECOMMENDED<!---0.134451%--></em>, using techniques such as [RFC6904] or successor specifications.</p>
+
+<p>Note that the appropriate mechanism to ensure confidentiality and 
+integrity of RTP packets and their payloads is very dependent on the 
+application and on the transport and signaling protocols employed. Thus,
+ although SRTP is given as an example above, other possible choices 
+exist. See <a href="https://tools.ietf.org/html/rfc7202">RFC7202</a>.</p>
+
+<p>Decoders <em class="rfc2119">MUST<!---0.134451%--></em> discard reserved OBU types and reserved metadata OBU types, and <em class="rfc2119">SHOULD<!---0.134451%--></em> filter out temporal delimiter and tile list OBUs carried within the RTP payload. Middle boxes <em class="rfc2119">SHOULD NOT<!---0.134451%--></em> parse OBUs they do not support. SFMs <em class="rfc2119">MUST NOT<!---0.134451%--></em> parse OBUs at all, but instead <em class="rfc2119">MUST<!---0.134451%--></em> make forwarding decisions based on the information within the RTP header and Dependency Descriptor RTP header extension.</p>
+
+<p>When integrity protection is applied to a stream, care <em class="rfc2119">MUST<!---0.134451%--></em>
+ be taken that the stream being transported may be scalable; hence a 
+receiver may be able to access only part of the entire stream.</p>
+
+<p>End-to-end security services such as authentication, integrity, or 
+confidentiality protection could prevent an SFM or MANE from performing 
+media-aware operations other than discarding complete packets. For 
+example, repacketization requires that the MANE have access to the 
+cleartext media payload. The Dependency Descriptor RTP extension 
+described in Appendix A allows discarding of packets in a media-aware 
+way even when confidentiality protection is used.</p>
+
+</section>
+
+<section>
+<h3 id="references">11. References<a class="self-link" aria-label="§" href="#references"></a></h3>
+
+<section>
+<h4 id="normative-references">11.1 Normative References<a class="self-link" aria-label="§" href="#normative-references"></a></h4>
+
+<ul>
+  <li>
+    <p><a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a> <strong>AV1 Bitstream &amp; Decoding Process Specification, Version 1.0.0 with Errata 1</strong>, January 2019.</p>
+  </li>
+  <li>
+    <p><a href="https://tools.ietf.org/html/rfc3550">RFC3550</a> <strong>RTP: A Transport Protocol for Real-Time Applications</strong>, H. Schulzrinne, S. Casner, R. Frederick, and V. Jacobson, July 2003.</p>
+  </li>
+  <li>
+    <p><a href="https://tools.ietf.org/html/rfc5104">RFC5104</a> <strong>Codec Control Messages in the RTP Audio-Visual Profile with Feedback (AVPF)</strong>, S. Wenger, U. Chandra, M. Westerlund, and B. Burman, February 2008.</p>
+  </li>
+  <li>
+    <p>[RFC6904] <strong>Encryption of Header Extensions in the Secure Real-time Transport Protocol (SRTP)</strong>, J. Lennox, April 2013.</p>
+  </li>
+  <li>
+    <p><a href="https://tools.ietf.org/html/rfc8285">RFC8285</a> <strong>A General Mechanism for RTP Header Extensions for generic RTP header extensions</strong>, D. Singer, H. Desineni, and R. Even, October 2017.</p>
+  </li>
+  <li>
+    <p><a href="https://tools.ietf.org/html/rfc7667">RFC7667</a> <strong>RTP Topologies</strong>, M. Westerlund and S. Wenger, November 2015.</p>
+  </li>
+  <li>
+    <p><a href="https://tools.ietf.org/html/draft-ietf-avtext-lrr-07">I-D.ietf-avtext-lrr</a> <strong>The Layer Refresh Request (LRR) RTCP Feedback Message</strong>, J. Lennox, D. Hong, J. Uberti, S. Holmer, and M. Flodman, June 29, 2017.</p>
+  </li>
+  <li>
+    <p><a href="https://tools.ietf.org/html/draft-ietf-avtext-rid">I-D.ietf-avtext-rid</a> <strong>RTP Stream Identifier Source Description (SDES)</strong>, A. Roach, S. Nandakumar and P. Thatcher, October 06, 2016.</p>
+  </li>
+  <li>
+    <p><a href="https://tools.ietf.org/html/draft-ietf-mmusic-rid">I-D.ietf-mmusic-rid</a> <strong>RTP Payload Format Restrictions</strong>, A. Roach, May 15, 2018.</p>
+  </li>
+  <li>
+    <p><a href="https://tools.ietf.org/html/draft-ietf-mmusic-sdp-simulcast">I-D.ietf-mmusic-sdp-simulcast</a> <strong>Using Simulcast in SDP and RTP Sessions</strong>, B. Burman, M. Westerlund, S. Nandakumar and M. Zanaty, March 5, 2019.</p>
+  </li>
+  <li>
+    <p><a href="https://tools.ietf.org/html/draft-ietf-payload-vp9">I-D.ietf-payload-vp9</a> <strong>RTP Payload Format for VP9 Video</strong>, J. Uberti, S. Holmer, M. Flodman, D. Hong, and J. Lennox, January 2020.</p>
+  </li>
+</ul>
+
+</section>
+
+<section>
+<h4 id="informative-references">11.2 Informative References<a class="self-link" aria-label="§" href="#informative-references"></a></h4>
+
+<ul>
+  <li>
+    <p><a href="https://tools.ietf.org/html/rfc3711">RFC3711</a> <strong>The Secure Real-time Transport Protocol (SRTP)</strong>, M. Baugher, D. McGrew, M. Naslund, E. Carrara, and K. Norrman, March 2004.</p>
+  </li>
+  <li>
+    <p><a href="https://tools.ietf.org/html/rfc7202">RFC7202</a> <strong>Securing the RTP Framework: Why RTP Does Not Mandate a Single Security Solution</strong>, C. Perkins and M. Westerlund, April 2014.</p>
+  </li>
+  <li>
+    <p><a href="https://tools.ietf.org/html/rfc8082">RFC8082</a> <strong>Using Codec Control Messages in the RTP Audio-Visual Profile with Feedback with Layered Codecs</strong>, S. Wenger, J. Lennox, B. Burman, and M. Westerlund, March 2017.</p>
+  </li>
+</ul>
+
+</section>
+
+</section>
+
+<section>
+<h3 id="appendix">Appendix<a class="self-link" aria-label="§" href="#appendix"></a></h3>
+
+<section>
+<h4 id="dependency-descriptor-rtp-header-extension-1">Dependency Descriptor RTP Header Extension<a class="self-link" aria-label="§" href="#dependency-descriptor-rtp-header-extension-1"></a></h4>
+
+<section>
+<h5 id="a1-introduction">A.1 Introduction<a class="self-link" aria-label="§" href="#a1-introduction"></a></h5>
+
+<p>This appendix describes the Dependency Descriptor (DD) RTP Header 
+extension. The DD is used for conveying dependency information about 
+individual video frames in a scalable video stream. The DD includes 
+provisions for both temporal and spatial scalability.</p>
+
+<p>In the DD, the smallest unit for which dependencies are described is 
+an RTP frame. An RTP frame contains one complete coded video frame and 
+may also contain additional information (e.g., metadata). Each RTP frame
+ is identified by a frame_number. When spatial scalability is used, 
+there may be multiple RTP frames produced for the same time instant. 
+Further, this specification allows for the transmission of an RTP frame 
+over multiple packets. RTP frame aggregation is explicitly disallowed. 
+Hereinafter, RTP frame will be referred to as frame.</p>
+
+<p>The DD uses the concept of Decode targets, each of which represents a
+ subset of a scalable video stream necessary to decode the stream at a 
+certain temporal and spatial fidelity. A frame may be associated with 
+several Decode targets. This concept is used to facilitate selective 
+forwarding, as is done by a Selective Forwarding Middlebox (SFM). 
+Typically an SFM would select one Decode target for each endpoint, and 
+forward all frames associated with that target.</p>
+
+<p>The DD describes the decodability of the current frame and provides 
+information about whether current and past frames are required for 
+decoding future frames associated with the Decode target. Specifically, 
+the DD contains
+* a list of Referred frames that can be used to deduce the decodability 
+of the current frame,
+* Decode Target Indications that communicate how current and past frames
+ are required for decoding future frames associated with the Decode 
+target (e.g., Discardable, Switch), and
+* Chains to communicate whether or not missed frames are required for 
+decoding future frames associated with the Decode target.</p>
+
+<p>To reduce overhead, the DD uses templates to avoid sending repetitive
+ information. Subsequent packets refer to a template containing 
+predefined information, which may be overridden with custom 
+dependencies. In this way, the typical DD payload requires three bytes. 
+Dynamic structures whose information is not known in advance can be 
+described using additional bytes.</p>
+
+</section>
+
+<section>
+<h5 id="a2-conventions-definitions-and-acronyms">A.2 Conventions, Definitions and Acronyms<a class="self-link" aria-label="§" href="#a2-conventions-definitions-and-acronyms"></a></h5>
+
+<p>The key words “<em class="rfc2119">MUST<!---0.134451%--></em>”, “<em class="rfc2119">MUST NOT<!---0.134451%--></em>”, “<em class="rfc2119">REQUIRED<!---0.134451%--></em>”, “<em class="rfc2119">SHALL<!---0.134451%--></em>”, “<em class="rfc2119">SHALL NOT<!---0.134451%--></em>”, “<em class="rfc2119">SHOULD<!---0.134451%--></em>”, “<em class="rfc2119">SHOULD NOT<!---0.134451%--></em>”, “<em class="rfc2119">RECOMMENDED<!---0.134451%--></em>”, “<em class="rfc2119">MAY<!---0.134451%--></em>”, and “<em class="rfc2119">OPTIONAL<!---0.134451%--></em>” in this document are to be interpreted as described in <a href="https://tools.ietf.org/html/rfc2119">RFC2119</a>.</p>
+
+<dl>
+  <dt>Chain</dt>
+  <dd>A sequence of frames for which it can be determined instantly if a frame from that sequence has been lost.</dd>
+  <dt>Decode target</dt>
+  <dd>The set of frames needed to decode a coded video sequence at a given spatial and temporal fidelity.</dd>
+  <dt>Decode Target Indication (DTI)</dt>
+  <dd>Describes the relationship of a frame to a Decode target. The DTI 
+indicates four distinct relationships: ‘not present’, ‘discardable’, 
+‘switch’, and ‘required’.</dd>
+  <dt>Discardable indication</dt>
+  <dd>An indication for a frame, associated with a given Decode target, 
+that it will not be a Referred frame for any frame belonging to that 
+Decode target.</dd>
+</dl>
+
+<p class="alert alert-info"><strong>Note:</strong> A frame belonging to more than one Decode target may be discardable for one Decode target and not for another.</p>
+
+<dl>
+  <dt>Frame dependency structure</dt>
+  <dd>Describes frame dependency information for the coded video 
+sequence. The structure includes the number of DTIs, an ordered list of 
+Frame dependency templates, and a mapping between Chains and Decode 
+targets.</dd>
+  <dt>Frame dependency template</dt>
+  <dd>Contains frame description information that many frames have in 
+common. Includes values for spatial ID, temporal ID, DTIs, frame 
+dependencies, and Chain information.</dd>
+  <dt>Not present indication</dt>
+  <dd>An indication for a frame, that it is not associated with a given Decode target.</dd>
+  <dt>Referred frame</dt>
+  <dd>A frame on which the current frame depends.</dd>
+  <dt>Required indication</dt>
+  <dd>An indication for a frame, associated with a given Decode target, 
+that it belongs to the Decode target and has neither a Discardable 
+indication nor a Switch indication.</dd>
+</dl>
+
+<p class="alert alert-info"><strong>Note:</strong> A frame belonging to 
+more than one Decode target may be required for one Decode target and 
+not required (either discardable or switch) for another.</p>
+
+<dl>
+  <dt>Switch indication</dt>
+  <dd>An indication associated with a specific Decode target that all 
+subsequent frames for that Decode target will be decodable if the frame 
+containing the indication is decodable.</dd>
+</dl>
+
+</section>
+
+<section>
+<h5 id="a3-media-stream-requirements">A.3 Media Stream Requirements<a class="self-link" aria-label="§" href="#a3-media-stream-requirements"></a></h5>
+
+<p>A bitstream conformant to this extension must adhere to the following statement(s).</p>
+
+<p>A frame for which all Referred frames are decodable <em class="rfc2119">MUST<!---0.134451%--></em> itself be decodable.</p>
+
+<p class="alert alert-info"><strong>Note:</strong> dependencies are not 
+limited to motion compensated prediction, other relevant information 
+such as entropy decoder state also constitute dependencies.</p>
+
+</section>
+
+<section>
+<h5 id="a4-dependency-descriptor-format">A.4 Dependency Descriptor Format<a class="self-link" aria-label="§" href="#a4-dependency-descriptor-format"></a></h5>
+
+<p>To facilitate the work of selectively forwarding portions of a 
+scalable video bitstream, as is done by a selective forwarding middlebox
+ (SFM), for each packet, the following information is made available 
+(even though not all elements are present in every packet).</p>
+
+<ul>
+  <li>spatial ID</li>
+  <li>temporal ID</li>
+  <li>DTIs</li>
+  <li>frame_number of the current frame</li>
+  <li>frame_number of each of the Referred frames</li>
+  <li>frame_number of last frame in each Chain</li>
+</ul>
+
+<section>
+<h6 id="a41-syntax">A.4.1 Syntax<a class="self-link" aria-label="§" href="#a41-syntax"></a></h6>
+
+<p>The syntax for the descriptor is described in pseudo-code form in 
+this section. Parameters read directly from the bitstream appear in 
+bold.</p>
+
+<p><strong>f(n)</strong> - unsigned n-bit number appearing directly in the bitstream.</p>
+<pre><code aria-busy="false" class="hljs xml">
+f(n) {
+  x = 0
+  for ( i = 0; i <span class="hljs-tag">&lt; <span class="hljs-attr">n</span>; <span class="hljs-attr">i</span>++ ) {
+    <span class="hljs-attr">x</span> = <span class="hljs-string">2</span> * <span class="hljs-attr">x</span> + <span class="hljs-attr">read_bit</span>()
+  }
+  <span class="hljs-attr">TotalConsumedBits</span> += <span class="hljs-string">n</span>
+  <span class="hljs-attr">return</span> <span class="hljs-attr">x</span>
+}
+</span></code></pre>
+
+<pre><code aria-busy="false" class="hljs javascript">
+read_bit() {
+  <span class="hljs-comment">// Returns the next bit from the bitstream and advances the bitstream position indicator by 1.</span>
+}
+</code></pre>
+
+<p><strong>ns(n)</strong> - non-symmetric unsigned encoded integer with maximum number of values n (i.e., output in range 0..n-1).</p>
+<pre><code aria-busy="false" class="hljs javascript">
+ns(n) {
+  w = <span class="hljs-number">0</span>
+  x = n
+  <span class="hljs-keyword">while</span> (x != <span class="hljs-number">0</span>) {
+    x = x &gt;&gt; <span class="hljs-number">1</span>
+    w++
+  }
+  m = (<span class="hljs-number">1</span> &lt;&lt; w) - n
+  v = f(w - <span class="hljs-number">1</span>)
+  <span class="hljs-keyword">if</span> (v &lt; m)
+    <span class="hljs-keyword">return</span> v
+  extra_bit = f(<span class="hljs-number">1</span>)
+  <span class="hljs-keyword">return</span> (v &lt;&lt; <span class="hljs-number">1</span>) - m + extra_bit
+}
+</code></pre>
+
+<table class="table table-sm table-bordered">
+  <thead>
+    <tr>
+      <th>Symbol name</th>
+      <th>Value</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>MAX_TEMPLATE_ID</td>
+      <td>63</td>
+      <td>Maximum value for a frame_dependency_template_id to identify a template</td>
+    </tr>
+    <tr>
+      <td>MAX_SPATIAL_ID</td>
+      <td>3</td>
+      <td>Maximum value for a FrameSpatialId</td>
+    </tr>
+    <tr>
+      <td>MAX_TEMPORAL_ID</td>
+      <td>7</td>
+      <td>Maximum value for a FrameTemporalId</td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="caption">Table A.1. Syntax constants</p>
+
+<pre><code aria-busy="false" class="hljs javascript">
+dependency_descriptor( sz ) {
+  TotalConsumedBits = <span class="hljs-number">0</span>
+  mandatory_descriptor_fields()
+  <span class="hljs-keyword">if</span> (sz &gt; <span class="hljs-number">3</span>) {
+    extended_descriptor_fields()
+  } <span class="hljs-keyword">else</span> {
+    no_extended_descriptor_fields()
+  }
+  frame_dependency_definition()
+  zero_padding = f(sz * <span class="hljs-number">8</span> - TotalConsumedBits)
+}
+</code></pre>
+
+<pre><code aria-busy="false" class="hljs">
+mandatory_descriptor_fields() {
+  start_of_frame = f(1)
+  end_of_frame = f(1)
+  frame_dependency_template_id = f(6)
+  frame_number = f(16)
+}
+</code></pre>
+
+<pre><code aria-busy="false" class="hljs">
+extended_descriptor_fields() {
+  template_dependency_structure_present_flag = f(1)
+  active_decode_targets_present_flag = f(1)
+  custom_dtis_flag = f(1)
+  custom_fdiffs_flag = f(1)
+  custom_chains_flag = f(1)
+
+  if (template_dependency_structure_present_flag) {
+    template_dependency_structure()
+    active_decode_targets_bitmask = (1 &lt;&lt; DtisCnt) - 1
+  }
+
+  if (active_decode_targets_present_flag) {
+    active_decode_targets_bitmask = f(DtisCnt)
+  }
+}
+</code></pre>
+
+<pre><code aria-busy="false" class="hljs">
+no_extended_descriptor_fields() {
+  custom_dtis_flag = 0
+  custom_fdiffs_flag = 0
+  custom_chains_flag = 0
+}
+</code></pre>
+
+<pre><code aria-busy="false" class="hljs">
+template_dependency_structure() {
+  template_id_offset = f(6)
+  dtis_cnt_minus_one = f(5)
+  DtisCnt = dtis_cnt_minus_one + 1
+  template_layers()
+  template_dtis()
+  template_fdiffs()
+  template_chains()
+  resolutions_present_flag = f(1)
+  if (resolutions_present_flag) {
+    render_resolutions()
+  }
+}
+</code></pre>
+
+<pre><code aria-busy="false" class="hljs javascript">
+frame_dependency_definition() {
+  templateIndex = (frame_dependency_template_id + (MAX_TEMPLATE_ID + <span class="hljs-number">1</span>) -
+                   template_id_offset) % (MAX_TEMPLATE_ID + <span class="hljs-number">1</span>)
+  If (templateIndex &gt;= TemplatesCnt) {
+    <span class="hljs-keyword">return</span>  <span class="hljs-comment">// error</span>
+  }
+  FrameSpatialId = TemplateSpatialId[templateIndex]
+  FrameTemporalId = TemplateTemporalId[templateIndex]
+
+  <span class="hljs-keyword">if</span> (custom_dtis_flag) {
+    frame_dtis()
+  } <span class="hljs-keyword">else</span> {
+    frame_dti = template_dti[templateIndex]
+  }
+
+  <span class="hljs-keyword">if</span> (custom_fdiffs_flag) {
+    frame_fdiffs()
+  } <span class="hljs-keyword">else</span> {
+    FrameFdiffsCnt = TemplateFdiffsCnt[templateIndex]
+    FrameFdiff = TemplateFdiff[templateIndex]
+  }
+
+  <span class="hljs-keyword">if</span> (custom_chains_flag) {
+    frame_chains()
+  } <span class="hljs-keyword">else</span> {
+    frame_chain_fdiff = template_chain_fdiff[templateIndex]
+  }
+
+  <span class="hljs-keyword">if</span> (resolutions_present_flag) {
+    FrameMaxWidth = max_render_width_minus_one[FrameSpatialId] + <span class="hljs-number">1</span>
+    FrameMaxHeight = max_render_height_minus_one[FrameSpatialId] + <span class="hljs-number">1</span>
+  }
+}
+</code></pre>
+
+<pre><code aria-busy="false" class="hljs javascript">
+template_layers() {
+  temporalId = <span class="hljs-number">0</span>
+  spatialId = <span class="hljs-number">0</span>
+  TemplatesCnt = <span class="hljs-number">0</span>;
+  MaxTemporalId = <span class="hljs-number">0</span>
+  <span class="hljs-keyword">do</span> {
+    TemplateSpatialId[TemplatesCnt] = spatialId
+    TemplateTemporalId[TemplatesCnt] = temporalId
+    TemplatesCnt++
+    next_layer_idc = f(<span class="hljs-number">2</span>)
+    <span class="hljs-comment">// next_layer_idc == 0 - same sid and tid</span>
+    <span class="hljs-keyword">if</span> (next_layer_idc == <span class="hljs-number">1</span>) {
+      temporalId++
+      <span class="hljs-keyword">if</span> (temporalId &gt; MaxTemporalId) {
+        MaxTemporalId = temporalId
+      }
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (next_layer_idc == <span class="hljs-number">2</span>) {
+      temporalId = <span class="hljs-number">0</span>
+      spatialId++
+    }
+  } <span class="hljs-keyword">while</span> (next_layer_idc != <span class="hljs-number">3</span>)
+  MaxSpatialId = spatialId
+}
+</code></pre>
+
+<pre><code aria-busy="false" class="hljs xml">
+render_resolutions() {
+  for (spatial_id = 0; spatial_id <span class="hljs-tag">&lt;<span class="hljs-name">=</span> <span class="hljs-attr">MaxSpatialId</span>; <span class="hljs-attr">spatial_id</span>++) {
+    <span class="hljs-attr">max_render_width_minus_1</span>[<span class="hljs-attr">spatial_id</span>] = <span class="hljs-string">f(16)</span>
+    <span class="hljs-attr">max_render_height_minus_1</span>[<span class="hljs-attr">spatial_id</span>] = <span class="hljs-string">f(16)</span>
+  }
+}
+</span></code></pre>
+
+<pre><code aria-busy="false" class="hljs abnf">
+template_dtis() {
+  for (templateIndex = <span class="hljs-number">0</span><span class="hljs-comment">; templateIndex &lt; TemplatesCnt; templateIndex++) {</span>
+    for (dtiIndex = <span class="hljs-number">0</span><span class="hljs-comment">; dtiIndex &lt; DtisCnt; dtiIndex++) {</span>
+      // See table A.<span class="hljs-number">2</span> below for meaning of DTI values.
+      template_dti[templateIndex][dtiIndex] = f(<span class="hljs-number">2</span>)
+    }
+  }
+}
+</code></pre>
+
+<pre><code aria-busy="false" class="hljs abnf">
+frame_dtis() {
+  for (dtiIndex = <span class="hljs-number">0</span><span class="hljs-comment">; dtiIndex &lt; DtisCnt; dtiIndex++) {</span>
+    // See table A.<span class="hljs-number">2</span> below for meaning of DTI values.
+    frame_dti[dtiIndex] = f(<span class="hljs-number">2</span>)
+  }
+}
+</code></pre>
+
+<pre><code aria-busy="false" class="hljs xml">
+template_fdiffs() {
+  for (templateIndex = 0; templateIndex <span class="hljs-tag">&lt; <span class="hljs-attr">TemplatesCnt</span>; <span class="hljs-attr">templateIndex</span>++) {
+    <span class="hljs-attr">fdiffsCnt</span> = <span class="hljs-string">0</span>
+    <span class="hljs-attr">fdiff_follows_flag</span> = <span class="hljs-string">f(1)</span>
+    <span class="hljs-attr">while</span> (<span class="hljs-attr">fdiff_follows_flag</span>) {
+      <span class="hljs-attr">fdiff_minus_one</span> = <span class="hljs-string">f(4)</span>
+      <span class="hljs-attr">TemplateFdiff</span>[<span class="hljs-attr">templateIndex</span>][<span class="hljs-attr">fdiffsCnt</span>] = <span class="hljs-string">fdiff_minus_one</span> + <span class="hljs-attr">1</span>
+      <span class="hljs-attr">fdiffsCnt</span>++
+      <span class="hljs-attr">fdiff_follows_flag</span> = <span class="hljs-string">f(1)</span>
+    }
+    <span class="hljs-attr">TemplateFdiffsCnt</span>[<span class="hljs-attr">templateIndex</span>] = <span class="hljs-string">fdiffsCnt</span>
+  }
+}
+</span></code></pre>
+
+<pre><code aria-busy="false" class="hljs javascript">
+frame_fdiffs() {
+  FrameFdiffsCnt = <span class="hljs-number">0</span>
+  next_fdiff_size = f(<span class="hljs-number">2</span>)
+  <span class="hljs-keyword">while</span> (next_fdiff_size) {
+    fdiff_minus_one = f(<span class="hljs-number">4</span> * next_fdiff_size)
+    FrameFdiff[FrameFdiffsCnt] = fdiff_minus_one + <span class="hljs-number">1</span>
+    FrameFdiffsCnt++
+    next_fdiff_size = f(<span class="hljs-number">2</span>)
+  }
+}
+</code></pre>
+
+<pre><code aria-busy="false" class="hljs javascript">
+template_chains() {
+  chains_cnt = ns(DtisCnt + <span class="hljs-number">1</span>)
+  <span class="hljs-keyword">if</span> (chains_cnt == <span class="hljs-number">0</span>) {
+    <span class="hljs-keyword">return</span>
+  }
+  <span class="hljs-keyword">for</span> (dtiIndex = <span class="hljs-number">0</span>; dtiIndex &lt; DtisCnt; dtiIndex++) {
+    decode_target_protected_by[dtiIndex] = ns(chains_cnt)
+  }
+  <span class="hljs-keyword">for</span> (templateIndex = <span class="hljs-number">0</span>; templateIndex &lt; TemplatesCnt; templateIndex++) {
+    <span class="hljs-keyword">for</span> (chainIndex = <span class="hljs-number">0</span>; chainIndex &lt; chains_cnt; chainIndex++) {
+      template_chain_fdiff[templateIndex][chainIndex] = f(<span class="hljs-number">4</span>)
+    }
+  }
+}
+</code></pre>
+
+<pre><code aria-busy="false" class="hljs abnf">
+frame_chains() {
+  for (chainIndex = <span class="hljs-number">0</span><span class="hljs-comment">; chainIndex &lt; chains_cnt; chainIndex++) {</span>
+    frame_chain_fdiff[chainIndex] = f(<span class="hljs-number">8</span>)
+  }
+}
+</code></pre>
+
+</section>
+
+<section>
+<h6 id="a42-semantics">A.4.2 Semantics<a class="self-link" aria-label="§" href="#a42-semantics"></a></h6>
+
+<p>The semantics pertaining to the Dependency Descriptor syntax section above is described in this section.</p>
+
+<p><strong>Mandatory Descriptor Fields</strong></p>
+
+<ul>
+  <li>
+    <p><strong>start_of_frame</strong>: <em class="rfc2119">MUST<!---0.134451%--></em> be set to 1 if the first payload byte of the RTP packet is the beginning of a new frame, and <em class="rfc2119">MUST<!---0.134451%--></em> be set to 0 otherwise. Note that this frame might not be the first frame of a temporal unit.</p>
+  </li>
+  <li>
+    <p><strong>end_of_frame</strong>: <em class="rfc2119">MUST<!---0.134451%--></em> be set to 1 for the final RTP packet of a frame, and <em class="rfc2119">MUST<!---0.134451%--></em> be set to 0 otherwise. Note that, if spatial scalability is in use, more frames from the same temporal unit may follow.</p>
+  </li>
+  <li>
+    <p><strong>frame_number</strong>: is represented using 16 bits and increases strictly monotonically in decode order. frame_number <em class="rfc2119">MAY<!---0.134451%--></em> start on a random number, and <em class="rfc2119">MUST<!---0.134451%--></em> wrap after reaching the maximum value. All packets of the same frame <em class="rfc2119">MUST<!---0.134451%--></em> have the same frame_number value.</p>
+  </li>
+</ul>
+
+<p class="alert alert-info"><strong>Note:</strong> frame_number is not the same as Frame ID in <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1 specification</a>.</p>
+
+<ul>
+  <li><strong>frame_dependency_template_id</strong>: ID of the Frame dependency template to use. <em class="rfc2119">MUST<!---0.134451%--></em> be in the range of template_id_offset to (template_id_offset + TemplatesCnt - 1), inclusive. frame_dependency_template_id <em class="rfc2119">MUST<!---0.134451%--></em> be the same for all packets of the same frame.</li>
+</ul>
+
+<p class="alert alert-info"><strong>Note:</strong> values outside of the
+ valid range may be caused by a change of the template dependency 
+structure, that is a packet with the new template dependency structure 
+was lost or delayed.</p>
+
+<ul>
+  <li><strong>zero_padding</strong>: <em class="rfc2119">MUST<!---0.134451%--></em> be set to 0 and be ignored by receivers.</li>
+</ul>
+
+<p><strong>Extended Descriptor Fields</strong></p>
+
+<ul>
+  <li>
+    <p><strong>template_dependency_structure_present_flag</strong>: 
+indicates the presence the template_dependency_structure. When the 
+template_dependency_structure_present_flag is set to 1, 
+template_dependency_structure <em class="rfc2119">MUST<!---0.134451%--></em> be present; otherwise template_dependency_structure <em class="rfc2119">MUST NOT<!---0.134451%--></em> be present. template_dependency_structure_present_flag <em class="rfc2119">MUST<!---0.134451%--></em> be set to 1 for the first packet of a coded video sequence, and <em class="rfc2119">MUST<!---0.134451%--></em> be set to 0 otherwise.</p>
+  </li>
+  <li>
+    <p><strong>active_decode_targets_present_flag</strong>: indicates the presence of active_decode_targets_bitmask. When set to 1, active_decode_targets_bitmask <em class="rfc2119">MUST<!---0.134451%--></em> be present, otherwise, active_decode_targets_bitmask <em class="rfc2119">MUST NOT<!---0.134451%--></em> be present.</p>
+  </li>
+  <li>
+    <p><strong>active_decode_targets_bitmask</strong>: contains a 
+bitmask that indicates which decode targets are available for decoding. 
+Bit i is equal to 1 if decode target i is available for decoding, 0 
+otherwise.</p>
+  </li>
+  <li>
+    <p><strong>custom_dtis_flag</strong>: indicates the presence of frame_dtis. When set to 1, frame_dtis <em class="rfc2119">MUST<!---0.134451%--></em> be present. Otherwise, frame_dtis <em class="rfc2119">MUST NOT<!---0.134451%--></em> be present.</p>
+  </li>
+  <li>
+    <p><strong>custom_fdiffs_flag</strong>: indicates the presence of frame_fdiffs. When set to 1, frame_fdiffs <em class="rfc2119">MUST<!---0.134451%--></em> be present. Otherwise, frame_fdiffs <em class="rfc2119">MUST NOT<!---0.134451%--></em> be present.</p>
+  </li>
+  <li>
+    <p><strong>custom_chains_flag</strong>: indicates the presence of frame_chain_fdiff. When set to 1, frame_chain_fdiff <em class="rfc2119">MUST<!---0.134451%--></em> be present. Otherwise, frame_chain_fdiff <em class="rfc2119">MUST NOT<!---0.134451%--></em> be present.</p>
+  </li>
+</ul>
+
+<p><strong>Template dependency structure</strong></p>
+
+<ul>
+  <li>
+    <p><strong>template_id_offset</strong>: indicates the value of the frame_dependency_template_id having templateIndex=0. The value of template_id_offset <em class="rfc2119">SHOULD<!---0.134451%--></em>
+ be chosen so that the valid frame_dependency_template_id range, 
+template_id_offset to template_id_offset + TemplatesCnt - 1, inclusive, 
+of a new template_dependency_structure, does not overlap the valid 
+frame_dependency_template_id range for the existing 
+template_dependency_structure. When template_id_offset of a new 
+template_dependency_structure is the same as in the existing 
+template_dependency_structure, all fields in both 
+template_dependency_structures <em class="rfc2119">MUST<!---0.134451%--></em> have identical values.</p>
+  </li>
+  <li>
+    <p><strong>dtis_cnt_minus_one</strong>: dtis_cnt_minus_one + 1 indicates the number of Decode targets present in the coded video sequence.</p>
+  </li>
+  <li>
+    <p><strong>resolutions_present_flag</strong>: indicates the presence of render_resolutions. When the resolutions_present_flag is set to 1, render_resolutions <em class="rfc2119">MUST<!---0.134451%--></em> be present; otherwise render_resolutions <em class="rfc2119">MUST NOT<!---0.134451%--></em> be present.</p>
+  </li>
+  <li>
+    <p><strong>next_layer_idc</strong>: used to determine spatial ID and
+ temporal ID for the next Frame dependency template. Table A.3 describes
+ how the spatial ID and temporal ID values are determined. A 
+next_layer_idc equal to 3 indicates that no more Frame dependency 
+templates are present in the Frame dependency structure.</p>
+  </li>
+  <li>
+    <p><strong>max_render_width_minus_1[spatial_id]</strong>: indicates the maximum render width minus 1 for frames with spatial ID equal to spatial_id.</p>
+  </li>
+  <li>
+    <p><strong>max_render_height_minus_1[spatial_id]</strong>: indicates the maximum render height minus 1 for frames with spatial ID equal to spatial_id.</p>
+  </li>
+  <li>
+    <p><strong>chains_cnt</strong>: indicates the number of Chains. When set to zero, the Frame dependency structure does not utilize protection with Chains.</p>
+  </li>
+  <li>
+    <p><strong>decode_target_protected_by[dtIndex]</strong>: the index of the Chain that protects the Decode target, dtIndex. When chains_cnt &gt; 0, each Decode target <em class="rfc2119">MUST<!---0.134451%--></em> be protected by exactly one Chain.</p>
+  </li>
+  <li>
+    <p><strong>template_dti[templateIndex][]</strong>: an array of size 
+dtis_cnt_minus_one + 1 containing Decode Target Indications for the 
+Frame dependency template having index value equal to templateIndex. 
+Table A.2 contains a description of the Decode Target Indication values.</p>
+  </li>
+  <li>
+    <p><strong>template_chain_fdiff[templateIndex][]</strong>: an array 
+of size chains_cnt containing chain-FDIFF values for the Frame 
+dependency template having index value equal to templateIndex. In a 
+template, the values of chain-FDIFF can be in the range 0 to 15, 
+inclusive.</p>
+  </li>
+  <li>
+    <p><strong>fdiff_follows_flag</strong>: indicates the presence of a frame difference value. When the fdiff_follows_flag is set to 1, fdiff_minus_one <em class="rfc2119">MUST<!---0.134451%--></em>
+ immediately follow; otherwise a value of 0 indicates no more frame 
+difference values are present for the current Frame dependency template.</p>
+  </li>
+  <li>
+    <p><strong>fdiff_minus_one</strong>: the difference between 
+frame_number and the frame_number of the Referred frame minus one. The 
+calculation is done modulo the size of the frame_number field.</p>
+  </li>
+</ul>
+
+<table class="table table-sm table-bordered">
+  <thead>
+    <tr>
+      <th>DTI</th>
+      <th>Value</th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Not present indication</td>
+      <td>0</td>
+      <td>No payload for this Decode target is present.</td>
+    </tr>
+    <tr>
+      <td>Discardable indication</td>
+      <td>1</td>
+      <td>Payload for this Decode target is present and discardable.</td>
+    </tr>
+    <tr>
+      <td>Switch indication</td>
+      <td>2</td>
+      <td>Payload for this Decode target is present and switch is possible (Switch indication).</td>
+    </tr>
+    <tr>
+      <td>Required indication</td>
+      <td>3</td>
+      <td>Payload for this Decode target is present but it is neither discardable nor is it a Switch indication.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="caption">Table A.2. Decode Target Indication (DTI) values.</p>
+
+<p><strong>Frame dependency defintion</strong></p>
+
+<ul>
+  <li>
+    <p><strong>next_fdiff_size</strong>: indicates the size of following fdiff_minus_one syntax elements in 4-bit units. When set to a non-zero value, fdiff_minus_one <em class="rfc2119">MUST<!---0.134451%--></em> immediately follow; otherwise a value of 0 indicates no more frame difference values are present.</p>
+  </li>
+  <li>
+    <p><strong>frame_dti[dtiIndex]</strong>: Decode Target Indication 
+describing the relationship between the current frame and the Decode 
+target having index equal to dtiIndex. Table A.2 contains a description 
+of the Decode Target Indication values.</p>
+  </li>
+  <li>
+    <p><strong>frame_chain_fdiff[chainIdx]</strong>: indicates the 
+difference between the frame_number and the frame_number of the previous
+ frame in the Chain having index equal to chainIdx. A value of 0 
+indicates no previous frames are needed for the Chain. For example, when
+ a packet containing frame_chain_fdiff[chainIdx]=3 and frame_number=112 
+the previous frame in the Chain with index equal to chainIdx has 
+frame_number=109. The calculation is done modulo the size of the 
+frame_number field.</p>
+  </li>
+</ul>
+
+<table class="table table-sm table-bordered">
+  <thead>
+    <tr>
+      <th>next_layer_idc</th>
+      <th>Next Spatial ID And Temporal ID Values</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>The next Frame dependency template has the same spatial ID and temporal ID as the current template</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>The next Frame dependency template has the same spatial ID and
+ temporal ID plus 1 compared with the current Frame dependency template.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>The next Frame dependency template has temporal ID equal to 0 
+and spatial ID plus 1 compared with the current Frame dependency 
+template.</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>No more Frame dependency templates are present in the Frame dependency structure.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="caption">Table A.3. Derivation Of Next Spatial ID And Temporal ID Values.</p>
+
+</section>
+
+<section>
+<h6 id="a43-deciding-decodability-using-chains">A.4.3 Deciding Decodability using Chains<a class="self-link" aria-label="§" href="#a43-deciding-decodability-using-chains"></a></h6>
+
+<p>Chains provide Instantaneous Decidability of Decodability (IDD). That
+ is, the ability to decide, immediately upon receiving the very first 
+packet after packet loss, if the lost packet(s) contained a packet that 
+is needed to decode frames in packets that follow. The concept of Chains
+ is a generalization of the TL0PICIDX field used in the RTP payload 
+formats for scalable codecs such as H.264, VP8, and VP9. A chain defines
+ a sequence of frames essential to decode Decode targets protected by 
+that Chain. Frames in the Chain <em class="rfc2119">MUST<!---0.134451%--></em> be propagated and decoded. All other frames associated with the Decode target <em class="rfc2119">MAY<!---0.134451%--></em>
+ be dropped, temporarily reducing Decode target fidelity. As long as all
+ frames in the Chain are decoded, it should be possible to recover the 
+Decode target’s full fidelity without requesting additional information 
+from the sender (e.g., a key frame request).</p>
+
+<p>The Frame dependency structure includes a mapping between Decode 
+targets and Chains. The mapping gives an SFM the ability to determine 
+the set of Chains it needs to track in order to ensure that the 
+corresponding Decode targets remain decodable. Every packet includes, 
+for every Chain, the frame_number for the previous frame in that Chain. 
+An SFM can instantaneously detect a broken Chain by checking whether or 
+not the previous frame in that Chain has been received. Due to the fact 
+that Chain information for all Chains is present in all packets, an SFM 
+can detect a broken Chain regardless of whether the first packet 
+received after a loss is part of that Chain.</p>
+
+<p>In order to start/restart Chains, a Dependency Descriptor may 
+reference the frame_number of the frame carried in the same RTP packet 
+to indicate that no previous frames are needed for the Chain. Key frames
+ are common cases for such ‘(re)start of Chain’ indications.</p>
+
+</section>
+
+<section>
+<h6 id="a44-switching">A.4.4 Switching<a class="self-link" aria-label="§" href="#a44-switching"></a></h6>
+
+<p>An SFM may begin forwarding packets belonging to a new Decode target 
+beginning with a decodable frame containing a Switch indication to that 
+Decode target.</p>
+
+<p>An SFM may change which Decode targets it forwards. Similarly, a 
+sender may change the Decode targets that are currently being produced. 
+In both cases, not all Decode targets may be available for decoding. 
+Such changes <em class="rfc2119">SHOULD<!---0.134451%--></em> be signaled to the receiver using the active_decode_targets_bitmask and <em class="rfc2119">SHOULD<!---0.134451%--></em> be signaled to the receiver in a reliable way.</p>
+
+<p>When not all Decode targets are active, the active_decode_targets_bitmask <em class="rfc2119">MUST<!---0.134451%--></em> be sent in every packet where the template_dependency_structure_present_flag is equal to 1.</p>
+
+<p class="alert alert-info"><strong>Note:</strong> One way to achieve 
+reliable delivery is to include the active_decode_targets_bitmask in 
+every packet until a receiver report acknowledges a packet containing 
+the latest active_decode_targets_bitmask. Alternately, for many video 
+streams, reliable delivery may be achieved by including the 
+active_decode_targets_bitmask on every chain in the first packet after a
+ change in active decode targets.</p>
+
+<p>Chains protecting no active decode targets <em class="rfc2119">MUST<!---0.134451%--></em> be ignored.</p>
+
+<p class="alert alert-info"><strong>Note:</strong> To increase the 
+chance of using a predefined template, chains protecting no active 
+decode targets may refer to any frame, including an RTP frame that was 
+never produced.</p>
+
+</section>
+
+<section>
+<h6 id="a45-templates">A.4.5 Templates<a class="self-link" aria-label="§" href="#a45-templates"></a></h6>
+
+<p>To facilitate selective forwarding portions of a scalable video 
+stream to each endpoint in a video conference, as is done by a Selective
+ Forwarding Middlebox (SFM), for each packet, several pieces of 
+information are required. To reduce overhead, repetitive information can
+ be predefined and sent once. Subsequent packets refer to a template 
+containing predefined information. In particular, when a video encoder 
+uses an unchanging (static) prediction structure to encode a scalable 
+bitstream, parameter values used to describe the bitstream repeat in a 
+predictable way. The techniques described in this document provide means
+ to send repeating information as predefined templates that can be 
+referenced at future points of the bitstream. Since a reference index to
+ a template requires fewer bits to convey than the associated structures
+ themselves, header overhead can be substantially reduced.</p>
+
+<p>The techniques also provide ways to describe changing (dynamic) 
+prediction structures. In cases where custom dependency information is 
+required, parameter values are explicitly defined rather than referenced
+ in a predefined template. Typically, even in dynamic structures the 
+majority of frames still follow one of the predefined templates.</p>
+
+</section>
+
+</section>
+
+<section>
+<h5 id="a5-signaling-setup-information">A.5 Signaling (Setup) Information<a class="self-link" aria-label="§" href="#a5-signaling-setup-information"></a></h5>
+
+<p>The URI for declaring this header extension in an extmap attribute is
+ 
+“https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension”.</p>
+
+</section>
+
+<section>
+<h5 id="a6-examples">A.6 Examples<a class="self-link" aria-label="§" href="#a6-examples"></a></h5>
+
+</section>
+
+<section>
+<h5 id="a61-decode-targets-decode-target-indications-and-chains">A.6.1 Decode targets, Decode Target Indications, and Chains<a class="self-link" aria-label="§" href="#a61-decode-targets-decode-target-indications-and-chains"></a></h5>
+<p>In the following example, the concepts of Decode targets, Chains, and
+ DTI are discussed in the context of the L2T3 scalability structure from
+ the perspective of frame_number=5 (F5).</p>
+
+<p class="caption"><img src="RTP_Payload_Format_For_AV1_files/L2T3.svg" alt="L2T3">
+L2T3</p>
+
+<p>A Decode target (DT) is a subset of a scalable video stream necessary
+ to decode the stream at a certain temporal and spatial fidelity. For 
+the L2T3 scalability structure, it is natural to define six Decode 
+targets: VGA @ 15, 30 and 60 FPS, and HD @ 15, 30 and 60 FPS. It is 
+however not necessary to define these six Decode targets, in this 
+example four are used as shown in the diagrams below.</p>
+
+<p class="caption"><img src="RTP_Payload_Format_For_AV1_files/L2T3_DT0.svg" alt="HD15fps">
+DT0: HD @ 15fps</p>
+
+<p class="caption"><img src="RTP_Payload_Format_For_AV1_files/L2T3_DT1.svg" alt="VGA30fps">
+DT1: VGA @ 30fps</p>
+
+<p class="caption"><img src="RTP_Payload_Format_For_AV1_files/L2T3_DT2.svg" alt="VGA60fps">
+DT2: VGA @ 60fps</p>
+
+<p class="caption"><img src="RTP_Payload_Format_For_AV1_files/L2T3_DT3.svg" alt="HD60fps">
+DT3: HD @ 60fps</p>
+
+<p>A Decode Target Indication describes the relationship of a frame to a
+ Decode target. For F5, the Decode Target Indication is different for 
+each of the decode targets as shown in the table below.</p>
+
+<table class="table table-sm table-bordered">
+  <thead>
+    <tr>
+      <th>&nbsp;</th>
+      <th>Indication</th>
+      <th>Description</th>
+      <th>SFM behavior</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>DT0</td>
+      <td>Not present</td>
+      <td>F5 is not associated with DT0.</td>
+      <td>Do not forward F5 to a DT0 client.</td>
+    </tr>
+    <tr>
+      <td>DT1</td>
+      <td>Discardable</td>
+      <td>No frame in DT1 will reference F5.</td>
+      <td>Should forward F5 to a DT1 client, but may discard it, e.g., when bandwidth is low.</td>
+    </tr>
+    <tr>
+      <td>DT2</td>
+      <td>Switch</td>
+      <td>If it is possible to decode F5, then all future frames in DT2 are also decodable.</td>
+      <td>Forward F5 to the DT2 client. In addition, the SFM can rely on
+ the fact that if the F5 frame is decodable for a particular client then
+ that client may be switched to DT2.</td>
+    </tr>
+    <tr>
+      <td>DT3</td>
+      <td>Required</td>
+      <td>Future frames in DT3 reference F5.</td>
+      <td>Forward F5 to a DT3 client. No additional decisions can be made.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>A Chain is a sequence of frames for which it can be determined 
+instantly if a frame from that sequence has been lost. In this example, 
+two are used as shown in the diagrams below.</p>
+
+<p class="caption"><img src="RTP_Payload_Format_For_AV1_files/L2T3_C0.svg" alt="ChainS0">
+Chain0</p>
+
+<p class="caption"><img src="RTP_Payload_Format_For_AV1_files/L2T3_C1.svg" alt="ChainS1">
+Chain1</p>
+
+<p>Note that the yellow arrows in the Chain diagrams do not show frame 
+dependencies, rather they indicate the order of frames in the Chain. For
+ example, F9 doesn’t depend on F2, but F9 immediately follows F2 in 
+Chain1.</p>
+
+<p>Purple arrows indicate the previous frame in the chain. F5 is not in 
+any chain. For F5, the last frame in Chain0 is F1, and the last frame in
+ Chain1 is F2.</p>
+
+<p>Decode targets are protected by Chains. In this example, DT1 and DT2 
+(i.e., Decode targets with VGA spatial fidelity) are protected by 
+Chain0, and DT0 and DT3 (i.e., Decode targets with HD spatial fidelity) 
+are protected by Chain1.</p>
+
+<p>To better understand how Chains are used, consider two receiving 
+clients. One client expects DT2, while the other expects DT3. These two 
+clients would track different chains. In this example, each client has 
+received and decoded F1 and then receives F5. F5 depends only on F1, 
+thus F5 is decodable.</p>
+
+<p>The DT2 client would track Chain0. From the DD received with F5, the 
+client would detect that the last essential frame is F1. Consequently, 
+it is safe to start decoding F5. Even if the DT2 client does not receive
+ F3, frames following F5 are decodable due to the fact that F3 is 
+Discardable for DT2.</p>
+
+<p>The DT3 client would track Chain1. From the DD received with F5, the 
+client would detect that the last essential frame is F2. Thus it is not 
+safe to start decoding F5. Due to the fact that frames must be decoded 
+in decode order and F2 is essential for all HD frames, decoding F5 
+before F2 would prevent the decoding of F2 and all subsequent HD frames.
+ The client therefore should wait for F2. The client may send a Generic 
+NACK per <a href="https://tools.ietf.org/html/rfc4585">RFC4585</a> in 
+order to notify the sender that packets have been missed since the 
+receipt of F1, or may send a Layer Refresh Request (LRR) per <a href="https://tools.ietf.org/html/draft-ietf-avtext-lrr-07">I-D.ietf-avtext-lrr</a> in order to refresh the media substream.</p>
+
+</section>
+
+<section>
+<h5 id="a62-scalability-structure-examples">A.6.2 Scalability structure examples<a class="self-link" aria-label="§" href="#a62-scalability-structure-examples"></a></h5>
+
+<p>Each example in this section contains a prediction structure figure 
+and a table describing the associated Frame dependency structure. The 
+Frame dependency structure table column headings have the meanings 
+listed below. For the DTI- related columns, Table A.4 shows the symbol 
+used to represent each DTI value.</p>
+
+<ul>
+  <li>Idx - template index</li>
+  <li>S - spatial ID</li>
+  <li>T - temporal ID</li>
+  <li>Fdiffs - comma delimited list of TemplateFdiff[Idx] values</li>
+  <li>Chain(s) - <strong>template_chain_fdiff[Idx]</strong> values for each Chain</li>
+  <li>DTI - <strong>template_dti[Idx]</strong></li>
+</ul>
+
+<table class="table table-sm table-bordered">
+  <thead>
+    <tr>
+      <th>DTI</th>
+      <th>Value</th>
+      <th>Symbol</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Not present indication</td>
+      <td>0</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Discardable indication</td>
+      <td>1</td>
+      <td>D</td>
+    </tr>
+    <tr>
+      <td>Switch indication</td>
+      <td>2</td>
+      <td>S</td>
+    </tr>
+    <tr>
+      <td>Required indication</td>
+      <td>3</td>
+      <td>R</td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="caption">Table A.4. DTI values</p>
+
+<section>
+<h6 id="a621-l1t3-single-spatial-layer-with-3-temporal-layers">A.6.2.1 L1T3 Single Spatial Layer with 3 Temporal Layers<a class="self-link" aria-label="§" href="#a621-l1t3-single-spatial-layer-with-3-temporal-layers"></a></h6>
+
+<p>This example uses one Chain, which includes frames with temporal ID equal to 0.</p>
+
+<p><img src="RTP_Payload_Format_For_AV1_files/L1T3.svg" alt="L1T3"></p>
+
+<table class="table-sm table-bordered" style="margin-bottom: 1.5em;">
+<tbody><tr>
+<th colspan="1" rowspan="2">Idx</th><th colspan="1" rowspan="2">S</th><th colspan="1" rowspan="2">T</th><th colspan="1" rowspan="2">Fdiffs</th><th colspan="1" rowspan="2">Chain</th><th colspan="3" rowspan="1">DTI</th>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">30 fps</th><th colspan="1" rowspan="1">15 fps</th><th colspan="1" rowspan="1">7.5 fps</th>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1"></td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">4</td><td colspan="1" rowspan="1">4</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">4</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">5</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="5" rowspan="1"><b><tt>decode_target_protected_by</tt></b></td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">0</td>
+</tr>
+</tbody></table>
+
+</section>
+
+<section>
+<h6 id="a622-l2t1-full-svc-with-occasional-switch">A.6.2.2 L2T1 Full SVC with Occasional Switch<a class="self-link" aria-label="§" href="#a622-l2t1-full-svc-with-occasional-switch"></a></h6>
+
+<p>This example uses two Chains. Chain 0 includes frames with spatial ID equal to 0. Chain 1 includes all frames.</p>
+
+<p><img src="RTP_Payload_Format_For_AV1_files/L2T1.svg" alt="L2T1"></p>
+
+<table class="table-sm table-bordered" style="margin-bottom: 1.5em;">
+<tbody><tr>
+<th colspan="1" rowspan="2">Idx</th><th colspan="1" rowspan="2">S</th><th colspan="1" rowspan="2">T</th><th colspan="1" rowspan="2">Fdiffs</th><th colspan="2" rowspan="1">Chains</th><th colspan="2" rowspan="1">DTI</th>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">0</th><th colspan="1" rowspan="1">1</th><th colspan="1" rowspan="1">HD</th><th colspan="1" rowspan="1">VGA</th>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1"></td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">S</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">4</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">5</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">2,1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="6" rowspan="1"><b><tt>decode_target_protected_by</tt></b></td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">0</td>
+</tr>
+</tbody></table>
+
+</section>
+
+<section>
+<h6 id="a623-l3t3-full-svc">A.6.2.3 L3T3 Full SVC<a class="self-link" aria-label="§" href="#a623-l3t3-full-svc"></a></h6>
+
+<p>This example uses three Chains. Chain 0 includes frames with spatial 
+ID equal to 0 and temporal ID equal to 0. Chain 1 includes frames with 
+spatial ID equal to 0 or 1 and temporal ID equal to 0. Chain 2 includes 
+all frames with temporal ID equal to 0.</p>
+
+<p><img src="RTP_Payload_Format_For_AV1_files/L3T3.svg" alt="L3T3"></p>
+
+<table class="table-sm table-bordered" style="margin-bottom: 1.5em;">
+<tbody><tr>
+<th colspan="1" rowspan="2">Idx</th><th colspan="1" rowspan="2">S</th><th colspan="1" rowspan="2">T</th><th colspan="1" rowspan="2">Fdiffs</th><th colspan="3" rowspan="1">Chains</th><th colspan="9" rowspan="1">DTI</th>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">0</th><th colspan="1" rowspan="1">1</th><th colspan="1" rowspan="1">2</th><th colspan="1" rowspan="1">HD30 fps</th><th colspan="1" rowspan="1">HD15 fps</th><th colspan="1" rowspan="1">HD7.5 fps</th><th colspan="1" rowspan="1">VGA30 fps</th><th colspan="1" rowspan="1">VGA15 fps</th><th colspan="1" rowspan="1">VGA7.5fps</th><th colspan="1" rowspan="1">QVGA30 fps</th><th colspan="1" rowspan="1">QVGA15 fps</th><th colspan="1" rowspan="1">QVGA7.5 fps</th>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1"></td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">12</td><td colspan="1" rowspan="1">12</td><td colspan="1" rowspan="1">11</td><td colspan="1" rowspan="1">10</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">6</td><td colspan="1" rowspan="1">6</td><td colspan="1" rowspan="1">5</td><td colspan="1" rowspan="1">4</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">4</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">5</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">9</td><td colspan="1" rowspan="1">8</td><td colspan="1" rowspan="1">7</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">6</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">7</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">12,1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">8</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">6,1</td><td colspan="1" rowspan="1">7</td><td colspan="1" rowspan="1">6</td><td colspan="1" rowspan="1">5</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">9</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">3,1</td><td colspan="1" rowspan="1">4</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">10</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">3,1</td><td colspan="1" rowspan="1">10</td><td colspan="1" rowspan="1">9</td><td colspan="1" rowspan="1">8</td><td colspan="1" rowspan="1">R</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">11</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">12</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">12,1</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">13</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">6,1</td><td colspan="1" rowspan="1">8</td><td colspan="1" rowspan="1">7</td><td colspan="1" rowspan="1">6</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">14</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">3,1</td><td colspan="1" rowspan="1">5</td><td colspan="1" rowspan="1">4</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">15</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">3,1</td><td colspan="1" rowspan="1">11</td><td colspan="1" rowspan="1">10</td><td colspan="1" rowspan="1">9</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="7" rowspan="1"><b><tt>decode_target_protected_by</tt></b></td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">0</td>
+</tr>
+</tbody></table>
+
+</section>
+
+<section>
+<h6 id="a624-l3t3-k-svc-with-temporal-shift">A.6.2.4 L3T3 K-SVC with Temporal Shift<a class="self-link" aria-label="§" href="#a624-l3t3-k-svc-with-temporal-shift"></a></h6>
+
+<p>This example uses three Chains. Chain 0 includes frames with spatial 
+ID equal to 0 and temporal ID equal to 0. Chain 1 includes frame 100 and
+ frames with spatial ID equal to 1 and temporal ID equal to 0. Chain 2 
+includes frames 100, 101, and frames with spatial ID equal to 2 and 
+temporal ID equal to 0.</p>
+
+<p><img src="RTP_Payload_Format_For_AV1_files/L3T3_KEY_SHIFT.svg" alt="L3T3_KEY_SHIFT"></p>
+
+<table class="table-sm table-bordered" style="margin-bottom: 1.5em;">
+<tbody><tr>
+<th colspan="1" rowspan="2">Idx</th><th colspan="1" rowspan="2">S</th><th colspan="1" rowspan="2">T</th><th colspan="1" rowspan="2">Fdiffs</th><th colspan="3" rowspan="1">Chains</th><th colspan="9" rowspan="1">DTI</th>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">0</th><th colspan="1" rowspan="1">1</th><th colspan="1" rowspan="1">2</th><th colspan="1" rowspan="1">HD 30 fps</th><th colspan="1" rowspan="1">HD 15 fps</th><th colspan="1" rowspan="1">HD 7.5 fps</th><th colspan="1" rowspan="1">VGA 30 fps</th><th colspan="1" rowspan="1">VGA 15 fps</th><th colspan="1" rowspan="1">VGA 7.5 fps</th><th colspan="1" rowspan="1">QVGA 30 fps</th><th colspan="1" rowspan="1">QVGA 15 fps</th><th colspan="1" rowspan="1">QVGA 7.5 fps</th>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1"></td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">12</td><td colspan="1" rowspan="1">12</td><td colspan="1" rowspan="1">8</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">4</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">6</td><td colspan="1" rowspan="1">6</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">7</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">5</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">5</td><td colspan="1" rowspan="1">4</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">6</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">9</td><td colspan="1" rowspan="1">5</td><td colspan="1" rowspan="1">10</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">7</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">11</td><td colspan="1" rowspan="1">4</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">8</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">9</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">6</td><td colspan="1" rowspan="1">4</td><td colspan="1" rowspan="1">6</td><td colspan="1" rowspan="1">5</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">10</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">12</td><td colspan="1" rowspan="1">4</td><td colspan="1" rowspan="1">12</td><td colspan="1" rowspan="1">5</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">11</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">6</td><td colspan="1" rowspan="1">10</td><td colspan="1" rowspan="1">6</td><td colspan="1" rowspan="1">11</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">12</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">13</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">7</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">8</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">14</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">9</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">15</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">16</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">12</td><td colspan="1" rowspan="1">11</td><td colspan="1" rowspan="1">7</td><td colspan="1" rowspan="1">12</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">17</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">6</td><td colspan="1" rowspan="1">5</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">6</td><td colspan="1" rowspan="1">S</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">18</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">4</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">19</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">8</td><td colspan="1" rowspan="1">4</td><td colspan="1" rowspan="1">9</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="1" rowspan="1">20</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">10</td><td colspan="1" rowspan="1">3</td><td colspan="1" rowspan="1">D</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td><td colspan="1" rowspan="1">-</td>
+</tr>
+<tr>
+<td colspan="7" rowspan="1"></td><td colspan="1" rowspan="1">HD 30 fps</td><td colspan="1" rowspan="1">HD 15 fps</td><td colspan="1" rowspan="1">HD 7.5 fps</td><td colspan="1" rowspan="1">VGA 30 fps</td><td colspan="1" rowspan="1">VGA 15 fps</td><td colspan="1" rowspan="1">VGA 7.5 fps</td><td colspan="1" rowspan="1">QVGA 30 fps</td><td colspan="1" rowspan="1">QVGA 15 fps</td><td colspan="1" rowspan="1">QVGA 7.5 fps</td>
+</tr>
+<tr>
+<td colspan="7" rowspan="1"><b><tt>decode_target_protected_by</tt></b></td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">2</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">1</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">0</td><td colspan="1" rowspan="1">0</td>
+</tr>
+</tbody></table>
+
+</section>
+
+</section>
+
+<section>
+<h5 id="a7-references">A.7 References<a class="self-link" aria-label="§" href="#a7-references"></a></h5>
+
+<section>
+<h6 id="a71-normative-references">A.7.1 Normative References<a class="self-link" aria-label="§" href="#a71-normative-references"></a></h6>
+
+<ul>
+  <li>
+    <p><a href="https://tools.ietf.org/html/rfc2119">RFC2119</a> <strong>Key words for use in RFCs to Indicate Requirement Levels</strong>, S. Bradner, March 1997.</p>
+  </li>
+  <li>
+    <p><a href="https://tools.ietf.org/html/rfc3550">RFC3550</a> <strong>RTP: A Transport Protocol for Real-Time Applications</strong>, H. Schulzrinne, S. Casner, R. Frederick, and V. Jacobson, July 2003.</p>
+  </li>
+  <li>
+    <p><a href="https://tools.ietf.org/html/rfc8285">RFC8285</a> <strong>A General Mechanism for RTP Header Extensions for generic RTP header extensions</strong>, D. Singer, H. Desineni, and R. Even, October 2017.</p>
+  </li>
+</ul>
+
+</section>
+
+<section>
+<h6 id="a72-informative-references">A.7.2 Informative References<a class="self-link" aria-label="§" href="#a72-informative-references"></a></h6>
+
+<ul>
+  <li>
+    <p><a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a> <strong>AV1 Bitstream &amp; Decoding Process Specification, Version 1.0.0 with Errata 1</strong>, January 2019.</p>
+  </li>
+  <li>
+    <p><a href="https://tools.ietf.org/html/rfc4585">RFC4585</a> <strong>Extended RTP Profile for Real-time Transport Control Protocol (RTCP)-Based Feedback (RTP/AVPF)</strong>, J. Ott, S. Wenger, N. Sato, C. Burmeister, and J. Rey, July 2006.</p>
+  </li>
+  <li>
+    <p><a href="https://tools.ietf.org/html/rfc6838">RFC6838</a> <strong>Media Type Specifications and Registration Procedures</strong>, N. Freed, J. Klensin, and T. Hansen, January 2013.</p>
+  </li>
+  <li>
+    <p><a href="https://tools.ietf.org/html/rfc7667">RFC7667</a> <strong>RTP Topologies</strong>, M. Westerlund and S. Wenger, November 2015.</p>
+  </li>
+</ul>
+
+</section>
+
+</section>
+
+</section>
+
+
+      </section></section></div>
+    </div>
+  </div>
+  <script>
+    anchors.options.visible = 'always';
+    anchors.add();
+  </script>
+
+
+<section id="references" class="appendix"><h2 id="references-0">References<!---0.134451%--><a class="self-link" aria-label="§" href="#references"></a></h2><section id="normative-references-0">
+    <h3 id="normative-references-1">Normative references<!---0.134451%--><a class="self-link" aria-label="§" href="#normative-references-0"></a></h3>
+    <dl class="bibliography">
+      <dt id="bib-rfc2119">[RFC2119<!---0.134451%-->]</dt><dd><a href="https://tools.ietf.org/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. S. Bradner.  IETF. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a><!---0.134451%--></dd><dt id="bib-rfc8174">[RFC8174<!---0.134451%-->]</dt><dd><a href="https://tools.ietf.org/html/rfc8174"><cite>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</cite></a>. B. Leiba.  IETF. May 2017. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc8174">https://tools.ietf.org/html/rfc8174</a><!---0.134451%--></dd><!---0.134451%-->
+    </dl>
+  </section></section><script id="respec-dfn-panel">(() => {
+// @ts-check
+if (document.respecIsReady) {
+  document.respecIsReady.then(dfnPanel);
+} else {
+  dfnPanel();
+}
+
+function dfnPanel() {
+  /** @type {HTMLElement} */
+  let panel;
+  document.body.addEventListener("click", event => {
+    if (!(event.target instanceof HTMLElement)) return;
+
+    /** @type {HTMLElement} */
+    const el = event.target;
+
+    const action = deriveAction(el);
+    switch (action) {
+      case "show": {
+        if (panel) hidePanel(panel);
+        /** @type {HTMLElement} */
+        const dfn = el.closest("dfn, .index-term");
+        panel = document.getElementById(`dfn-panel-for-${dfn.id}`);
+        displayPanel(dfn, panel, { x: event.clientX, y: event.clientY });
+        break;
+      }
+      case "dock": {
+        panel.style.left = null;
+        panel.style.top = null;
+        panel.classList.add("docked");
+        break;
+      }
+      case "hide": {
+        hidePanel(panel);
+        break;
+      }
+    }
+  });
+}
+
+/** @param {HTMLElement} clickTarget */
+function deriveAction(clickTarget) {
+  const hitALink = !!clickTarget.closest("a");
+  if (clickTarget.closest("dfn, .index-term")) {
+    return hitALink ? null : "show";
+  }
+  if (clickTarget.closest(".dfn-panel")) {
+    if (hitALink) {
+      const clickedSelfLink = clickTarget.classList.contains("self-link");
+      return clickedSelfLink ? "hide" : "dock";
+    }
+    const panel = clickTarget.closest(".dfn-panel");
+    return panel.classList.contains("docked") ? "hide" : null;
+  }
+  if (document.querySelector(".dfn-panel:not([hidden])")) {
+    return "hide";
+  }
+  return null;
+}
+
+/**
+ * @param {HTMLElement} dfn
+ * @param {HTMLElement} panel
+ * @param {{ x: number, y: number }} clickPosition
+ */
+function displayPanel(dfn, panel, { x, y }) {
+  panel.hidden = false;
+  // distance (px) between edge of panel and the pointing triangle (caret)
+  const MARGIN = 20;
+
+  const dfnRects = dfn.getClientRects();
+  // Find the `top` offset when the `dfn` can be spread across multiple lines
+  let closestTop = 0;
+  let minDiff = Infinity;
+  for (const rect of dfnRects) {
+    const { top, bottom } = rect;
+    const diffFromClickY = Math.abs((top + bottom) / 2 - y);
+    if (diffFromClickY < minDiff) {
+      minDiff = diffFromClickY;
+      closestTop = top;
+    }
+  }
+
+  const top = window.scrollY + closestTop + dfnRects[0].height;
+  const left = x - MARGIN;
+  panel.style.left = `${left}px`;
+  panel.style.top = `${top}px`;
+
+  // Find if the panel is flowing out of the window
+  const panelRect = panel.getBoundingClientRect();
+  const SCREEN_WIDTH = Math.min(window.innerWidth, window.screen.width);
+  if (panelRect.right > SCREEN_WIDTH) {
+    const newLeft = Math.max(MARGIN, x + MARGIN - panelRect.width);
+    const newCaretOffset = left - newLeft;
+    panel.style.left = `${newLeft}px`;
+    /** @type {HTMLElement} */
+    const caret = panel.querySelector(".caret");
+    caret.style.left = `${newCaretOffset}px`;
+  }
+}
+
+/** @param {HTMLElement} panel */
+function hidePanel(panel) {
+  panel.hidden = true;
+  panel.classList.remove("docked");
+}
+})()</script><script src="RTP_Payload_Format_For_AV1_files/fixup.js"></script></body></html>
