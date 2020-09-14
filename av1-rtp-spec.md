@@ -37,7 +37,6 @@ This specification also provides several mechanisms through which scalability st
 ## 2. Conventions, Definitions and Acronyms
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC2119].
-{: .no-test-needed }
 
 Coded frame
 : The representation of one frame before the decoding process.
