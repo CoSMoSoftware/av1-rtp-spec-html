@@ -712,6 +712,7 @@ Decode target
 
 Decode Target Indication (DTI)
 : Describes the relationship of a frame to a Decode target. The DTI indicates four distinct relationships: 'not present', 'discardable', 'switch', and 'required'.
+{:.no-test-needed }
 
 Discardable indication
 : An indication for a frame, associated with a given Decode target, that it will not be a Referred frame for any frame belonging to that Decode target.
@@ -725,6 +726,7 @@ Frame dependency structure
 
 Frame dependency template
 : Contains frame description information that many frames have in common. Includes values for spatial ID, temporal ID, DTIs, frame dependencies, and Chain information.
+{:.no-test-needed }
 
 Not present indication
 : An indication for a frame, that it is not associated with a given Decode target.
@@ -1054,6 +1056,7 @@ The semantics pertaining to the Dependency Descriptor syntax section above is de
 * **template_dependency_structure_present_flag**: indicates the presence the template_dependency_structure. When the template_dependency_structure_present_flag is set to 1, template_dependency_structure MUST be present; otherwise template_dependency_structure MUST NOT be present. template_dependency_structure_present_flag MUST be set to 1 for the first packet of a coded video sequence, and MUST be set to 0 otherwise.
 
 * **active_decode_targets_present_flag**: indicates the presence of active_decode_targets_bitmask. When set to 1, active_decode_targets_bitmask MUST be present, otherwise, active_decode_targets_bitmask MUST NOT be present.
+{:.no-test-needed }
 
 * **active_decode_targets_bitmask**: contains a bitmask that indicates which decode targets are available for decoding. Bit i is equal to 1 if decode target i is available for decoding, 0 otherwise.
 {:& https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/video_coding/codecs/av1/libaom_av1_encoder_unittest.cc?q=NoBitrateOnTopLayerRefecltedInActiveDecodeTargets }
@@ -1078,6 +1081,7 @@ The semantics pertaining to the Dependency Descriptor syntax section above is de
 * **max_render_width_minus_1[spatial_id]**: indicates the maximum render width minus 1 for frames with spatial ID equal to spatial_id.
 
 * **max_render_height_minus_1[spatial_id]**: indicates the maximum render height minus 1 for frames with spatial ID equal to spatial_id.
+{:.no-test-needed }
 
 * **chains_cnt**: indicates the number of Chains. When set to zero, the Frame dependency structure does not utilize protection with Chains.
 {:& https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/video_coding/codecs/av1/scalability_structure_unittest.cc?q=NumberOfDecodeTargetsAndChainsAreInRangeAndConsistent }

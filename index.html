@@ -1006,24 +1006,30 @@ new coded video sequences for other encodings from the same source(s).</p>
 
 <p>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in <a href="https://tools.ietf.org/html/rfc2119">RFC2119</a>.</p>
 
-<dl data-tests="https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/video_coding/codecs/av1/scalability_structure_unittest.cc?q=NoFrameDependsOnDiscardableOrNotPresent">
+<dl class="no-test-needed">
   <dt>Chain</dt>
   <dd>A sequence of frames for which it can be determined instantly if a frame from that sequence has been lost.</dd>
   <dt>Decode target</dt>
   <dd>The set of frames needed to decode a coded video sequence at a given spatial and temporal fidelity.</dd>
   <dt>Decode Target Indication (DTI)</dt>
   <dd>Describes the relationship of a frame to a Decode target. The DTI indicates four distinct relationships: ‘not present’, ‘discardable’, ‘switch’, and ‘required’.</dd>
+</dl>
+
+<dl data-tests="https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/video_coding/codecs/av1/scalability_structure_unittest.cc?q=NoFrameDependsOnDiscardableOrNotPresent">
   <dt>Discardable indication</dt>
   <dd>An indication for a frame, associated with a given Decode target, that it will not be a Referred frame for any frame belonging to that Decode target.</dd>
 </dl>
 
 <p class="alert alert-info"><strong>Note:</strong> A frame belonging to more than one Decode target may be discardable for one Decode target and not for another.</p>
 
-<dl data-tests="https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/video_coding/codecs/av1/scalability_structure_unittest.cc?q=NoFrameDependsOnDiscardableOrNotPresent">
+<dl class="no-test-needed">
   <dt>Frame dependency structure</dt>
   <dd>Describes frame dependency information for the coded video sequence. The structure includes the number of DTIs, an ordered list of Frame dependency templates, and a mapping between Chains and Decode targets.</dd>
   <dt>Frame dependency template</dt>
   <dd>Contains frame description information that many frames have in common. Includes values for spatial ID, temporal ID, DTIs, frame dependencies, and Chain information.</dd>
+</dl>
+
+<dl data-tests="https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/video_coding/codecs/av1/scalability_structure_unittest.cc?q=NoFrameDependsOnDiscardableOrNotPresent">
   <dt>Not present indication</dt>
   <dd>An indication for a frame, that it is not associated with a given Decode target.</dd>
 </dl>
@@ -1385,16 +1391,17 @@ frame_chains() {
 
 <p><strong>Extended Descriptor Fields</strong></p>
 
-<ul data-tests="https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/video_coding/codecs/av1/libaom_av1_encoder_unittest.cc?q=NoBitrateOnTopLayerRefecltedInActiveDecodeTargets">
+<ul class="no-test-needed">
   <li>
     <p><strong>template_dependency_structure_present_flag</strong>: indicates the presence the template_dependency_structure. When the template_dependency_structure_present_flag is set to 1, template_dependency_structure MUST be present; otherwise template_dependency_structure MUST NOT be present. template_dependency_structure_present_flag MUST be set to 1 for the first packet of a coded video sequence, and MUST be set to 0 otherwise.</p>
   </li>
   <li>
     <p><strong>active_decode_targets_present_flag</strong>: indicates the presence of active_decode_targets_bitmask. When set to 1, active_decode_targets_bitmask MUST be present, otherwise, active_decode_targets_bitmask MUST NOT be present.</p>
   </li>
-  <li>
-    <p><strong>active_decode_targets_bitmask</strong>: contains a bitmask that indicates which decode targets are available for decoding. Bit i is equal to 1 if decode target i is available for decoding, 0 otherwise.</p>
-  </li>
+</ul>
+
+<ul data-tests="https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/video_coding/codecs/av1/libaom_av1_encoder_unittest.cc?q=NoBitrateOnTopLayerRefecltedInActiveDecodeTargets">
+  <li><strong>active_decode_targets_bitmask</strong>: contains a bitmask that indicates which decode targets are available for decoding. Bit i is equal to 1 if decode target i is available for decoding, 0 otherwise.</li>
 </ul>
 
 <ul>
@@ -1415,7 +1422,7 @@ frame_chains() {
   <li><strong>template_id_offset</strong>: indicates the value of the frame_dependency_template_id having templateIndex=0. The value of template_id_offset SHOULD be chosen so that the valid frame_dependency_template_id range, template_id_offset to template_id_offset + TemplatesCnt - 1, inclusive, of a new template_dependency_structure, does not overlap the valid frame_dependency_template_id range for the existing template_dependency_structure. When template_id_offset of a new template_dependency_structure is the same as in the existing template_dependency_structure, all fields in both template_dependency_structures MUST have identical values.</li>
 </ul>
 
-<ul data-tests="https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/video_coding/codecs/av1/scalability_structure_unittest.cc?q=NumberOfDecodeTargetsAndChainsAreInRangeAndConsistent">
+<ul class="no-test-needed">
   <li>
     <p><strong>dtis_cnt_minus_one</strong>: dtis_cnt_minus_one + 1 indicates the number of Decode targets present in the coded video sequence.</p>
   </li>
@@ -1431,9 +1438,10 @@ frame_chains() {
   <li>
     <p><strong>max_render_height_minus_1[spatial_id]</strong>: indicates the maximum render height minus 1 for frames with spatial ID equal to spatial_id.</p>
   </li>
-  <li>
-    <p><strong>chains_cnt</strong>: indicates the number of Chains. When set to zero, the Frame dependency structure does not utilize protection with Chains.</p>
-  </li>
+</ul>
+
+<ul data-tests="https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/video_coding/codecs/av1/scalability_structure_unittest.cc?q=NumberOfDecodeTargetsAndChainsAreInRangeAndConsistent">
+  <li><strong>chains_cnt</strong>: indicates the number of Chains. When set to zero, the Frame dependency structure does not utilize protection with Chains.</li>
 </ul>
 
 <ul>
