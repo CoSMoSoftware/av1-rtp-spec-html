@@ -121,7 +121,7 @@ var respecConfig = {
   xref: ["dom", "hr-time", "webidl", "html", "mediacapture-streams", "fileapi", "webrtc-stats"],
   preProcess: [
     highlightTests,
-    markTestableAssertions,
+    // markTestableAssertions,
       function linkToJsep() {
           require(["core/pubsubhub"], function(pubsubhub){
               var xhr = new XMLHttpRequest();

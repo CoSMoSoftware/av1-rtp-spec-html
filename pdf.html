@@ -133,7 +133,7 @@
 <section>
 <h2 id="conventions-definitions-and-acronyms">2. Conventions, Definitions and Acronyms</h2>
 
-<p>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in <a href="https://tools.ietf.org/html/rfc2119">RFC2119</a>.</p>
+<p class="no-test-needed">The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in <a href="https://tools.ietf.org/html/rfc2119">RFC2119</a>.</p>
 
 <dl>
   <dt>Coded frame</dt>
@@ -283,7 +283,7 @@ Length of the last OBU element =
 
 <p>The length field is encoded using leb128. Leb128 is defined in the AV1 specification, and provides for a variable-sized, byte-oriented encoding of non-negative integers where the first bit of each (little-endian) byte indicates whether or not additional bytes are used in the representation (AV1, Section 4.10.5).</p>
 
-<p>Whether or not the first and/or last OBU element is a fragment of an OBU is signaled in the aggregation header. Fragmentation may occur regardless of how the W field is set.</p>
+<p class="needs-tests">Whether or not the first and/or last OBU element is a fragment of an OBU is signaled in the aggregation header. Fragmentation may occur regardless of how the W field is set.</p>
 
 <p data-tests="https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_packetizer_av1_unittest.cc?q=PacketizeOneObuWithoutSizeAndExtension, https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_packetizer_av1_unittest.cc?q=PacketizeOneObuWithoutSizeWithExtension, https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_packetizer_av1_unittest.cc?q=RemovesObuSizeFieldWithoutExtension, https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_packetizer_av1_unittest.cc?q=RemovesObuSizeFieldWithExtension">The AV1 specification allows OBUs to have an optional size field called obu_size (also leb128 encoded), signaled by the obu_has_size_field flag in the OBU header. To minimize overhead, the obu_has_size_field flag SHOULD be set to zero in all OBUs.</p>
 
@@ -365,11 +365,11 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 
 <p class="alert alert-info"><strong>Note:</strong> The intent is to disable OBU dropping in the AV1 decoder. To ensure a decoder’s capabilities are not exceeded, OBU filtering should instead be implemented at the system level (e.g., in a MANE).</p>
 
-<p>If more than one OBU contained in an RTP packet has an OBU extension header, then the values of the temporal_id and spatial_id MUST be the same in all such OBUs in the RTP packet.</p>
+<p class="needs-tests">If more than one OBU contained in an RTP packet has an OBU extension header, then the values of the temporal_id and spatial_id MUST be the same in all such OBUs in the RTP packet.</p>
 
 <p>If a sequence header OBU is present in an RTP packet, then it	SHOULD be the first OBU in the packet. OBUs that are not associated with a particular layer (and thus do not have an OBU extension header) SHOULD be in the beginning of a packet, following the sequence header OBU if present.</p>
 
-<p>A sequence header OBU SHOULD be included in the base layer when scalable encoding is used. When simulcast encodings are transported on the same SSRC (an “S” mode), a sequence header OBU SHOULD be aggregated with each spatial layer. This ensures that if an intermediary removes simulcast encodings from the bitstream before forwarding, the modified bitstream will still be decodable.</p>
+<p class="needs-tests">A sequence header OBU SHOULD be included in the base layer when scalable encoding is used. When simulcast encodings are transported on the same SSRC (an “S” mode), a sequence header OBU SHOULD be aggregated with each spatial layer. This ensures that if an intermediary removes simulcast encodings from the bitstream before forwarding, the modified bitstream will still be decodable.</p>
 
 <section>
 <h3 id="examples">5.1 Examples</h3>
@@ -534,12 +534,15 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 
 <section>
 <h4 id="mapping-of-media-subtype-parameters-to-sdp">7.2.1 Mapping of Media Subtype Parameters to SDP</h4>
-<p>The media type video/AV1 string is mapped to fields in the Session Description Protocol (SDP) per <a href="https://tools.ietf.org/html/rfc4566">RFC4566</a> as follows:
-* The media name in the “m=” line of SDP MUST be video.
-* The encoding name in the “a=rtpmap” line of SDP MUST be AV1 (the media subtype).
-* The clock rate in the “a=rtpmap” line MUST be 90000.
-* The parameters “<strong>profile</strong>”, and “<strong>level-idx</strong>”, MUST be included in the “a=fmtp” line of SDP if SDP is used to declare receiver capabilities. These parameters are expressed as a media subtype string, in the form of a semicolon separated list of parameter=value pairs.
-* Parameter “<strong>tier</strong>” MAY be included alongside “<strong>profile</strong>” and “<strong>level-idx</strong> parameters in “a=fmtp” line if the indicated level supports a non-zero tier.</p>
+<p>The media type video/AV1 string is mapped to fields in the Session Description Protocol (SDP) per <a href="https://tools.ietf.org/html/rfc4566">RFC4566</a> as follows:</p>
+
+<ul>
+  <li>The media name in the “m=” line of SDP MUST be video.</li>
+  <li>The encoding name in the “a=rtpmap” line of SDP MUST be AV1 (the media subtype).</li>
+  <li>The clock rate in the “a=rtpmap” line MUST be 90000.</li>
+  <li>The parameters “<strong>profile</strong>”, and “<strong>level-idx</strong>”, MUST be included in the “a=fmtp” line of SDP if SDP is used to declare receiver capabilities. These parameters are expressed as a media subtype string, in the form of a semicolon separated list of parameter=value pairs.</li>
+  <li>Parameter “<strong>tier</strong>” MAY be included alongside “<strong>profile</strong>” and “<strong>level-idx</strong> parameters in “a=fmtp” line if the indicated level supports a non-zero tier.</li>
+</ul>
 
 </section>
 
@@ -548,34 +551,46 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 <section>
 <h3 id="rid-restrictions-mapping-for-av1">7.2.2 RID restrictions mapping for AV1</h3>
 
-<p>The RID specification declares the set of codec-agnostic restrictions for media streams. All the restrictions are optional and are subject to negotiation based on the SDP Offer/Answer rules described in Section 6 in <a href="https://tools.ietf.org/html/draft-ietf-mmusic-rid">I-D.ietf-mmusic-rid</a>. When these restrictions are applied to the AV1 codec, they MUST have the following interpretation:
-* <strong>max-width</strong>, maximum width of the frame in units of samples. The meaning of the restriction is the same as variable <strong>MaxHSize</strong> of the levels table from Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.
-* <strong>max-height</strong>, maximum height of the frame in units of samples. The meaning of the restriction is the same as variable <strong>MaxVSize</strong> of the levels table from Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.
-* <strong>max-fps</strong>, maximum number of temporal units per second.
-* <strong>max-fs</strong>, maximum size of the frame in units of samples. The meaning of the restriction is the same as variable <strong>MaxPicSize</strong> of the levels table from Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.
-* <strong>max-br</strong>, maximum bit rate in units bits per second. The meaning of the restriction is the same as variable <strong>MaxBitrate</strong> defined in Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>. 
-* <strong>max-pps</strong>, maximum decode rate in units of samples per second. The meaning of the restriction is the same as variable <strong>MaxDecodeRate</strong> of the levels table from Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.
-* <strong>max-bpp</strong>, maximum number of bits per pixel of any given coded frame, calculated as a ratio between <strong>CompressedSize</strong> variable defined Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a> and expressed in bits, and number of samples in frame.</p>
+<p>The RID specification declares the set of codec-agnostic restrictions for media streams. All the restrictions are optional and are subject to negotiation based on the SDP Offer/Answer rules described in Section 6 in <a href="https://tools.ietf.org/html/draft-ietf-mmusic-rid">I-D.ietf-mmusic-rid</a>. When these restrictions are applied to the AV1 codec, they MUST have the following interpretation:</p>
+
+<ul>
+  <li><strong>max-width</strong>, maximum width of the frame in units of samples. The meaning of the restriction is the same as variable <strong>MaxHSize</strong> of the levels table from Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.</li>
+  <li><strong>max-height</strong>, maximum height of the frame in units of samples. The meaning of the restriction is the same as variable <strong>MaxVSize</strong> of the levels table from Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.</li>
+  <li><strong>max-fps</strong>, maximum number of temporal units per second.</li>
+  <li><strong>max-fs</strong>, maximum size of the frame in units of samples. The meaning of the restriction is the same as variable <strong>MaxPicSize</strong> of the levels table from Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.</li>
+  <li><strong>max-br</strong>, maximum bit rate in units bits per second. The meaning of the restriction is the same as variable <strong>MaxBitrate</strong> defined in Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.</li>
+  <li><strong>max-pps</strong>, maximum decode rate in units of samples per second. The meaning of the restriction is the same as variable <strong>MaxDecodeRate</strong> of the levels table from Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.</li>
+  <li><strong>max-bpp</strong>, maximum number of bits per pixel of any given coded frame, calculated as a ratio between <strong>CompressedSize</strong> variable defined Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a> and expressed in bits, and number of samples in frame.</li>
+</ul>
 
 <p>If during the SDP negotiation process both parties acknowledge restrictions, then the transported media stream MUST have at least one operating point with the negotiated restrictions.</p>
 
 <section>
 <h4 id="usage-with-the-sdp-offeranswer-model">7.2.3  Usage with the SDP Offer/Answer Model</h4>
 
-<p>When AV1 is offered over RTP using SDP in an Offer/Answer model as described in <a href="https://tools.ietf.org/html/rfc3264">RFC3264</a> for negotiation for unicast usage, the following limitations and rules apply:
-* The media format configuration is identified by <strong>level-idx</strong>, <strong>profile</strong> and <strong>tier</strong>.  The answerer SHOULD maintain all parameters. These media configuration parameters are asymmetrical and the answerer MAY declare its own media configuration if the answerer capabilities are different from the offerer.
-  * The profile to use in the offerer-to-answerer direction MUST be lesser or equal to the profile the answerer supports for receiving, and the profile to use in the answerer-to-offerer direction MUST be lesser or equal to the profile the offerer supports for receiving.
-  * The level to use in the offerer-to-answerer direction MUST be lesser or equal to the level the answerer supports for receiving, and the level to use in the answerer-to-offerer direction MUST be lesser or equal to the level the offerer supports for receiving.
-  * The tier to use in the offerer-to-answerer direction MUST be lesser or equal to the tier the answerer supports for receiving, and the tier to use in the answerer-to-offerer direction MUST be lesser or equal to the tier the offerer supports for receiving.</p>
+<p>When AV1 is offered over RTP using SDP in an Offer/Answer model as described in <a href="https://tools.ietf.org/html/rfc3264">RFC3264</a> for negotiation for unicast usage, the following limitations and rules apply:</p>
+
+<ul>
+  <li>The media format configuration is identified by <strong>level-idx</strong>, <strong>profile</strong> and <strong>tier</strong>.  The answerer SHOULD maintain all parameters. These media configuration parameters are asymmetrical and the answerer MAY declare its own media configuration if the answerer capabilities are different from the offerer.
+    <ul>
+      <li>The profile to use in the offerer-to-answerer direction MUST be lesser or equal to the profile the answerer supports for receiving, and the profile to use in the answerer-to-offerer direction MUST be lesser or equal to the profile the offerer supports for receiving.</li>
+      <li>The level to use in the offerer-to-answerer direction MUST be lesser or equal to the level the answerer supports for receiving, and the level to use in the answerer-to-offerer direction MUST be lesser or equal to the level the offerer supports for receiving.</li>
+      <li>The tier to use in the offerer-to-answerer direction MUST be lesser or equal to the tier the answerer supports for receiving, and the tier to use in the answerer-to-offerer direction MUST be lesser or equal to the tier the offerer supports for receiving.</li>
+    </ul>
+  </li>
+</ul>
 
 </section>
 
 <section>
 <h4 id="usage-in-declarative-session-descriptions">7.2.4  Usage in Declarative Session Descriptions</h4>
 
-<p>When AV1 over RTP is offered with SDP in a declarative style, as in Real Time Streaming Protocol (RTSP) <a href="https://tools.ietf.org/html/rfc2326">RFC2326</a> or Session Announcement Protocol (SAP) <a href="https://tools.ietf.org/html/rfc2974">RFC2974</a>, the following considerations apply.
-* All parameters capable of indicating both stream properties and receiver capabilities are used to indicate only stream properties. In this case, the parameters <strong>profile</strong>, <strong>level-idx</strong> and <strong>tier</strong> declare only the values used by the stream, not the capabilities for receiving streams.
-* A receiver of the SDP is required to support all parameters and values of the parameters provided; otherwise, the receiver MUST reject (RTSP) or not participate in (SAP) the session. It falls on the creator of the session to use values that are expected to be supported by the receiving application.</p>
+<p>When AV1 over RTP is offered with SDP in a declarative style, as in Real Time Streaming Protocol (RTSP) <a href="https://tools.ietf.org/html/rfc2326">RFC2326</a> or Session Announcement Protocol (SAP) <a href="https://tools.ietf.org/html/rfc2974">RFC2974</a>, the following considerations apply.</p>
+
+<ul>
+  <li>All parameters capable of indicating both stream properties and receiver capabilities are used to indicate only stream properties. In this case, the parameters <strong>profile</strong>, <strong>level-idx</strong> and <strong>tier</strong> declare only the values used by the stream, not the capabilities for receiving streams.</li>
+  <li>A receiver of the SDP is required to support all parameters and values of the parameters provided; otherwise, the receiver MUST reject (RTSP) or not participate in (SAP) the session. It falls on the creator of the session to use values that are expected to be supported by the receiving application.</li>
+</ul>
 
 </section>
 
@@ -595,15 +610,21 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 <h4 id="level-upgrading">7.3.1 Level upgrading</h4>
 <p>In the following example the offer is accepted with level upgrading. The level to use in the offerer-to-answerer direction is Level 2.0, and the level to use in the answerer-to-offerer direction is Level 3.0/Tier 1.  The answerer is allowed to send at any level up to and including Level 2.0, and the offerer is allowed to send at any level up to and including Level 3.0/Tier 1:</p>
 
-<p>Offer SDP:
-* m=video 49170 RTP/AVPF 98
-* a=rtpmap:98 AV1/90000
-* a=fmtp:98 profile=0; level-idx=0;</p>
+<p>Offer SDP:</p>
 
-<p>Answer SDP:
-* m=video 49170 RTP/AVPF 98
-* a=rtpmap:98 AV1/90000
-* a=fmtp:98 profile=0; level-idx=4; tier=1;</p>
+<ul>
+  <li>m=video 49170 RTP/AVPF 98</li>
+  <li>a=rtpmap:98 AV1/90000</li>
+  <li>a=fmtp:98 profile=0; level-idx=0;</li>
+</ul>
+
+<p>Answer SDP:</p>
+
+<ul>
+  <li>m=video 49170 RTP/AVPF 98</li>
+  <li>a=rtpmap:98 AV1/90000</li>
+  <li>a=fmtp:98 profile=0; level-idx=4; tier=1;</li>
+</ul>
 
 </section>
 
@@ -611,63 +632,69 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 <h4 id="simulcast-with-payload-multiplexing">7.3.2 Simulcast with payload multiplexing</h4>
 <p>In the following example an offer is made by a conferencing server to receive 3 simulcast streams with payload multiplexing.  The answerer agrees to send 3 simulcast streams at different resolutions.</p>
 
-<p>Offer SDP:
-* m=video 49170 UDP/TLS/RTP/SAVPF 98
-* a=mid:0
-* a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid
-* a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
-* a=extmap:3 urn:3gpp:video-orientation
-* a=extmap:4 https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension
-* a=sendrecv
-* a=rtcp-mux
-* a=rtcp-rsize
-* a=rtpmap:98 AV1/90000
-* a=rtpmap:99 AV1/90000
-* a=rtpmap:100 AV1/90000
-* a=fmtp:98 profile=2; level-idx=8; tier=1;
-* a=fmtp:99 profile=2; level-idx=8; tier=1;
-* a=fmtp:100 profile=2; level-idx=8; tier=1;
-* a=rtcp-fb:98 ccm fir
-* a=rtcp-fb:98 nack
-* a=rtcp-fb:98 nack pli
-* a=rtcp-fb:99 ccm fir
-* a=rtcp-fb:99 nack
-* a=rtcp-fb:99 nack pli
-* a=rtcp-fb:100 ccm fir
-* a=rtcp-fb:100 nack
-* a=rtcp-fb:100 nack pli
-* a=rid:q recv pt=98;max-width=640;max-height=480
-* a=rid:h recv pt=99;max-width=1280;max-height=720
-* a=rid:f recv pt=100;max-width=1920;max-height=1080
-* a=simulcast:recv q;h;f</p>
+<p>Offer SDP:</p>
 
-<p>Answer SDP:
-* m=video 48120 UDP/TLS/RTP/SAVPF 98
-* a=mid:0
-* a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid
-* a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
-* a=extmap:3 urn:3gpp:video-orientation
-* a=extmap:4 https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension
-* a=sendrecv
-* a=rtcp-mux
-* a=rtcp-rsize
-* a=rtpmap:98 AV1/90000
-* a=fmtp:98 profile=2; level-idx=8; tier=1;
-* a=fmtp:99 profile=2; level-idx=8; tier=1;
-* a=fmtp:100 profile=2; level-idx=8; tier=1;
-* a=rtcp-fb:98 ccm fir
-* a=rtcp-fb:98 nack
-* a=rtcp-fb:98 nack pli
-* a=rtcp-fb:99 ccm fir
-* a=rtcp-fb:99 nack
-* a=rtcp-fb:99 nack pli
-* a=rtcp-fb:100 ccm fir
-* a=rtcp-fb:100 nack
-* a=rtcp-fb:100 nack pli
-* a=rid:q send pt=98;max-width=640;max-height=480
-* a=rid:h send pt=99;max-width=1280;max-height=720
-* a=rid:f send pt=100;max-width=1920;max-height=1080
-* a=simulcast:send q;h;f</p>
+<ul>
+  <li>m=video 49170 UDP/TLS/RTP/SAVPF 98</li>
+  <li>a=mid:0</li>
+  <li>a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid</li>
+  <li>a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id</li>
+  <li>a=extmap:3 urn:3gpp:video-orientation</li>
+  <li>a=extmap:4 https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension</li>
+  <li>a=sendrecv</li>
+  <li>a=rtcp-mux</li>
+  <li>a=rtcp-rsize</li>
+  <li>a=rtpmap:98 AV1/90000</li>
+  <li>a=rtpmap:99 AV1/90000</li>
+  <li>a=rtpmap:100 AV1/90000</li>
+  <li>a=fmtp:98 profile=2; level-idx=8; tier=1;</li>
+  <li>a=fmtp:99 profile=2; level-idx=8; tier=1;</li>
+  <li>a=fmtp:100 profile=2; level-idx=8; tier=1;</li>
+  <li>a=rtcp-fb:98 ccm fir</li>
+  <li>a=rtcp-fb:98 nack</li>
+  <li>a=rtcp-fb:98 nack pli</li>
+  <li>a=rtcp-fb:99 ccm fir</li>
+  <li>a=rtcp-fb:99 nack</li>
+  <li>a=rtcp-fb:99 nack pli</li>
+  <li>a=rtcp-fb:100 ccm fir</li>
+  <li>a=rtcp-fb:100 nack</li>
+  <li>a=rtcp-fb:100 nack pli</li>
+  <li>a=rid:q recv pt=98;max-width=640;max-height=480</li>
+  <li>a=rid:h recv pt=99;max-width=1280;max-height=720</li>
+  <li>a=rid:f recv pt=100;max-width=1920;max-height=1080</li>
+  <li>a=simulcast:recv q;h;f</li>
+</ul>
+
+<p>Answer SDP:</p>
+
+<ul>
+  <li>m=video 48120 UDP/TLS/RTP/SAVPF 98</li>
+  <li>a=mid:0</li>
+  <li>a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid</li>
+  <li>a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id</li>
+  <li>a=extmap:3 urn:3gpp:video-orientation</li>
+  <li>a=extmap:4 https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension</li>
+  <li>a=sendrecv</li>
+  <li>a=rtcp-mux</li>
+  <li>a=rtcp-rsize</li>
+  <li>a=rtpmap:98 AV1/90000</li>
+  <li>a=fmtp:98 profile=2; level-idx=8; tier=1;</li>
+  <li>a=fmtp:99 profile=2; level-idx=8; tier=1;</li>
+  <li>a=fmtp:100 profile=2; level-idx=8; tier=1;</li>
+  <li>a=rtcp-fb:98 ccm fir</li>
+  <li>a=rtcp-fb:98 nack</li>
+  <li>a=rtcp-fb:98 nack pli</li>
+  <li>a=rtcp-fb:99 ccm fir</li>
+  <li>a=rtcp-fb:99 nack</li>
+  <li>a=rtcp-fb:99 nack pli</li>
+  <li>a=rtcp-fb:100 ccm fir</li>
+  <li>a=rtcp-fb:100 nack</li>
+  <li>a=rtcp-fb:100 nack pli</li>
+  <li>a=rid:q send pt=98;max-width=640;max-height=480</li>
+  <li>a=rid:h send pt=99;max-width=1280;max-height=720</li>
+  <li>a=rid:f send pt=100;max-width=1920;max-height=1080</li>
+  <li>a=simulcast:send q;h;f</li>
+</ul>
 
 </section>
 
@@ -675,45 +702,51 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 <h4 id="simulcast-with-ssrc-multiplexing">7.3.3 Simulcast with SSRC multiplexing</h4>
 <p>In the following example an offer is made by a conferencing server to receive 3 simulcast streams with SSRC multiplexing.  The answerer agrees to send 3 simulcast streams at different resolutions.</p>
 
-<p>Offer SDP:
-* m=video 49170 UDP/TLS/RTP/SAVPF 98
-* a=mid:0
-* a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid
-* a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
-* a=extmap:3 urn:3gpp:video-orientation
-* a=extmap:4 https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension
-* a=sendrecv
-* a=rtcp-mux
-* a=rtcp-rsize
-* a=rtpmap:98 AV1/90000
-* a=fmtp:98 profile=2; level-idx=8; tier=1;
-* a=rtcp-fb:98 ccm fir
-* a=rtcp-fb:98 nack
-* a=rtcp-fb:98 nack pli
-* a=rid:q recv
-* a=rid:h recv
-* a=rid:f recv
-* a=simulcast:recv q;h;f</p>
+<p>Offer SDP:</p>
 
-<p>Answer SDP:
-* m=video 48120 UDP/TLS/RTP/SAVPF 98
-* a=mid:0
-* a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid
-* a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
-* a=extmap:3 urn:3gpp:video-orientation
-* a=extmap:4 https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension
-* a=sendrecv
-* a=rtcp-mux
-* a=rtcp-rsize
-* a=rtpmap:98 AV1/90000
-* a=fmtp:98 profile=2; level-idx=8; tier=1;
-* a=rtcp-fb:98 ccm fir
-* a=rtcp-fb:98 nack
-* a=rtcp-fb:98 nack pli
-* a=rid:q send
-* a=rid:h send
-* a=rid:f send
-* a=simulcast:send q;h;f</p>
+<ul>
+  <li>m=video 49170 UDP/TLS/RTP/SAVPF 98</li>
+  <li>a=mid:0</li>
+  <li>a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid</li>
+  <li>a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id</li>
+  <li>a=extmap:3 urn:3gpp:video-orientation</li>
+  <li>a=extmap:4 https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension</li>
+  <li>a=sendrecv</li>
+  <li>a=rtcp-mux</li>
+  <li>a=rtcp-rsize</li>
+  <li>a=rtpmap:98 AV1/90000</li>
+  <li>a=fmtp:98 profile=2; level-idx=8; tier=1;</li>
+  <li>a=rtcp-fb:98 ccm fir</li>
+  <li>a=rtcp-fb:98 nack</li>
+  <li>a=rtcp-fb:98 nack pli</li>
+  <li>a=rid:q recv</li>
+  <li>a=rid:h recv</li>
+  <li>a=rid:f recv</li>
+  <li>a=simulcast:recv q;h;f</li>
+</ul>
+
+<p>Answer SDP:</p>
+
+<ul>
+  <li>m=video 48120 UDP/TLS/RTP/SAVPF 98</li>
+  <li>a=mid:0</li>
+  <li>a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid</li>
+  <li>a=extmap:2 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id</li>
+  <li>a=extmap:3 urn:3gpp:video-orientation</li>
+  <li>a=extmap:4 https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension</li>
+  <li>a=sendrecv</li>
+  <li>a=rtcp-mux</li>
+  <li>a=rtcp-rsize</li>
+  <li>a=rtpmap:98 AV1/90000</li>
+  <li>a=fmtp:98 profile=2; level-idx=8; tier=1;</li>
+  <li>a=rtcp-fb:98 ccm fir</li>
+  <li>a=rtcp-fb:98 nack</li>
+  <li>a=rtcp-fb:98 nack pli</li>
+  <li>a=rid:q send</li>
+  <li>a=rid:h send</li>
+  <li>a=rid:f send</li>
+  <li>a=simulcast:send q;h;f</li>
+</ul>
 
 </section>
 
@@ -721,35 +754,41 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 <h4 id="single-stream-simulcast">7.3.4 Single stream simulcast</h4>
 <p>In the following example an offer is made to send a single RTP stream to a conferencing server. This single stream might include any AV1 dependency structure, including “S” scalability modes.</p>
 
-<p>Offer SDP:
-* m=video 49170 UDP/TLS/RTP/SAVPF 98
-* a=mid:0
-* a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid
-* a=extmap:3 urn:3gpp:video-orientation
-* a=extmap:4 https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension
-* a=sendrecv
-* a=rtcp-mux
-* a=rtcp-rsize
-* a=rtpmap:98 AV1/90000
-* a=fmtp:98 profile=2; level-idx=8; tier=1;
-* a=rtcp-fb:98 ccm fir
-* a=rtcp-fb:98 nack
-* a=rtcp-fb:98 nack pli</p>
+<p>Offer SDP:</p>
 
-<p>Answer SDP:
-* m=video 48120 UDP/TLS/RTP/SAVPF 98
-* a=mid:0
-* a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid
-* a=extmap:3 urn:3gpp:video-orientation
-* a=extmap:4 https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension
-* a=sendrecv
-* a=rtcp-mux
-* a=rtcp-rsize
-* a=rtpmap:98 AV1/90000
-* a=fmtp:98 profile=2; level-idx=8; tier=1;
-* a=rtcp-fb:98 ccm fir
-* a=rtcp-fb:98 nack
-* a=rtcp-fb:98 nack pli</p>
+<ul>
+  <li>m=video 49170 UDP/TLS/RTP/SAVPF 98</li>
+  <li>a=mid:0</li>
+  <li>a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid</li>
+  <li>a=extmap:3 urn:3gpp:video-orientation</li>
+  <li>a=extmap:4 https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension</li>
+  <li>a=sendrecv</li>
+  <li>a=rtcp-mux</li>
+  <li>a=rtcp-rsize</li>
+  <li>a=rtpmap:98 AV1/90000</li>
+  <li>a=fmtp:98 profile=2; level-idx=8; tier=1;</li>
+  <li>a=rtcp-fb:98 ccm fir</li>
+  <li>a=rtcp-fb:98 nack</li>
+  <li>a=rtcp-fb:98 nack pli</li>
+</ul>
+
+<p>Answer SDP:</p>
+
+<ul>
+  <li>m=video 48120 UDP/TLS/RTP/SAVPF 98</li>
+  <li>a=mid:0</li>
+  <li>a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid</li>
+  <li>a=extmap:3 urn:3gpp:video-orientation</li>
+  <li>a=extmap:4 https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension</li>
+  <li>a=sendrecv</li>
+  <li>a=rtcp-mux</li>
+  <li>a=rtcp-rsize</li>
+  <li>a=rtpmap:98 AV1/90000</li>
+  <li>a=fmtp:98 profile=2; level-idx=8; tier=1;</li>
+  <li>a=rtcp-fb:98 ccm fir</li>
+  <li>a=rtcp-fb:98 nack</li>
+  <li>a=rtcp-fb:98 nack pli</li>
+</ul>
 
 </section>
 
@@ -1465,7 +1504,7 @@ frame_chains() {
 
 <p class="alert alert-info"><strong>Note:</strong> One way to achieve reliable delivery is to include the active_decode_targets_bitmask in every packet until a receiver report acknowledges a packet containing the latest active_decode_targets_bitmask. Alternately, for many video streams, reliable delivery may be achieved by including the active_decode_targets_bitmask on every chain in the first packet after a change in active decode targets.</p>
 
-<p data-tests="https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_dependency_descriptor_extension_unittest.cc?q=TemplateMatchingSkipsInactiveChains">Chains protecting no active decode targets MUST be ignored.</p>
+<p data-tests="https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_dependency_descriptor_extension_unittest.cc?q=TemplateMatchingSkipsInactiveChains, https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_dependency_descriptor_extension_unittest.cc?q=AcceptsInvalidChainDiffForInactiveChainWhenChainsAreCustom">Chains protecting no active decode targets MUST be ignored.</p>
 
 <p class="alert alert-info"><strong>Note:</strong> To increase the chance of using a predefined template, chains protecting no active decode targets may refer to any frame, including an RTP frame that was never produced.</p>
 

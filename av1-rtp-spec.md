@@ -37,6 +37,7 @@ This specification also provides several mechanisms through which scalability st
 ## 2. Conventions, Definitions and Acronyms
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC2119].
+{: .no-test-needed }
 
 Coded frame
 : The representation of one frame before the decoding process.
@@ -189,6 +190,7 @@ The payload contains a series of one or more OBU elements. The design allows for
 The length field is encoded using leb128. Leb128 is defined in the AV1 specification, and provides for a variable-sized, byte-oriented encoding of non-negative integers where the first bit of each (little-endian) byte indicates whether or not additional bytes are used in the representation (AV1, Section 4.10.5).
 
 Whether or not the first and/or last OBU element is a fragment of an OBU is signaled in the aggregation header. Fragmentation may occur regardless of how the W field is set.
+{: .needs-tests }
 
 The AV1 specification allows OBUs to have an optional size field called obu_size (also leb128 encoded), signaled by the obu_has_size_field flag in the OBU header. To minimize overhead, the obu_has_size_field flag SHOULD be set to zero in all OBUs.
 {:& https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_packetizer_av1_unittest.cc?q=PacketizeOneObuWithoutSizeAndExtension, https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_packetizer_av1_unittest.cc?q=PacketizeOneObuWithoutSizeWithExtension, https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_packetizer_av1_unittest.cc?q=RemovesObuSizeFieldWithoutExtension, https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_packetizer_av1_unittest.cc?q=RemovesObuSizeFieldWithExtension }
@@ -271,10 +273,12 @@ A sender MAY produce a sequence header with operating_points_cnt_minus_1 = 0 and
 {:.alert .alert-info }
 
 If more than one OBU contained in an RTP packet has an OBU extension header, then the values of the temporal_id and spatial_id MUST be the same in all such OBUs in the RTP packet.
+{: .needs-tests }
 
 If a sequence header OBU is present in an RTP packet, then it	SHOULD be the first OBU in the packet. OBUs that are not associated with a particular layer (and thus do not have an OBU extension header) SHOULD be in the beginning of a packet, following the sequence header OBU if present.
 
 A sequence header OBU SHOULD be included in the base layer when scalable encoding is used. When simulcast encodings are transported on the same SSRC (an "S" mode), a sequence header OBU SHOULD be aggregated with each spatial layer. This ensures that if an intermediary removes simulcast encodings from the bitstream before forwarding, the modified bitstream will still be decodable.
+{: .needs-tests }
 
 
 ### 5.1 Examples
@@ -376,6 +380,7 @@ The receiver MUST ignore any fmtp parameter not specified in this document.
 
 #### 7.2.1 Mapping of Media Subtype Parameters to SDP
 The media type video/AV1 string is mapped to fields in the Session Description Protocol (SDP) per [RFC4566] as follows:
+
 * The media name in the "m=" line of SDP MUST be video.
 * The encoding name in the "a=rtpmap" line of SDP MUST be AV1 (the media subtype).
 * The clock rate in the "a=rtpmap" line MUST be 90000.
@@ -385,6 +390,7 @@ The media type video/AV1 string is mapped to fields in the Session Description P
 ### 7.2.2 RID restrictions mapping for AV1
 
 The RID specification declares the set of codec-agnostic restrictions for media streams. All the restrictions are optional and are subject to negotiation based on the SDP Offer/Answer rules described in Section 6 in [I-D.ietf-mmusic-rid]. When these restrictions are applied to the AV1 codec, they MUST have the following interpretation:
+
 * **max-width**, maximum width of the frame in units of samples. The meaning of the restriction is the same as variable **MaxHSize** of the levels table from Section A.3 of [AV1].
 * **max-height**, maximum height of the frame in units of samples. The meaning of the restriction is the same as variable **MaxVSize** of the levels table from Section A.3 of [AV1].
 * **max-fps**, maximum number of temporal units per second.
@@ -399,6 +405,7 @@ If during the SDP negotiation process both parties acknowledge restrictions, the
 #### 7.2.3  Usage with the SDP Offer/Answer Model
 
 When AV1 is offered over RTP using SDP in an Offer/Answer model as described in [RFC3264] for negotiation for unicast usage, the following limitations and rules apply:
+
 * The media format configuration is identified by **level-idx**, **profile** and **tier**.  The answerer SHOULD maintain all parameters. These media configuration parameters are asymmetrical and the answerer MAY declare its own media configuration if the answerer capabilities are different from the offerer.
   * The profile to use in the offerer-to-answerer direction MUST be lesser or equal to the profile the answerer supports for receiving, and the profile to use in the answerer-to-offerer direction MUST be lesser or equal to the profile the offerer supports for receiving.
   * The level to use in the offerer-to-answerer direction MUST be lesser or equal to the level the answerer supports for receiving, and the level to use in the answerer-to-offerer direction MUST be lesser or equal to the level the offerer supports for receiving.
@@ -408,6 +415,7 @@ When AV1 is offered over RTP using SDP in an Offer/Answer model as described in 
 #### 7.2.4  Usage in Declarative Session Descriptions
 
 When AV1 over RTP is offered with SDP in a declarative style, as in Real Time Streaming Protocol (RTSP) [RFC2326] or Session Announcement Protocol (SAP) [RFC2974], the following considerations apply.
+
 * All parameters capable of indicating both stream properties and receiver capabilities are used to indicate only stream properties. In this case, the parameters **profile**, **level-idx** and **tier** declare only the values used by the stream, not the capabilities for receiving streams.
 * A receiver of the SDP is required to support all parameters and values of the parameters provided; otherwise, the receiver MUST reject (RTSP) or not participate in (SAP) the session. It falls on the creator of the session to use values that are expected to be supported by the receiving application.
 
@@ -423,11 +431,13 @@ An example of media representation in SDP is as follows:
 In the following example the offer is accepted with level upgrading. The level to use in the offerer-to-answerer direction is Level 2.0, and the level to use in the answerer-to-offerer direction is Level 3.0/Tier 1.  The answerer is allowed to send at any level up to and including Level 2.0, and the offerer is allowed to send at any level up to and including Level 3.0/Tier 1:
 
 Offer SDP:
+
 * m=video 49170 RTP/AVPF 98
 * a=rtpmap:98 AV1/90000
 * a=fmtp:98 profile=0; level-idx=0;
 
 Answer SDP:
+
 * m=video 49170 RTP/AVPF 98
 * a=rtpmap:98 AV1/90000
 * a=fmtp:98 profile=0; level-idx=4; tier=1;
@@ -436,6 +446,7 @@ Answer SDP:
 In the following example an offer is made by a conferencing server to receive 3 simulcast streams with payload multiplexing.  The answerer agrees to send 3 simulcast streams at different resolutions.
 
 Offer SDP:
+
 * m=video 49170 UDP/TLS/RTP/SAVPF 98
 * a=mid:0
 * a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid
@@ -466,6 +477,7 @@ Offer SDP:
 * a=simulcast:recv q;h;f
  
 Answer SDP:
+
 * m=video 48120 UDP/TLS/RTP/SAVPF 98
 * a=mid:0
 * a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid
@@ -498,6 +510,7 @@ Answer SDP:
 In the following example an offer is made by a conferencing server to receive 3 simulcast streams with SSRC multiplexing.  The answerer agrees to send 3 simulcast streams at different resolutions.
 
 Offer SDP:
+
 * m=video 49170 UDP/TLS/RTP/SAVPF 98
 * a=mid:0
 * a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid
@@ -518,6 +531,7 @@ Offer SDP:
 * a=simulcast:recv q;h;f
 
 Answer SDP:
+
 * m=video 48120 UDP/TLS/RTP/SAVPF 98
 * a=mid:0
 * a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid
@@ -541,6 +555,7 @@ Answer SDP:
 In the following example an offer is made to send a single RTP stream to a conferencing server. This single stream might include any AV1 dependency structure, including "S" scalability modes.
 
 Offer SDP:
+
 * m=video 49170 UDP/TLS/RTP/SAVPF 98
 * a=mid:0
 * a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid
@@ -556,6 +571,7 @@ Offer SDP:
 * a=rtcp-fb:98 nack pli
 
 Answer SDP:
+
 * m=video 48120 UDP/TLS/RTP/SAVPF 98
 * a=mid:0
 * a=extmap:1 urn:ietf:params:rtp-hdrext:sdes:mid
@@ -1128,7 +1144,7 @@ When not all Decode targets are active, the active_decode_targets_bitmask MUST b
 {:.alert .alert-info }
 
 Chains protecting no active decode targets MUST be ignored.
-{:& https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_dependency_descriptor_extension_unittest.cc?q=TemplateMatchingSkipsInactiveChains }
+{:& https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_dependency_descriptor_extension_unittest.cc?q=TemplateMatchingSkipsInactiveChains, https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_dependency_descriptor_extension_unittest.cc?q=AcceptsInvalidChainDiffForInactiveChainWhenChainsAreCustom }
 
 **Note:** To increase the chance of using a predefined template, chains protecting no active decode targets may refer to any frame, including an RTP frame that was never produced.
 {:.alert .alert-info }
