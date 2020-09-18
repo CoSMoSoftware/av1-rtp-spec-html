@@ -88,6 +88,7 @@ Temporal and spatial scalability layers are associated with non-negative integer
 ## 4. Payload Format
 
 This section describes how the encoded AV1 bitstream is encapsulated in RTP. All integer fields in this specification are encoded as unsigned integers in network byte order.
+{: .needs-tests }
 
 
 ### 4.1 RTP Header Usage
@@ -133,9 +134,11 @@ The Dependency Descriptor and AV1 aggregation header are described in this docum
 ### 4.2  RTP Header Marker Bit (M)
 
 The RTP header Marker bit MUST be set equal to 0 if the packet is not the last packet of the temporal unit, it SHOULD be set equal to 1 otherwise.
+{: .needs-tests }
 
 **Note:** It is possible for a receiver to receive the last packet of a temporal unit without the marker bit being set equal to 1, and a receiver should be able to handle this case. The last packet of a temporal unit is also indicated by the next packet, in RTP sequence number order, having an incremented timestamp.
 {:.alert .alert-info }
+{: .needs-tests }
 
 ### 4.3  Dependency Descriptor RTP Header Extension
 
@@ -145,6 +148,7 @@ To facilitate the work of selectively forwarding portions of a scalable video bi
 ### 4.4 AV1 Aggregation Header
 
 The aggregation header is carried in the first byte of the RTP payload and is used to indicate if the first and/or last OBU element in the payload is a fragment of an OBU.  The aggregation header is not part of the AV1 bitstream and MUST NOT be presented to an AV1 decoder.
+{: .needs-tests }
 
 The structure is as follows.
 
@@ -187,6 +191,7 @@ The smallest high-level syntax unit in AV1 is the OBU. All AV1 bitstream structu
 The payload contains a series of one or more OBU elements. The design allows for a combination of aggregation and fragmentation of OBUs, i.e., a set of OBU elements in which the first and/or last element is a fragment of an OBU.
 
 The length field is encoded using leb128. Leb128 is defined in the AV1 specification, and provides for a variable-sized, byte-oriented encoding of non-negative integers where the first bit of each (little-endian) byte indicates whether or not additional bytes are used in the representation (AV1, Section 4.10.5).
+{: .needs-tests }
 
 Whether or not the first and/or last OBU element is a fragment of an OBU is signaled in the aggregation header. Fragmentation may occur regardless of how the W field is set.
 {: .needs-tests }
@@ -260,13 +265,16 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 ## 5. Packetization Rules
 
 Each RTP packet MUST NOT contain OBUs that belong to different temporal units.
+{: .needs-tests }
 
 The temporal delimiter OBU, if present, SHOULD be removed when transmitting, and MUST be ignored by receivers. Tile list OBUs are not supported. They SHOULD be removed when transmitted, and MUST be ignored by receivers.
 {:& https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_packetizer_av1_unittest.cc?q=DiscardsTemporalDelimiterAndTileListObu }
 
 If a sequence header OBU is present in an RTP packet and operating_points_cnt_minus_1 > 0 then for any number i where 0 <= i < operating_points_cnt_minus_1 the following MUST be true: (operating_point_idc[i] & operating_point_idc[i+1]) == operating_point_idc[i+1].
+{: .needs-tests }
 
 A sender MAY produce a sequence header with operating_points_cnt_minus_1 = 0 and operating_point_idc[0] = 0xFFF and seq_level_idx[0] = 0. In such case, seq_level_idx[0] does not reflect the level of the operating point.
+{: .needs-tests }
 
 **Note:** The intent is to disable OBU dropping in the AV1 decoder. To ensure a decoder’s capabilities are not exceeded, OBU filtering should instead be implemented at the system level (e.g., in a MANE).
 {:.alert .alert-info }
@@ -275,6 +283,7 @@ If more than one OBU contained in an RTP packet has an OBU extension header, the
 {: .needs-tests }
 
 If a sequence header OBU is present in an RTP packet, then it	SHOULD be the first OBU in the packet. OBUs that are not associated with a particular layer (and thus do not have an OBU extension header) SHOULD be in the beginning of a packet, following the sequence header OBU if present.
+{: .needs-tests }
 
 A sequence header OBU SHOULD be included in the base layer when scalable encoding is used. When simulcast encodings are transported on the same SSRC (an "S" mode), a sequence header OBU SHOULD be aggregated with each spatial layer. This ensures that if an intermediary removes simulcast encodings from the bitstream before forwarding, the modified bitstream will still be decodable.
 {: .needs-tests }
@@ -315,6 +324,7 @@ The general function of a MANE or SFM is to selectively forward packets to recei
 ### 6.1. Simulcast
 
 The RTP payload defined in this specification supports two distinct modes for transport of simulcast encodings. In either mode, simulcast transport MUST only be used to convey multiple encodings from the same source. Also, in either mode, a sequence header OBU SHOULD be aggregated with each spatial layer. Both modes MUST be supported by implementations of this specification.
+{: .needs-tests }
 
 When simulcast encodings are transported each on a separate RTP stream, each simulcast encoding utilizes a distinct bitstream containing its own distinct Sequence Header and Scalability Metadata OBUs. This mode utilizes distinct SSRCs and Restriction Identifiers (RIDs) for each encoding as described in [I-D.ietf-avtext-rid] and, as a result, RTCP feedback can be provided for each simulcast encoding. This mode of simulcast transport, which MUST be supported by SFMs, utilizes Session Description Protocol (SDP) signaling as described in [I-D.ietf-mmusic-sdp-simulcast] and [I-D.ietf-mmusic-rid].
 
@@ -324,8 +334,10 @@ When simulcast encodings are transported on a single RTP stream, RIDs are not us
 ### 6.1.1 Example
 
 In this example, it is desired to send three simulcast encodings, each containing three temporal layers. When sending all encodings on a single SSRC, scalability mode 'S3T3' would be indicated within the scalability metadata OBU, and the Dependency Descriptor describes the dependency structure of all encodings.
+{: .needs-tests }
 
 When sending each simulcast encoding on a distinct SSRC, the scalability mode 'L1T3' would be indicated within the scalability metadata OBU of each bitstream, and the Dependency Descriptor in each stream describes only the dependency structure for that individual encoding.  A distinct spatial_id (e.g. 0, 1, 2) could be used for each stream (if a single AV1 encoder is used to produce the three simulcast encodings), but if distinct AV1 encoders are used, the spatial_id values may not be distinct.
+{: .needs-tests }
 
 
 ## 7. Payload Format Parameters
@@ -343,9 +355,12 @@ This section specifies the parameters that MAY be used to select optional featur
   * None.
 * Optional parameters:
   * These parameters are used to signal the capabilities of a receiver implementation. If the implementation is willing to receive media, **profile** and **level-idx** parameters MUST be provided. These parameters MUST NOT be used for any other purpose.
+  {: .needs-tests }
     * **profile**: The value of **profile** is an integer indicating the highest AV1 profile supported by the receiver. The range of possible values is identical to the **seq_profile** syntax element specified in [AV1]
     * **level-idx**: The value of **level-idx** is an integer indicating the highest AV1 level supported by the receiver. The range of possible values is identical to the **seq_level_idx** syntax element specified in [AV1]
+    {: .no-test-needed }
     * **tier**: The value of **tier** is an integer indicating tier of the indicated level.  The range of possible values is identical to the **seq_tier** syntax element specified in [AV1]. If parameter is not present, level's tier is to be assumed equal to 0
+    {: .needs-tests }
 
 * Encoding considerations:
   * This media type is framed in RTP and contains binary data; see Section 4.8 of [RFC6838].
@@ -375,30 +390,44 @@ This section specifies the parameters that MAY be used to select optional featur
 
 ### 7.2 SDP Parameters
 The receiver MUST ignore any fmtp parameter not specified in this document.
+{: .needs-tests }
 
 
 #### 7.2.1 Mapping of Media Subtype Parameters to SDP
 The media type video/AV1 string is mapped to fields in the Session Description Protocol (SDP) per [RFC4566] as follows:
 
 * The media name in the "m=" line of SDP MUST be video.
+{: .needs-tests }
 * The encoding name in the "a=rtpmap" line of SDP MUST be AV1 (the media subtype).
+{: .needs-tests }
 * The clock rate in the "a=rtpmap" line MUST be 90000.
+{: .needs-tests }
 * The parameters "**profile**", and "**level-idx**", MUST be included in the "a=fmtp" line of SDP if SDP is used to declare receiver capabilities. These parameters are expressed as a media subtype string, in the form of a semicolon separated list of parameter=value pairs.
+{: .needs-tests }
 * Parameter "**tier**" MAY be included alongside "**profile**" and "**level-idx** parameters in "a=fmtp" line if the indicated level supports a non-zero tier.
+{: .needs-tests }
 
 ### 7.2.2 RID restrictions mapping for AV1
 
 The RID specification declares the set of codec-agnostic restrictions for media streams. All the restrictions are optional and are subject to negotiation based on the SDP Offer/Answer rules described in Section 6 in [I-D.ietf-mmusic-rid]. When these restrictions are applied to the AV1 codec, they MUST have the following interpretation:
 
 * **max-width**, maximum width of the frame in units of samples. The meaning of the restriction is the same as variable **MaxHSize** of the levels table from Section A.3 of [AV1].
+{: .needs-tests }
 * **max-height**, maximum height of the frame in units of samples. The meaning of the restriction is the same as variable **MaxVSize** of the levels table from Section A.3 of [AV1].
+{: .needs-tests }
 * **max-fps**, maximum number of temporal units per second.
+{: .needs-tests }
 * **max-fs**, maximum size of the frame in units of samples. The meaning of the restriction is the same as variable **MaxPicSize** of the levels table from Section A.3 of [AV1].
+{: .needs-tests }
 * **max-br**, maximum bit rate in units bits per second. The meaning of the restriction is the same as variable **MaxBitrate** defined in Section A.3 of [AV1]. 
+{: .needs-tests }
 * **max-pps**, maximum decode rate in units of samples per second. The meaning of the restriction is the same as variable **MaxDecodeRate** of the levels table from Section A.3 of [AV1].
+{: .needs-tests }
 * **max-bpp**, maximum number of bits per pixel of any given coded frame, calculated as a ratio between **CompressedSize** variable defined Section A.3 of [AV1] and expressed in bits, and number of samples in frame.
+{: .needs-tests }
   
 If during the SDP negotiation process both parties acknowledge restrictions, then the transported media stream MUST have at least one operating point with the negotiated restrictions.
+{: .needs-tests }
 
 
 #### 7.2.3  Usage with the SDP Offer/Answer Model
@@ -407,8 +436,11 @@ When AV1 is offered over RTP using SDP in an Offer/Answer model as described in 
 
 * The media format configuration is identified by **level-idx**, **profile** and **tier**.  The answerer SHOULD maintain all parameters. These media configuration parameters are asymmetrical and the answerer MAY declare its own media configuration if the answerer capabilities are different from the offerer.
   * The profile to use in the offerer-to-answerer direction MUST be lesser or equal to the profile the answerer supports for receiving, and the profile to use in the answerer-to-offerer direction MUST be lesser or equal to the profile the offerer supports for receiving.
+  {: .needs-tests }
   * The level to use in the offerer-to-answerer direction MUST be lesser or equal to the level the answerer supports for receiving, and the level to use in the answerer-to-offerer direction MUST be lesser or equal to the level the offerer supports for receiving.
+  {: .needs-tests }
   * The tier to use in the offerer-to-answerer direction MUST be lesser or equal to the tier the answerer supports for receiving, and the tier to use in the answerer-to-offerer direction MUST be lesser or equal to the tier the offerer supports for receiving.
+  {: .needs-tests }
 
 
 #### 7.2.4  Usage in Declarative Session Descriptions
@@ -416,7 +448,9 @@ When AV1 is offered over RTP using SDP in an Offer/Answer model as described in 
 When AV1 over RTP is offered with SDP in a declarative style, as in Real Time Streaming Protocol (RTSP) [RFC2326] or Session Announcement Protocol (SAP) [RFC2974], the following considerations apply.
 
 * All parameters capable of indicating both stream properties and receiver capabilities are used to indicate only stream properties. In this case, the parameters **profile**, **level-idx** and **tier** declare only the values used by the stream, not the capabilities for receiving streams.
+{: .no-test-needed }
 * A receiver of the SDP is required to support all parameters and values of the parameters provided; otherwise, the receiver MUST reject (RTSP) or not participate in (SAP) the session. It falls on the creator of the session to use values that are expected to be supported by the receiving application.
+{: .needs-tests }
 
 
 ### 7.3 Examples

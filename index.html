@@ -232,7 +232,7 @@
 <section>
 <h2 id="payload-format">4. Payload Format</h2>
 
-<p>This section describes how the encoded AV1 bitstream is encapsulated in RTP. All integer fields in this specification are encoded as unsigned integers in network byte order.</p>
+<p class="needs-tests">This section describes how the encoded AV1 bitstream is encapsulated in RTP. All integer fields in this specification are encoded as unsigned integers in network byte order.</p>
 
 <section>
 <h3 id="rtp-header-usage">4.1 RTP Header Usage</h3>
@@ -279,9 +279,9 @@
 <section>
 <h3 id="rtp-header-marker-bit-m">4.2  RTP Header Marker Bit (M)</h3>
 
-<p>The RTP header Marker bit MUST be set equal to 0 if the packet is not the last packet of the temporal unit, it SHOULD be set equal to 1 otherwise.</p>
+<p class="needs-tests">The RTP header Marker bit MUST be set equal to 0 if the packet is not the last packet of the temporal unit, it SHOULD be set equal to 1 otherwise.</p>
 
-<p class="alert alert-info"><strong>Note:</strong> It is possible for a receiver to receive the last packet of a temporal unit without the marker bit being set equal to 1, and a receiver should be able to handle this case. The last packet of a temporal unit is also indicated by the next packet, in RTP sequence number order, having an incremented timestamp.</p>
+<p class="alert alert-info needs-tests"><strong>Note:</strong> It is possible for a receiver to receive the last packet of a temporal unit without the marker bit being set equal to 1, and a receiver should be able to handle this case. The last packet of a temporal unit is also indicated by the next packet, in RTP sequence number order, having an incremented timestamp.</p>
 
 </section>
 
@@ -295,7 +295,7 @@
 <section>
 <h3 id="av1-aggregation-header">4.4 AV1 Aggregation Header</h3>
 
-<p>The aggregation header is carried in the first byte of the RTP payload and is used to indicate if the first and/or last OBU element in the payload is a fragment of an OBU.  The aggregation header is not part of the AV1 bitstream and MUST NOT be presented to an AV1 decoder.</p>
+<p class="needs-tests">The aggregation header is carried in the first byte of the RTP payload and is used to indicate if the first and/or last OBU element in the payload is a fragment of an OBU.  The aggregation header is not part of the AV1 bitstream and MUST NOT be presented to an AV1 decoder.</p>
 
 <p>The structure is as follows.</p>
 
@@ -332,7 +332,7 @@ Length of the last OBU element =
 
 <p>The payload contains a series of one or more OBU elements. The design allows for a combination of aggregation and fragmentation of OBUs, i.e., a set of OBU elements in which the first and/or last element is a fragment of an OBU.</p>
 
-<p>The length field is encoded using leb128. Leb128 is defined in the AV1 specification, and provides for a variable-sized, byte-oriented encoding of non-negative integers where the first bit of each (little-endian) byte indicates whether or not additional bytes are used in the representation (AV1, Section 4.10.5).</p>
+<p class="needs-tests">The length field is encoded using leb128. Leb128 is defined in the AV1 specification, and provides for a variable-sized, byte-oriented encoding of non-negative integers where the first bit of each (little-endian) byte indicates whether or not additional bytes are used in the representation (AV1, Section 4.10.5).</p>
 
 <p class="needs-tests">Whether or not the first and/or last OBU element is a fragment of an OBU is signaled in the aggregation header. Fragmentation may occur regardless of how the W field is set.</p>
 
@@ -406,19 +406,19 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 <section>
 <h2 id="packetization-rules">5. Packetization Rules</h2>
 
-<p>Each RTP packet MUST NOT contain OBUs that belong to different temporal units.</p>
+<p class="needs-tests">Each RTP packet MUST NOT contain OBUs that belong to different temporal units.</p>
 
 <p data-tests="https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_packetizer_av1_unittest.cc?q=DiscardsTemporalDelimiterAndTileListObu">The temporal delimiter OBU, if present, SHOULD be removed when transmitting, and MUST be ignored by receivers. Tile list OBUs are not supported. They SHOULD be removed when transmitted, and MUST be ignored by receivers.</p>
 
-<p>If a sequence header OBU is present in an RTP packet and operating_points_cnt_minus_1 &gt; 0 then for any number i where 0 &lt;= i &lt; operating_points_cnt_minus_1 the following MUST be true: (operating_point_idc[i] &amp; operating_point_idc[i+1]) == operating_point_idc[i+1].</p>
+<p class="needs-tests">If a sequence header OBU is present in an RTP packet and operating_points_cnt_minus_1 &gt; 0 then for any number i where 0 &lt;= i &lt; operating_points_cnt_minus_1 the following MUST be true: (operating_point_idc[i] &amp; operating_point_idc[i+1]) == operating_point_idc[i+1].</p>
 
-<p>A sender MAY produce a sequence header with operating_points_cnt_minus_1 = 0 and operating_point_idc[0] = 0xFFF and seq_level_idx[0] = 0. In such case, seq_level_idx[0] does not reflect the level of the operating point.</p>
+<p class="needs-tests">A sender MAY produce a sequence header with operating_points_cnt_minus_1 = 0 and operating_point_idc[0] = 0xFFF and seq_level_idx[0] = 0. In such case, seq_level_idx[0] does not reflect the level of the operating point.</p>
 
 <p class="alert alert-info"><strong>Note:</strong> The intent is to disable OBU dropping in the AV1 decoder. To ensure a decoder’s capabilities are not exceeded, OBU filtering should instead be implemented at the system level (e.g., in a MANE).</p>
 
 <p class="needs-tests">If more than one OBU contained in an RTP packet has an OBU extension header, then the values of the temporal_id and spatial_id MUST be the same in all such OBUs in the RTP packet.</p>
 
-<p>If a sequence header OBU is present in an RTP packet, then it	SHOULD be the first OBU in the packet. OBUs that are not associated with a particular layer (and thus do not have an OBU extension header) SHOULD be in the beginning of a packet, following the sequence header OBU if present.</p>
+<p class="needs-tests">If a sequence header OBU is present in an RTP packet, then it	SHOULD be the first OBU in the packet. OBUs that are not associated with a particular layer (and thus do not have an OBU extension header) SHOULD be in the beginning of a packet, following the sequence header OBU if present.</p>
 
 <p class="needs-tests">A sequence header OBU SHOULD be included in the base layer when scalable encoding is used. When simulcast encodings are transported on the same SSRC (an “S” mode), a sequence header OBU SHOULD be aggregated with each spatial layer. This ensures that if an intermediary removes simulcast encodings from the bitstream before forwarding, the modified bitstream will still be decodable.</p>
 
@@ -461,7 +461,7 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 <section>
 <h3 id="simulcast">6.1. Simulcast</h3>
 
-<p>The RTP payload defined in this specification supports two distinct modes for transport of simulcast encodings. In either mode, simulcast transport MUST only be used to convey multiple encodings from the same source. Also, in either mode, a sequence header OBU SHOULD be aggregated with each spatial layer. Both modes MUST be supported by implementations of this specification.</p>
+<p class="needs-tests">The RTP payload defined in this specification supports two distinct modes for transport of simulcast encodings. In either mode, simulcast transport MUST only be used to convey multiple encodings from the same source. Also, in either mode, a sequence header OBU SHOULD be aggregated with each spatial layer. Both modes MUST be supported by implementations of this specification.</p>
 
 <p>When simulcast encodings are transported each on a separate RTP stream, each simulcast encoding utilizes a distinct bitstream containing its own distinct Sequence Header and Scalability Metadata OBUs. This mode utilizes distinct SSRCs and Restriction Identifiers (RIDs) for each encoding as described in <a href="https://tools.ietf.org/html/draft-ietf-avtext-rid">I-D.ietf-avtext-rid</a> and, as a result, RTCP feedback can be provided for each simulcast encoding. This mode of simulcast transport, which MUST be supported by SFMs, utilizes Session Description Protocol (SDP) signaling as described in <a href="https://tools.ietf.org/html/draft-ietf-mmusic-sdp-simulcast">I-D.ietf-mmusic-sdp-simulcast</a> and <a href="https://tools.ietf.org/html/draft-ietf-mmusic-rid">I-D.ietf-mmusic-rid</a>.</p>
 
@@ -472,9 +472,9 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 <section>
 <h3 id="example">6.1.1 Example</h3>
 
-<p>In this example, it is desired to send three simulcast encodings, each containing three temporal layers. When sending all encodings on a single SSRC, scalability mode ‘S3T3’ would be indicated within the scalability metadata OBU, and the Dependency Descriptor describes the dependency structure of all encodings.</p>
+<p class="needs-tests">In this example, it is desired to send three simulcast encodings, each containing three temporal layers. When sending all encodings on a single SSRC, scalability mode ‘S3T3’ would be indicated within the scalability metadata OBU, and the Dependency Descriptor describes the dependency structure of all encodings.</p>
 
-<p>When sending each simulcast encoding on a distinct SSRC, the scalability mode ‘L1T3’ would be indicated within the scalability metadata OBU of each bitstream, and the Dependency Descriptor in each stream describes only the dependency structure for that individual encoding.  A distinct spatial_id (e.g. 0, 1, 2) could be used for each stream (if a single AV1 encoder is used to produce the three simulcast encodings), but if distinct AV1 encoders are used, the spatial_id values may not be distinct.</p>
+<p class="needs-tests">When sending each simulcast encoding on a distinct SSRC, the scalability mode ‘L1T3’ would be indicated within the scalability metadata OBU of each bitstream, and the Dependency Descriptor in each stream describes only the dependency structure for that individual encoding.  A distinct spatial_id (e.g. 0, 1, 2) could be used for each stream (if a single AV1 encoder is used to produce the three simulcast encodings), but if distinct AV1 encoders are used, the spatial_id values may not be distinct.</p>
 
 </section>
 
@@ -505,14 +505,15 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
     </ul>
   </li>
   <li>Optional parameters:
-    <ul>
-      <li>These parameters are used to signal the capabilities of a receiver implementation. If the implementation is willing to receive media, <strong>profile</strong> and <strong>level-idx</strong> parameters MUST be provided. These parameters MUST NOT be used for any other purpose.
-        <ul>
-          <li><strong>profile</strong>: The value of <strong>profile</strong> is an integer indicating the highest AV1 profile supported by the receiver. The range of possible values is identical to the <strong>seq_profile</strong> syntax element specified in <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a></li>
-          <li><strong>level-idx</strong>: The value of <strong>level-idx</strong> is an integer indicating the highest AV1 level supported by the receiver. The range of possible values is identical to the <strong>seq_level_idx</strong> syntax element specified in <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a></li>
-          <li><strong>tier</strong>: The value of <strong>tier</strong> is an integer indicating tier of the indicated level.  The range of possible values is identical to the <strong>seq_tier</strong> syntax element specified in <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>. If parameter is not present, level’s tier is to be assumed equal to 0</li>
-        </ul>
-      </li>
+    <ul class="needs-tests">
+      <li>These parameters are used to signal the capabilities of a receiver implementation. If the implementation is willing to receive media, <strong>profile</strong> and <strong>level-idx</strong> parameters MUST be provided. These parameters MUST NOT be used for any other purpose.</li>
+    </ul>
+    <ul class="no-test-needed">
+      <li><strong>profile</strong>: The value of <strong>profile</strong> is an integer indicating the highest AV1 profile supported by the receiver. The range of possible values is identical to the <strong>seq_profile</strong> syntax element specified in <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a></li>
+      <li><strong>level-idx</strong>: The value of <strong>level-idx</strong> is an integer indicating the highest AV1 level supported by the receiver. The range of possible values is identical to the <strong>seq_level_idx</strong> syntax element specified in <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a></li>
+    </ul>
+    <ul class="needs-tests">
+      <li><strong>tier</strong>: The value of <strong>tier</strong> is an integer indicating tier of the indicated level.  The range of possible values is identical to the <strong>seq_tier</strong> syntax element specified in <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>. If parameter is not present, level’s tier is to be assumed equal to 0</li>
     </ul>
   </li>
   <li>Encoding considerations:
@@ -581,17 +582,25 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 
 <section>
 <h3 id="sdp-parameters">7.2 SDP Parameters</h3>
-<p>The receiver MUST ignore any fmtp parameter not specified in this document.</p>
+<p class="needs-tests">The receiver MUST ignore any fmtp parameter not specified in this document.</p>
 
 <section>
 <h4 id="mapping-of-media-subtype-parameters-to-sdp">7.2.1 Mapping of Media Subtype Parameters to SDP</h4>
 <p>The media type video/AV1 string is mapped to fields in the Session Description Protocol (SDP) per <a href="https://tools.ietf.org/html/rfc4566">RFC4566</a> as follows:</p>
 
-<ul>
+<ul class="needs-tests">
   <li>The media name in the “m=” line of SDP MUST be video.</li>
+</ul>
+<ul class="needs-tests">
   <li>The encoding name in the “a=rtpmap” line of SDP MUST be AV1 (the media subtype).</li>
+</ul>
+<ul class="needs-tests">
   <li>The clock rate in the “a=rtpmap” line MUST be 90000.</li>
+</ul>
+<ul class="needs-tests">
   <li>The parameters “<strong>profile</strong>”, and “<strong>level-idx</strong>”, MUST be included in the “a=fmtp” line of SDP if SDP is used to declare receiver capabilities. These parameters are expressed as a media subtype string, in the form of a semicolon separated list of parameter=value pairs.</li>
+</ul>
+<ul class="needs-tests">
   <li>Parameter “<strong>tier</strong>” MAY be included alongside “<strong>profile</strong>” and “<strong>level-idx</strong> parameters in “a=fmtp” line if the indicated level supports a non-zero tier.</li>
 </ul>
 
@@ -604,17 +613,29 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 
 <p>The RID specification declares the set of codec-agnostic restrictions for media streams. All the restrictions are optional and are subject to negotiation based on the SDP Offer/Answer rules described in Section 6 in <a href="https://tools.ietf.org/html/draft-ietf-mmusic-rid">I-D.ietf-mmusic-rid</a>. When these restrictions are applied to the AV1 codec, they MUST have the following interpretation:</p>
 
-<ul>
+<ul class="needs-tests">
   <li><strong>max-width</strong>, maximum width of the frame in units of samples. The meaning of the restriction is the same as variable <strong>MaxHSize</strong> of the levels table from Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.</li>
+</ul>
+<ul class="needs-tests">
   <li><strong>max-height</strong>, maximum height of the frame in units of samples. The meaning of the restriction is the same as variable <strong>MaxVSize</strong> of the levels table from Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.</li>
+</ul>
+<ul class="needs-tests">
   <li><strong>max-fps</strong>, maximum number of temporal units per second.</li>
+</ul>
+<ul class="needs-tests">
   <li><strong>max-fs</strong>, maximum size of the frame in units of samples. The meaning of the restriction is the same as variable <strong>MaxPicSize</strong> of the levels table from Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.</li>
+</ul>
+<ul class="needs-tests">
   <li><strong>max-br</strong>, maximum bit rate in units bits per second. The meaning of the restriction is the same as variable <strong>MaxBitrate</strong> defined in Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.</li>
+</ul>
+<ul class="needs-tests">
   <li><strong>max-pps</strong>, maximum decode rate in units of samples per second. The meaning of the restriction is the same as variable <strong>MaxDecodeRate</strong> of the levels table from Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.</li>
+</ul>
+<ul class="needs-tests">
   <li><strong>max-bpp</strong>, maximum number of bits per pixel of any given coded frame, calculated as a ratio between <strong>CompressedSize</strong> variable defined Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a> and expressed in bits, and number of samples in frame.</li>
 </ul>
 
-<p>If during the SDP negotiation process both parties acknowledge restrictions, then the transported media stream MUST have at least one operating point with the negotiated restrictions.</p>
+<p class="needs-tests">If during the SDP negotiation process both parties acknowledge restrictions, then the transported media stream MUST have at least one operating point with the negotiated restrictions.</p>
 
 <section>
 <h4 id="usage-with-the-sdp-offeranswer-model">7.2.3  Usage with the SDP Offer/Answer Model</h4>
@@ -623,9 +644,13 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 
 <ul>
   <li>The media format configuration is identified by <strong>level-idx</strong>, <strong>profile</strong> and <strong>tier</strong>.  The answerer SHOULD maintain all parameters. These media configuration parameters are asymmetrical and the answerer MAY declare its own media configuration if the answerer capabilities are different from the offerer.
-    <ul>
+    <ul class="needs-tests">
       <li>The profile to use in the offerer-to-answerer direction MUST be lesser or equal to the profile the answerer supports for receiving, and the profile to use in the answerer-to-offerer direction MUST be lesser or equal to the profile the offerer supports for receiving.</li>
+    </ul>
+    <ul class="needs-tests">
       <li>The level to use in the offerer-to-answerer direction MUST be lesser or equal to the level the answerer supports for receiving, and the level to use in the answerer-to-offerer direction MUST be lesser or equal to the level the offerer supports for receiving.</li>
+    </ul>
+    <ul class="needs-tests">
       <li>The tier to use in the offerer-to-answerer direction MUST be lesser or equal to the tier the answerer supports for receiving, and the tier to use in the answerer-to-offerer direction MUST be lesser or equal to the tier the offerer supports for receiving.</li>
     </ul>
   </li>
@@ -638,8 +663,10 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 
 <p>When AV1 over RTP is offered with SDP in a declarative style, as in Real Time Streaming Protocol (RTSP) <a href="https://tools.ietf.org/html/rfc2326">RFC2326</a> or Session Announcement Protocol (SAP) <a href="https://tools.ietf.org/html/rfc2974">RFC2974</a>, the following considerations apply.</p>
 
-<ul>
+<ul class="no-test-needed">
   <li>All parameters capable of indicating both stream properties and receiver capabilities are used to indicate only stream properties. In this case, the parameters <strong>profile</strong>, <strong>level-idx</strong> and <strong>tier</strong> declare only the values used by the stream, not the capabilities for receiving streams.</li>
+</ul>
+<ul class="needs-tests">
   <li>A receiver of the SDP is required to support all parameters and values of the parameters provided; otherwise, the receiver MUST reject (RTSP) or not participate in (SAP) the session. It falls on the creator of the session to use values that are expected to be supported by the receiving application.</li>
 </ul>
 
