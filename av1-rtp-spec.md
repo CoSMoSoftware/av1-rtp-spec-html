@@ -634,11 +634,13 @@ Upon reception of an FIR, for every SSRC indicated in the FIR message,
 the AV1 sender MUST send a new coded video sequence as soon as possible.
 See section 7.5 of the [AV1 video codec][AV1] for the definition
 of a new coded video sequence.
+{: .needs-tests }
 
 If simulcast encodings of the same source are transported on distinct SSRCs,
 then in addition to sending a new coded video sequence for each encoding
 corresponding to an SSRC in the FIR message, the AV1 sender MAY also send
 new coded video sequences for other encodings from the same source(s).
+{: .needs-tests }
 
 
 ## 8.2.  Layer Refresh Request (LRR)
@@ -654,8 +656,10 @@ The Layer Refresh Request specified in [I-D.ietf-avtext-lrr] is designed to allo
                              Figure 4
 
 AV1 streams MUST use the Layer Refresh Request format defined for VP9 in Section 5.3 of [I-D.ietf-payload-vp9], with the high order bit of its three-bit SID field set to 0. Figure 4 shows the format for AV1 streams. Notice that SID here is two bits.  SID is associated with AV1's spatial_id and TID is associated with AV1's temporal_id. See Sections 2, 5.3.3, and 6.2.3 of the AV1 bitstream specification [AV1] for details on the temporal_id and spatial_id fields.
+{: .needs-tests }
 
 Identification of a layer refresh frame may be performed by examining the coding dependency structure of the coded video sequence it belongs to. This may be provided by the scalability metadata (Sections 5.8.5 and 6.7.5 of [AV1]), either in the form of a pre-defined scalability mode or through a scalability structure (Sections 5.8.6 and 6.7.6 of [AV1]). Alternatively, the Dependency Descriptor RTP header extension that is specified in Appendix A of this document may be used.
+{: .needs-tests }
 
 
 ## 9. IANA Considerations
@@ -670,8 +674,10 @@ RTP packets using the payload format defined in this document are subject to the
 Note that the appropriate mechanism to ensure confidentiality and integrity of RTP packets and their payloads is very dependent on the application and on the transport and signaling protocols employed. Thus, although SRTP is given as an example above, other possible choices exist. See [RFC7202].
 
 Decoders MUST discard reserved OBU types and reserved metadata OBU types, and SHOULD filter out temporal delimiter and tile list OBUs carried within the RTP payload. Middle boxes SHOULD NOT parse OBUs they do not support. SFMs MUST NOT parse OBUs at all, but instead MUST make forwarding decisions based on the information within the RTP header and Dependency Descriptor RTP header extension.
+{: .needs-tests }
 
 When integrity protection is applied to a stream, care MUST be taken that the stream being transported may be scalable; hence a receiver may be able to access only part of the entire stream.
+{: .needs-tests }
 
 End-to-end security services such as authentication, integrity, or confidentiality protection could prevent an SFM or MANE from performing media-aware operations other than discarding complete packets. For example, repacketization requires that the MANE have access to the cleartext media payload. The Dependency Descriptor RTP extension described in Appendix A allows discarding of packets in a media-aware way even when confidentiality protection is used.
 
@@ -728,6 +734,7 @@ In the DD, the smallest unit for which dependencies are described is an RTP fram
 The DD uses the concept of Decode targets, each of which represents a subset of a scalable video stream necessary to decode the stream at a certain temporal and spatial fidelity. A frame may be associated with several Decode targets. This concept is used to facilitate selective forwarding, as is done by a Selective Forwarding Middlebox (SFM). Typically an SFM would select one Decode target for each endpoint, and forward all frames associated with that target.
 
 The DD describes the decodability of the current frame and provides information about whether current and past frames are required for decoding future frames associated with the Decode target. Specifically, the DD contains
+
 * a list of Referred frames that can be used to deduce the decodability of the current frame,
 * Decode Target Indications that communicate how current and past frames are required for decoding future frames associated with the Decode target (e.g., Discardable, Switch), and
 * Chains to communicate whether or not missed frames are required for decoding future frames associated with the Decode target.
@@ -743,10 +750,11 @@ Chain
 
 Decode target
 : The set of frames needed to decode a coded video sequence at a given spatial and temporal fidelity.
+{:.no-test-needed }
 
 Decode Target Indication (DTI)
 : Describes the relationship of a frame to a Decode target. The DTI indicates four distinct relationships: 'not present', 'discardable', 'switch', and 'required'.
-{:.no-test-needed }
+{: .needs-tests }
 
 Discardable indication
 : An indication for a frame, associated with a given Decode target, that it will not be a Referred frame for any frame belonging to that Decode target.
@@ -754,13 +762,15 @@ Discardable indication
 
 **Note:** A frame belonging to more than one Decode target may be discardable for one Decode target and not for another.
 {:.alert .alert-info }
+{: .needs-tests }
 
 Frame dependency structure
 : Describes frame dependency information for the coded video sequence. The structure includes the number of DTIs, an ordered list of Frame dependency templates, and a mapping between Chains and Decode targets.
+{:.no-test-needed }
 
 Frame dependency template
 : Contains frame description information that many frames have in common. Includes values for spatial ID, temporal ID, DTIs, frame dependencies, and Chain information.
-{:.no-test-needed }
+{: .needs-tests }
 
 Not present indication
 : An indication for a frame, that it is not associated with a given Decode target.
@@ -768,15 +778,19 @@ Not present indication
 
 Referred frame
 : A frame on which the current frame depends.
+{:.no-test-needed }
 
 Required indication
 : An indication for a frame, associated with a given Decode target, that it belongs to the Decode target and has neither a Discardable indication nor a Switch indication.
+{: .needs-tests }
 
 **Note:** A frame belonging to more than one Decode target may be required for one Decode target and not required (either discardable or switch) for another.
 {:.alert .alert-info }
+{: .needs-tests }
 
 Switch indication
 : An indication associated with a specific Decode target that all subsequent frames for that Decode target will be decodable if the frame containing the indication is decodable.
+{: .needs-tests }
 
 
 #### A.3 Media Stream Requirements
@@ -784,6 +798,7 @@ Switch indication
 A bitstream conformant to this extension must adhere to the following statement(s).
 
 A frame for which all Referred frames are decodable MUST itself be decodable.
+{: .needs-tests }
 
 **Note:** dependencies are not limited to motion compensated prediction, other relevant information such as entropy decoder state also constitute dependencies.
 {:.alert .alert-info }
@@ -1069,15 +1084,19 @@ The semantics pertaining to the Dependency Descriptor syntax section above is de
 **Mandatory Descriptor Fields**
 
 * **start_of_frame**: MUST be set to 1 if the first payload byte of the RTP packet is the beginning of a new frame, and MUST be set to 0 otherwise. Note that this frame might not be the first frame of a temporal unit.
+{: .needs-tests }
 
 * **end_of_frame**: MUST be set to 1 for the final RTP packet of a frame, and MUST be set to 0 otherwise. Note that, if spatial scalability is in use, more frames from the same temporal unit may follow.
+{: .needs-tests }
 
 * **frame_number**: is represented using 16 bits and increases strictly monotonically in decode order. frame_number MAY start on a random number, and MUST wrap after reaching the maximum value. All packets of the same frame MUST have the same frame_number value.
+{: .needs-tests }
 
 **Note:** frame_number is not the same as Frame ID in [AV1 specification][AV1].
 {:.alert .alert-info }
 
 * **frame_dependency_template_id**: ID of the Frame dependency template to use. MUST be in the range of template_id_offset to (template_id_offset + TemplatesCnt - 1), inclusive. frame_dependency_template_id MUST be the same for all packets of the same frame.
+{: .needs-tests }
 
 **Note:** values outside of the valid range may be caused by a change of the template dependency structure, that is a packet with the new template dependency structure was lost or delayed.
 {:.alert .alert-info }
@@ -1088,18 +1107,22 @@ The semantics pertaining to the Dependency Descriptor syntax section above is de
 **Extended Descriptor Fields**
 
 * **template_dependency_structure_present_flag**: indicates the presence the template_dependency_structure. When the template_dependency_structure_present_flag is set to 1, template_dependency_structure MUST be present; otherwise template_dependency_structure MUST NOT be present. template_dependency_structure_present_flag MUST be set to 1 for the first packet of a coded video sequence, and MUST be set to 0 otherwise.
+{: .needs-tests }
 
 * **active_decode_targets_present_flag**: indicates the presence of active_decode_targets_bitmask. When set to 1, active_decode_targets_bitmask MUST be present, otherwise, active_decode_targets_bitmask MUST NOT be present.
-{:.no-test-needed }
+{: .needs-tests }
 
 * **active_decode_targets_bitmask**: contains a bitmask that indicates which decode targets are available for decoding. Bit i is equal to 1 if decode target i is available for decoding, 0 otherwise.
 {:& https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/video_coding/codecs/av1/libaom_av1_encoder_unittest.cc?q=NoBitrateOnTopLayerRefecltedInActiveDecodeTargets }
 
 * **custom_dtis_flag**: indicates the presence of frame_dtis. When set to 1, frame_dtis MUST be present. Otherwise, frame_dtis MUST NOT be present.
+{: .needs-tests }
 
 * **custom_fdiffs_flag**: indicates the presence of frame_fdiffs. When set to 1, frame_fdiffs MUST be present. Otherwise, frame_fdiffs MUST NOT be present.
+{: .needs-tests }
 
 * **custom_chains_flag**: indicates the presence of frame_chain_fdiff. When set to 1, frame_chain_fdiff MUST be present. Otherwise, frame_chain_fdiff MUST NOT be present.
+{: .needs-tests }
 
 **Template dependency structure**
 
@@ -1107,28 +1130,37 @@ The semantics pertaining to the Dependency Descriptor syntax section above is de
 {:& https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_sender_video_unittest.cc?q=SetDiffentVideoStructureAvoidsCollisionWithThePreviousStructure }
 
 * **dtis_cnt_minus_one**: dtis_cnt_minus_one + 1 indicates the number of Decode targets present in the coded video sequence.
+{: .needs-tests }
 
 * **resolutions_present_flag**: indicates the presence of render_resolutions. When the resolutions_present_flag is set to 1, render_resolutions MUST be present; otherwise render_resolutions MUST NOT be present.
+{: .needs-tests }
 
 * **next_layer_idc**: used to determine spatial ID and temporal ID for the next Frame dependency template. Table A.3 describes how the spatial ID and temporal ID values are determined. A next_layer_idc equal to 3 indicates that no more Frame dependency templates are present in the Frame dependency structure.
+{: .needs-tests }
 
 * **max_render_width_minus_1[spatial_id]**: indicates the maximum render width minus 1 for frames with spatial ID equal to spatial_id.
+{: .needs-tests }
 
 * **max_render_height_minus_1[spatial_id]**: indicates the maximum render height minus 1 for frames with spatial ID equal to spatial_id.
-{:.no-test-needed }
+{: .needs-tests }
 
 * **chains_cnt**: indicates the number of Chains. When set to zero, the Frame dependency structure does not utilize protection with Chains.
 {:& https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/video_coding/codecs/av1/scalability_structure_unittest.cc?q=NumberOfDecodeTargetsAndChainsAreInRangeAndConsistent }
 
 * **decode_target_protected_by[dtIndex]**: the index of the Chain that protects the Decode target, dtIndex. When chains_cnt > 0, each Decode target MUST be protected by exactly one Chain.
+{: .needs-tests }
 
 * **template_dti[templateIndex][]**: an array of size dtis_cnt_minus_one + 1 containing Decode Target Indications for the Frame dependency template having index value equal to templateIndex. Table A.2 contains a description of the Decode Target Indication values.
+{: .needs-tests }
 
 * **template_chain_fdiff[templateIndex][]**: an array of size chains_cnt containing chain-FDIFF values for the Frame dependency template having index value equal to templateIndex. In a template, the values of chain-FDIFF can be in the range 0 to 15, inclusive.
+{: .needs-tests }
 
 * **fdiff_follows_flag**: indicates the presence of a frame difference value. When the fdiff_follows_flag is set to 1, fdiff_minus_one MUST immediately follow; otherwise a value of 0 indicates no more frame difference values are present for the current Frame dependency template.
+{: .needs-tests }
 
 * **fdiff_minus_one**: the difference between frame_number and the frame_number of the Referred frame minus one. The calculation is done modulo the size of the frame_number field.
+{: .needs-tests }
 
 | DTI                    | Value |                                                        |
 | ---------------------- | ----- | ------------------------------------------------------ |
@@ -1144,10 +1176,13 @@ Table A.2. Decode Target Indication (DTI) values.
 **Frame dependency defintion**
 
 * **next_fdiff_size**: indicates the size of following fdiff_minus_one syntax elements in 4-bit units. When set to a non-zero value, fdiff_minus_one MUST immediately follow; otherwise a value of 0 indicates no more frame difference values are present.
+{: .needs-tests }
 
 * **frame_dti[dtiIndex]**: Decode Target Indication describing the relationship between the current frame and the Decode target having index equal to dtiIndex. Table A.2 contains a description of the Decode Target Indication values.
+{: .needs-tests }
 
 * **frame_chain_fdiff[chainIdx]**: indicates the difference between the frame_number and the frame_number of the previous frame in the Chain having index equal to chainIdx. A value of 0 indicates no previous frames are needed for the Chain. For example, when a packet containing frame_chain_fdiff[chainIdx]=3 and frame_number=112 the previous frame in the Chain with index equal to chainIdx has frame_number=109. The calculation is done modulo the size of the frame_number field.
+{: .needs-tests }
 
 | next_layer_idc | Next Spatial ID And Temporal ID Values                   |
 | -------------- | -------------------------------------------------------- |
@@ -1164,6 +1199,7 @@ Table A.3. Derivation Of Next Spatial ID And Temporal ID Values.
 ##### A.4.3 Deciding Decodability using Chains
 
 Chains provide Instantaneous Decidability of Decodability (IDD). That is, the ability to decide, immediately upon receiving the very first packet after packet loss, if the lost packet(s) contained a packet that is needed to decode frames in packets that follow. The concept of Chains is a generalization of the TL0PICIDX field used in the RTP payload formats for scalable codecs such as H.264, VP8, and VP9. A chain defines a sequence of frames essential to decode Decode targets protected by that Chain. Frames in the Chain MUST be propagated and decoded. All other frames associated with the Decode target MAY be dropped, temporarily reducing Decode target fidelity. As long as all frames in the Chain are decoded, it should be possible to recover the Decode target’s full fidelity without requesting additional information from the sender (e.g., a key frame request).
+{: .needs-tests }
 
 The Frame dependency structure includes a mapping between Decode targets and Chains. The mapping gives an SFM the ability to determine the set of Chains it needs to track in order to ensure that the corresponding Decode targets remain decodable. Every packet includes, for every Chain, the frame_number for the previous frame in that Chain. An SFM can instantaneously detect a broken Chain by checking whether or not the previous frame in that Chain has been received. Due to the fact that Chain information for all Chains is present in all packets, an SFM can detect a broken Chain regardless of whether the first packet received after a loss is part of that Chain.
 
@@ -1174,8 +1210,10 @@ In order to start/restart Chains, a Dependency Descriptor may reference the fram
 An SFM may begin forwarding packets belonging to a new Decode target beginning with a decodable frame containing a Switch indication to that Decode target.
 
 An SFM may change which Decode targets it forwards. Similarly, a sender may change the Decode targets that are currently being produced. In both cases, not all Decode targets may be available for decoding. Such changes SHOULD be signaled to the receiver using the active_decode_targets_bitmask and SHOULD be signaled to the receiver in a reliable way.
+{: .needs-tests }
 
 When not all Decode targets are active, the active_decode_targets_bitmask MUST be sent in every packet where the template_dependency_structure_present_flag is equal to 1.
+{: .needs-tests }
 
 **Note:** One way to achieve reliable delivery is to include the active_decode_targets_bitmask in every packet until a receiver report acknowledges a packet containing the latest active_decode_targets_bitmask. Alternately, for many video streams, reliable delivery may be achieved by including the active_decode_targets_bitmask on every chain in the first packet after a change in active decode targets.
 {:.alert .alert-info }
