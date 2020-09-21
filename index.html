@@ -332,7 +332,7 @@ Length of the last OBU element =
 
 <p>The payload contains a series of one or more OBU elements. The design allows for a combination of aggregation and fragmentation of OBUs, i.e., a set of OBU elements in which the first and/or last element is a fragment of an OBU.</p>
 
-<p class="needs-tests">The length field is encoded using leb128. Leb128 is defined in the AV1 specification, and provides for a variable-sized, byte-oriented encoding of non-negative integers where the first bit of each (little-endian) byte indicates whether or not additional bytes are used in the representation (AV1, Section 4.10.5).</p>
+<p>The length field is encoded using leb128. Leb128 is defined in the AV1 specification, and provides for a variable-sized, byte-oriented encoding of non-negative integers where the first bit of each (little-endian) byte indicates whether or not additional bytes are used in the representation (AV1, Section 4.10.5).</p>
 
 <p class="needs-tests">Whether or not the first and/or last OBU element is a fragment of an OBU is signaled in the aggregation header. Fragmentation may occur regardless of how the W field is set.</p>
 
@@ -454,7 +454,7 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 <section>
 <h2 id="mane-and-sfm-behavior">6. MANE and SFM Behavior</h2>
 
-<p>If a packet contains an OBU with an OBU extension header then the entire packet is considered associated with the layer identified by the temporal_id and spatial_id combination that are indicated in the extension header. If a packet does not contain any OBU with an OBU extension header, then it is considered to be associated with all operating points.</p>
+<p class="needs-tests">If a packet contains an OBU with an OBU extension header then the entire packet is considered associated with the layer identified by the temporal_id and spatial_id combination that are indicated in the extension header. If a packet does not contain any OBU with an OBU extension header, then it is considered to be associated with all operating points.</p>
 
 <p>The general function of a MANE or SFM is to selectively forward packets to receivers. To make forwarding decisions a MANE may inspect the media payload, so that it may need to be able to parse the AV1 bitstream and if so, cannot function when end-to-end encryption is enabled. An SFM does not parse the AV1 bitstream and therefore needs to obtain the information relevant to selective forwarding by other means, such as the Dependency Descriptor described in Appendix A. In addition to enabling bitstream-independent forwarding and support for end-to-end encryption, the Dependency Descriptor also enables forwarding where the metadata OBU provided in the AV1 bitstream is not sufficient to express the structure of the stream.</p>
 
@@ -463,18 +463,18 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 
 <p class="needs-tests">The RTP payload defined in this specification supports two distinct modes for transport of simulcast encodings. In either mode, simulcast transport MUST only be used to convey multiple encodings from the same source. Also, in either mode, a sequence header OBU SHOULD be aggregated with each spatial layer. Both modes MUST be supported by implementations of this specification.</p>
 
-<p>When simulcast encodings are transported each on a separate RTP stream, each simulcast encoding utilizes a distinct bitstream containing its own distinct Sequence Header and Scalability Metadata OBUs. This mode utilizes distinct SSRCs and Restriction Identifiers (RIDs) for each encoding as described in <a href="https://tools.ietf.org/html/draft-ietf-avtext-rid">I-D.ietf-avtext-rid</a> and, as a result, RTCP feedback can be provided for each simulcast encoding. This mode of simulcast transport, which MUST be supported by SFMs, utilizes Session Description Protocol (SDP) signaling as described in <a href="https://tools.ietf.org/html/draft-ietf-mmusic-sdp-simulcast">I-D.ietf-mmusic-sdp-simulcast</a> and <a href="https://tools.ietf.org/html/draft-ietf-mmusic-rid">I-D.ietf-mmusic-rid</a>.</p>
+<p class="needs-tests">When simulcast encodings are transported each on a separate RTP stream, each simulcast encoding utilizes a distinct bitstream containing its own distinct Sequence Header and Scalability Metadata OBUs. This mode utilizes distinct SSRCs and Restriction Identifiers (RIDs) for each encoding as described in <a href="https://tools.ietf.org/html/draft-ietf-avtext-rid">I-D.ietf-avtext-rid</a> and, as a result, RTCP feedback can be provided for each simulcast encoding. This mode of simulcast transport, which MUST be supported by SFMs, utilizes Session Description Protocol (SDP) signaling as described in <a href="https://tools.ietf.org/html/draft-ietf-mmusic-sdp-simulcast">I-D.ietf-mmusic-sdp-simulcast</a> and <a href="https://tools.ietf.org/html/draft-ietf-mmusic-rid">I-D.ietf-mmusic-rid</a>.</p>
 
-<p>When simulcast encodings are transported on a single RTP stream, RIDs are not used and the Sequence Header and Scalability Metadata OBUs (utilizing an ‘S’ mode) convey information relating to all encodings. This simulcast transport mode is possible since AV1 enables multiple simulcast encodings to be provided within a single bitstream. However, in this mode, RTCP feedback cannot be provided for each simulcast encoding, but only for the aggregate, since only a single SSRC is used. This mode of simulcast transport MAY be supported by SFMs.</p>
+<p class="needs-tests">When simulcast encodings are transported on a single RTP stream, RIDs are not used and the Sequence Header and Scalability Metadata OBUs (utilizing an ‘S’ mode) convey information relating to all encodings. This simulcast transport mode is possible since AV1 enables multiple simulcast encodings to be provided within a single bitstream. However, in this mode, RTCP feedback cannot be provided for each simulcast encoding, but only for the aggregate, since only a single SSRC is used. This mode of simulcast transport MAY be supported by SFMs.</p>
 
 </section>
 
 <section>
 <h3 id="example">6.1.1 Example</h3>
 
-<p class="needs-tests">In this example, it is desired to send three simulcast encodings, each containing three temporal layers. When sending all encodings on a single SSRC, scalability mode ‘S3T3’ would be indicated within the scalability metadata OBU, and the Dependency Descriptor describes the dependency structure of all encodings.</p>
+<p>In this example, it is desired to send three simulcast encodings, each containing three temporal layers. When sending all encodings on a single SSRC, scalability mode ‘S3T3’ would be indicated within the scalability metadata OBU, and the Dependency Descriptor describes the dependency structure of all encodings.</p>
 
-<p class="needs-tests">When sending each simulcast encoding on a distinct SSRC, the scalability mode ‘L1T3’ would be indicated within the scalability metadata OBU of each bitstream, and the Dependency Descriptor in each stream describes only the dependency structure for that individual encoding.  A distinct spatial_id (e.g. 0, 1, 2) could be used for each stream (if a single AV1 encoder is used to produce the three simulcast encodings), but if distinct AV1 encoders are used, the spatial_id values may not be distinct.</p>
+<p>When sending each simulcast encoding on a distinct SSRC, the scalability mode ‘L1T3’ would be indicated within the scalability metadata OBU of each bitstream, and the Dependency Descriptor in each stream describes only the dependency structure for that individual encoding.  A distinct spatial_id (e.g. 0, 1, 2) could be used for each stream (if a single AV1 encoder is used to produce the three simulcast encodings), but if distinct AV1 encoders are used, the spatial_id values may not be distinct.</p>
 
 </section>
 
@@ -490,17 +490,17 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 
 <ul>
   <li>Type name:
-    <ul>
+    <ul class="needs-tests">
       <li><strong>video</strong></li>
     </ul>
   </li>
   <li>Subtype name:
-    <ul>
+    <ul class="needs-tests">
       <li><strong>AV1</strong></li>
     </ul>
   </li>
   <li>Required parameters:
-    <ul>
+    <ul class="no-test-needed">
       <li>None.</li>
     </ul>
   </li>
@@ -508,8 +508,10 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
     <ul class="needs-tests">
       <li>These parameters are used to signal the capabilities of a receiver implementation. If the implementation is willing to receive media, <strong>profile</strong> and <strong>level-idx</strong> parameters MUST be provided. These parameters MUST NOT be used for any other purpose.</li>
     </ul>
-    <ul class="no-test-needed">
+    <ul class="needs-tests">
       <li><strong>profile</strong>: The value of <strong>profile</strong> is an integer indicating the highest AV1 profile supported by the receiver. The range of possible values is identical to the <strong>seq_profile</strong> syntax element specified in <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a></li>
+    </ul>
+    <ul class="needs-tests">
       <li><strong>level-idx</strong>: The value of <strong>level-idx</strong> is an integer indicating the highest AV1 level supported by the receiver. The range of possible values is identical to the <strong>seq_level_idx</strong> syntax element specified in <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a></li>
     </ul>
     <ul class="needs-tests">
@@ -642,18 +644,18 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 
 <p>When AV1 is offered over RTP using SDP in an Offer/Answer model as described in <a href="https://tools.ietf.org/html/rfc3264">RFC3264</a> for negotiation for unicast usage, the following limitations and rules apply:</p>
 
-<ul>
-  <li>The media format configuration is identified by <strong>level-idx</strong>, <strong>profile</strong> and <strong>tier</strong>.  The answerer SHOULD maintain all parameters. These media configuration parameters are asymmetrical and the answerer MAY declare its own media configuration if the answerer capabilities are different from the offerer.
-    <ul class="needs-tests">
-      <li>The profile to use in the offerer-to-answerer direction MUST be lesser or equal to the profile the answerer supports for receiving, and the profile to use in the answerer-to-offerer direction MUST be lesser or equal to the profile the offerer supports for receiving.</li>
-    </ul>
-    <ul class="needs-tests">
-      <li>The level to use in the offerer-to-answerer direction MUST be lesser or equal to the level the answerer supports for receiving, and the level to use in the answerer-to-offerer direction MUST be lesser or equal to the level the offerer supports for receiving.</li>
-    </ul>
-    <ul class="needs-tests">
-      <li>The tier to use in the offerer-to-answerer direction MUST be lesser or equal to the tier the answerer supports for receiving, and the tier to use in the answerer-to-offerer direction MUST be lesser or equal to the tier the offerer supports for receiving.</li>
-    </ul>
-  </li>
+<ul class="needs-tests">
+  <li>The media format configuration is identified by <strong>level-idx</strong>, <strong>profile</strong> and <strong>tier</strong>.  The answerer SHOULD maintain all parameters. These media configuration parameters are asymmetrical and the answerer MAY declare its own media configuration if the answerer capabilities are different from the offerer.</li>
+</ul>
+
+<ul class="needs-tests">
+  <li>The profile to use in the offerer-to-answerer direction MUST be lesser or equal to the profile the answerer supports for receiving, and the profile to use in the answerer-to-offerer direction MUST be lesser or equal to the profile the offerer supports for receiving.</li>
+</ul>
+<ul class="needs-tests">
+  <li>The level to use in the offerer-to-answerer direction MUST be lesser or equal to the level the answerer supports for receiving, and the level to use in the answerer-to-offerer direction MUST be lesser or equal to the level the offerer supports for receiving.</li>
+</ul>
+<ul class="needs-tests">
+  <li>The tier to use in the offerer-to-answerer direction MUST be lesser or equal to the tier the answerer supports for receiving, and the tier to use in the answerer-to-offerer direction MUST be lesser or equal to the tier the offerer supports for receiving.</li>
 </ul>
 
 </section>
@@ -663,7 +665,7 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 
 <p>When AV1 over RTP is offered with SDP in a declarative style, as in Real Time Streaming Protocol (RTSP) <a href="https://tools.ietf.org/html/rfc2326">RFC2326</a> or Session Announcement Protocol (SAP) <a href="https://tools.ietf.org/html/rfc2974">RFC2974</a>, the following considerations apply.</p>
 
-<ul class="no-test-needed">
+<ul class="needs-tests">
   <li>All parameters capable of indicating both stream properties and receiver capabilities are used to indicate only stream properties. In this case, the parameters <strong>profile</strong>, <strong>level-idx</strong> and <strong>tier</strong> declare only the values used by the stream, not the capabilities for receiving streams.</li>
 </ul>
 <ul class="needs-tests">
