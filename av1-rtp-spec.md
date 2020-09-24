@@ -812,6 +812,7 @@ A frame for which all Referred frames are decodable MUST itself be decodable.
 #### A.4 Dependency Descriptor Format
 
 To facilitate the work of selectively forwarding portions of a scalable video bitstream, as is done by a selective forwarding middlebox (SFM), for each packet, the following information is made available (even though not all elements are present in every packet).
+{: .needs-tests }
 
 * spatial ID
 * temporal ID
@@ -819,6 +820,7 @@ To facilitate the work of selectively forwarding portions of a scalable video bi
 * frame_number of the current frame
 * frame_number of each of the Referred frames
 * frame_number of last frame in each Chain
+{: .needs-tests }
 
 
 ##### A.4.1 Syntax
@@ -1239,7 +1241,7 @@ The techniques also provide ways to describe changing (dynamic) prediction struc
 #### A.5 Signaling (Setup) Information
 
 The URI for declaring this header extension in an extmap attribute is "https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension".
-
+{: .needs-tests }
 
 #### A.6 Examples
 
