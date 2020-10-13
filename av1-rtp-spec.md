@@ -147,7 +147,7 @@ To facilitate the work of selectively forwarding portions of a scalable video bi
 ### 4.4 AV1 Aggregation Header
 
 The aggregation header is carried in the first byte of the RTP payload and is used to indicate if the first and/or last OBU element in the payload is a fragment of an OBU. The aggregation header is not part of the AV1 bitstream and MUST NOT be presented to an AV1 decoder.
-{: .needs-tests }
+{:& https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_av1_unittest.cc?q=AssembleFrameFromOnePacketWithOneObu }
 
 The structure is as follows.
 
@@ -465,6 +465,7 @@ An example of media representation in SDP is as follows:
 * m=video 49170 RTP/AVPF 98
 * a=rtpmap:98 AV1/90000
 * a=fmtp:98 profile=2; level-idx=8; tier=1;
+
 
 #### 7.3.1 Level upgrading
 In the following example the offer is accepted with level upgrading. The level to use in the offerer-to-answerer direction is Level 2.0, and the level to use in the answerer-to-offerer direction is Level 3.0/Tier 1. The answerer is allowed to send at any level up to and including Level 2.0, and the offerer is allowed to send at any level up to and including Level 3.0/Tier 1:
@@ -798,7 +799,7 @@ Required indication
 
 Switch indication
 : An indication associated with a specific Decode target that all subsequent frames for that Decode target will be decodable if the frame containing the indication is decodable.
-{: .needs-tests }
+{:& https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/video_coding/codecs/av1/scalability_structure_unittest.cc?q=NoFrameDependsThroughSwitchIndication }
 
 
 #### A.3 Media Stream Requirements
@@ -865,16 +866,6 @@ ns(n) {
   return (v << 1) - m + extra_bit
 }
 </code></pre>
-
-| Symbol name               | Value | Description                                         |
-| ------------------------- | ----- | --------------------------------------------------- |
-| MAX_TEMPLATE_ID           | 63    | Maximum value for a frame_dependency_template_id to identify a template
-| MAX_SPATIAL_ID            | 3     | Maximum value for a FrameSpatialId
-| MAX_TEMPORAL_ID           | 7     | Maximum value for a FrameTemporalId
-{:.table .table-sm .table-bordered }
-
-Table A.1. Syntax constants
-{: .caption }
 
 <pre><code>
 dependency_descriptor( sz ) {
@@ -944,8 +935,7 @@ template_dependency_structure() {
 
 <pre><code>
 frame_dependency_definition() {
-  templateIndex = (frame_dependency_template_id + (MAX_TEMPLATE_ID + 1) -
-                   template_id_offset) % (MAX_TEMPLATE_ID + 1)
+  templateIndex = (frame_dependency_template_id + 64 - template_id_offset) % 64
   If (templateIndex >= TemplatesCnt) {
     return  // error
   }
@@ -1017,7 +1007,7 @@ render_resolutions() {
 template_dtis() {
   for (templateIndex = 0; templateIndex < TemplatesCnt; templateIndex++) {
     for (dtiIndex = 0; dtiIndex < DtisCnt; dtiIndex++) {
-      // See table A.2 below for meaning of DTI values.
+      // See table A.1 below for meaning of DTI values.
       <b>template_dti[templateIndex][dtiIndex]</b> = f(2)
     }
   }
@@ -1027,7 +1017,7 @@ template_dtis() {
 <pre><code>
 frame_dtis() {
   for (dtiIndex = 0; dtiIndex < DtisCnt; dtiIndex++) {
-    // See table A.2 below for meaning of DTI values.
+    // See table A.1 below for meaning of DTI values.
     <b>frame_dti[dtiIndex]</b> = f(2)
   }
 }
@@ -1146,7 +1136,7 @@ The semantics pertaining to the Dependency Descriptor syntax section above is de
 * **resolutions_present_flag**: indicates the presence of render_resolutions. When the resolutions_present_flag is set to 1, render_resolutions MUST be present; otherwise render_resolutions MUST NOT be present.
 {: .needs-tests }
 
-* **next_layer_idc**: used to determine spatial ID and temporal ID for the next Frame dependency template. Table A.3 describes how the spatial ID and temporal ID values are determined. A next_layer_idc equal to 3 indicates that no more Frame dependency templates are present in the Frame dependency structure.
+* **next_layer_idc**: used to determine spatial ID and temporal ID for the next Frame dependency template. Table A.2 describes how the spatial ID and temporal ID values are determined. A next_layer_idc equal to 3 indicates that no more Frame dependency templates are present in the Frame dependency structure.
 {: .needs-tests }
 
 * **max_render_width_minus_1[spatial_id]**: indicates the maximum render width minus 1 for frames with spatial ID equal to spatial_id.
@@ -1161,7 +1151,7 @@ The semantics pertaining to the Dependency Descriptor syntax section above is de
 * **decode_target_protected_by[dtIndex]**: the index of the Chain that protects the Decode target, dtIndex. When chains_cnt > 0, each Decode target MUST be protected by exactly one Chain.
 {: .needs-tests }
 
-* **template_dti[templateIndex][]**: an array of size dtis_cnt_minus_one + 1 containing Decode Target Indications for the Frame dependency template having index value equal to templateIndex. Table A.2 contains a description of the Decode Target Indication values.
+* **template_dti[templateIndex][]**: an array of size dtis_cnt_minus_one + 1 containing Decode Target Indications for the Frame dependency template having index value equal to templateIndex. Table A.1 contains a description of the Decode Target Indication values.
 {: .needs-tests }
 
 * **template_chain_fdiff[templateIndex][]**: an array of size chains_cnt containing chain-FDIFF values for the Frame dependency template having index value equal to templateIndex. In a template, the values of chain-FDIFF can be in the range 0 to 15, inclusive.
@@ -1173,15 +1163,15 @@ The semantics pertaining to the Dependency Descriptor syntax section above is de
 * **fdiff_minus_one**: the difference between frame_number and the frame_number of the Referred frame minus one. The calculation is done modulo the size of the frame_number field.
 {: .needs-tests }
 
-| DTI                    | Value |                                                        |
-| ---------------------- | ----- | ------------------------------------------------------ |
-| Not present indication | 0     | No payload for this Decode target is present.
-| Discardable indication | 1     | Payload for this Decode target is present and discardable.
-| Switch indication      | 2     | Payload for this Decode target is present and switch is possible (Switch indication).
-| Required indication    | 3     | Payload for this Decode target is present but it is neither discardable nor is it a Switch indication.
+| DTI                    | Value | Symbol |                                                        |
+| ---------------------- | ----- | ------ | ------------------------------------------------------ |
+| Not present indication | 0     | -      | No payload for this Decode target is present.
+| Discardable indication | 1     | D      | Payload for this Decode target is present and discardable.
+| Switch indication      | 2     | S      | Payload for this Decode target is present and switch is possible (Switch indication).
+| Required indication    | 3     | R      | Payload for this Decode target is present but it is neither discardable nor is it a Switch indication.
 {:.table .table-sm .table-bordered }
 
-Table A.2. Decode Target Indication (DTI) values.
+Table A.1. Decode Target Indication (DTI) values.
 {: .caption }
 
 **Frame dependency defintion**
@@ -1203,7 +1193,7 @@ Table A.2. Decode Target Indication (DTI) values.
 | 3              | No more Frame dependency templates are present in the Frame dependency structure.
 {:.table .table-sm .table-bordered }
 
-Table A.3. Derivation Of Next Spatial ID And Temporal ID Values.
+Table A.2. Derivation Of Next Spatial ID And Temporal ID Values.
 {: .caption }
 
 
@@ -1312,6 +1302,7 @@ To better understand how Chains are used, consider two receiving clients. One cl
 The DT2 client would track Chain0. From the DD received with F5, the client would detect that the last essential frame is F1. Consequently, it is safe to start decoding F5. Even if the DT2 client does not receive F3, frames following F5 are decodable due to the fact that F3 is Discardable for DT2.
 
 The DT3 client would track Chain1. From the DD received with F5, the client would detect that the last essential frame is F2. Thus it is not safe to start decoding F5. Due to the fact that frames must be decoded in decode order and F2 is essential for all HD frames, decoding F5 before F2 would prevent the decoding of F2 and all subsequent HD frames. The client therefore should wait for F2. The client may send a Generic NACK per [RFC4585] in order to notify the sender that packets have been missed since the receipt of F1, or may send a Layer Refresh Request (LRR) per [I-D.ietf-avtext-lrr] in order to refresh the media substream.
+
 
 ##### A.6.1.2 Spatial Upswitch
 In the following example, spatial upswitch is discussed in the context of the L2T1 scalability structure.
@@ -1436,7 +1427,7 @@ The first way uses fewer templates and therefore requires fewer bits in the firs
 
 #### A.6.2 Scalability structure examples
 
-Each example in this section contains a prediction structure figure and a table describing the associated Frame dependency structure. The Frame dependency structure table column headings have the meanings listed below. For the DTI- related columns, Table A.4 shows the symbol used to represent each DTI value.
+Each example in this section contains a prediction structure figure and a table describing the associated Frame dependency structure. The Frame dependency structure table column headings have the meanings listed below. For the DTI- related columns, Table A.1 shows the symbol used to represent each DTI value.
 
   * Idx - template index
   * S - spatial ID
@@ -1444,17 +1435,6 @@ Each example in this section contains a prediction structure figure and a table 
   * Fdiffs - comma delimited list of TemplateFdiff[Idx] values
   * Chain(s) - **template_chain_fdiff[Idx]** values for each Chain
   * DTI - **template_dti[Idx]**
-
-| DTI                    | Value | Symbol   |
-| ---------------------- | ----- | -------- |
-| Not present indication | 0     | -        |
-| Discardable indication | 1     | D        |
-| Switch indication      | 2     | S        |
-| Required indication    | 3     | R        |
-{:.table .table-sm .table-bordered }
-
-Table A.4. DTI values
-{: .caption }
 
 
 ##### A.6.2.1 L1T3 Single Spatial Layer with 3 Temporal Layers

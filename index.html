@@ -277,7 +277,7 @@
 <section>
 <h3 id="av1-aggregation-header">4.4 AV1 Aggregation Header</h3>
 
-<p class="needs-tests">The aggregation header is carried in the first byte of the RTP payload and is used to indicate if the first and/or last OBU element in the payload is a fragment of an OBU. The aggregation header is not part of the AV1 bitstream and MUST NOT be presented to an AV1 decoder.</p>
+<p data-tests="https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_av1_unittest.cc?q=AssembleFrameFromOnePacketWithOneObu">The aggregation header is carried in the first byte of the RTP payload and is used to indicate if the first and/or last OBU element in the payload is a fragment of an OBU. The aggregation header is not part of the AV1 bitstream and MUST NOT be presented to an AV1 decoder.</p>
 
 <p>The structure is as follows.</p>
 
@@ -1066,7 +1066,7 @@ new coded video sequences for other encodings from the same source(s).</p>
 
 <p class="alert alert-info"><strong>Note:</strong> A frame belonging to more than one Decode target may be required for one Decode target and not required (either discardable or switch) for another.</p>
 
-<dl class="needs-tests">
+<dl data-tests="https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/video_coding/codecs/av1/scalability_structure_unittest.cc?q=NoFrameDependsThroughSwitchIndication">
   <dt>Switch indication</dt>
   <dd>An indication associated with a specific Decode target that all subsequent frames for that Decode target will be decodable if the frame containing the indication is decodable.</dd>
 </dl>
@@ -1139,35 +1139,6 @@ ns(n) {
 }
 </code></pre>
 
-<table class="table table-sm table-bordered">
-  <thead>
-    <tr>
-      <th>Symbol name</th>
-      <th>Value</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>MAX_TEMPLATE_ID</td>
-      <td>63</td>
-      <td>Maximum value for a frame_dependency_template_id to identify a template</td>
-    </tr>
-    <tr>
-      <td>MAX_SPATIAL_ID</td>
-      <td>3</td>
-      <td>Maximum value for a FrameSpatialId</td>
-    </tr>
-    <tr>
-      <td>MAX_TEMPORAL_ID</td>
-      <td>7</td>
-      <td>Maximum value for a FrameTemporalId</td>
-    </tr>
-  </tbody>
-</table>
-
-<p class="caption">Table A.1. Syntax constants</p>
-
 <pre><code>
 dependency_descriptor( sz ) {
   TotalConsumedBits = 0
@@ -1236,8 +1207,7 @@ template_dependency_structure() {
 
 <pre><code>
 frame_dependency_definition() {
-  templateIndex = (frame_dependency_template_id + (MAX_TEMPLATE_ID + 1) -
-                   template_id_offset) % (MAX_TEMPLATE_ID + 1)
+  templateIndex = (frame_dependency_template_id + 64 - template_id_offset) % 64
   If (templateIndex &gt;= TemplatesCnt) {
     return  // error
   }
@@ -1309,7 +1279,7 @@ render_resolutions() {
 template_dtis() {
   for (templateIndex = 0; templateIndex &lt; TemplatesCnt; templateIndex++) {
     for (dtiIndex = 0; dtiIndex &lt; DtisCnt; dtiIndex++) {
-      // See table A.2 below for meaning of DTI values.
+      // See table A.1 below for meaning of DTI values.
       <b>template_dti[templateIndex][dtiIndex]</b> = f(2)
     }
   }
@@ -1319,7 +1289,7 @@ template_dtis() {
 <pre><code>
 frame_dtis() {
   for (dtiIndex = 0; dtiIndex &lt; DtisCnt; dtiIndex++) {
-    // See table A.2 below for meaning of DTI values.
+    // See table A.1 below for meaning of DTI values.
     <b>frame_dti[dtiIndex]</b> = f(2)
   }
 }
@@ -1453,7 +1423,7 @@ frame_chains() {
 </ul>
 
 <ul class="needs-tests">
-  <li><strong>next_layer_idc</strong>: used to determine spatial ID and temporal ID for the next Frame dependency template. Table A.3 describes how the spatial ID and temporal ID values are determined. A next_layer_idc equal to 3 indicates that no more Frame dependency templates are present in the Frame dependency structure.</li>
+  <li><strong>next_layer_idc</strong>: used to determine spatial ID and temporal ID for the next Frame dependency template. Table A.2 describes how the spatial ID and temporal ID values are determined. A next_layer_idc equal to 3 indicates that no more Frame dependency templates are present in the Frame dependency structure.</li>
 </ul>
 
 <ul class="needs-tests">
@@ -1473,7 +1443,7 @@ frame_chains() {
 </ul>
 
 <ul class="needs-tests">
-  <li><strong>template_dti[templateIndex][]</strong>: an array of size dtis_cnt_minus_one + 1 containing Decode Target Indications for the Frame dependency template having index value equal to templateIndex. Table A.2 contains a description of the Decode Target Indication values.</li>
+  <li><strong>template_dti[templateIndex][]</strong>: an array of size dtis_cnt_minus_one + 1 containing Decode Target Indications for the Frame dependency template having index value equal to templateIndex. Table A.1 contains a description of the Decode Target Indication values.</li>
 </ul>
 
 <ul class="needs-tests">
@@ -1493,6 +1463,7 @@ frame_chains() {
     <tr>
       <th>DTI</th>
       <th>Value</th>
+      <th>Symbol</th>
       <th> </th>
     </tr>
   </thead>
@@ -1500,27 +1471,31 @@ frame_chains() {
     <tr>
       <td>Not present indication</td>
       <td>0</td>
+      <td>-</td>
       <td>No payload for this Decode target is present.</td>
     </tr>
     <tr>
       <td>Discardable indication</td>
       <td>1</td>
+      <td>D</td>
       <td>Payload for this Decode target is present and discardable.</td>
     </tr>
     <tr>
       <td>Switch indication</td>
       <td>2</td>
+      <td>S</td>
       <td>Payload for this Decode target is present and switch is possible (Switch indication).</td>
     </tr>
     <tr>
       <td>Required indication</td>
       <td>3</td>
+      <td>R</td>
       <td>Payload for this Decode target is present but it is neither discardable nor is it a Switch indication.</td>
     </tr>
   </tbody>
 </table>
 
-<p class="caption">Table A.2. Decode Target Indication (DTI) values.</p>
+<p class="caption">Table A.1. Decode Target Indication (DTI) values.</p>
 
 <p><strong>Frame dependency defintion</strong></p>
 
@@ -1563,7 +1538,7 @@ frame_chains() {
   </tbody>
 </table>
 
-<p class="caption">Table A.3. Derivation Of Next Spatial ID And Temporal ID Values.</p>
+<p class="caption">Table A.2. Derivation Of Next Spatial ID And Temporal ID Values.</p>
 
 </section>
 
@@ -2123,7 +2098,7 @@ Chain1</p>
 <section>
 <h4 id="a62-scalability-structure-examples">A.6.2 Scalability structure examples</h4>
 
-<p>Each example in this section contains a prediction structure figure and a table describing the associated Frame dependency structure. The Frame dependency structure table column headings have the meanings listed below. For the DTI- related columns, Table A.4 shows the symbol used to represent each DTI value.</p>
+<p>Each example in this section contains a prediction structure figure and a table describing the associated Frame dependency structure. The Frame dependency structure table column headings have the meanings listed below. For the DTI- related columns, Table A.1 shows the symbol used to represent each DTI value.</p>
 
 <ul>
   <li>Idx - template index</li>
@@ -2133,40 +2108,6 @@ Chain1</p>
   <li>Chain(s) - <strong>template_chain_fdiff[Idx]</strong> values for each Chain</li>
   <li>DTI - <strong>template_dti[Idx]</strong></li>
 </ul>
-
-<table class="table table-sm table-bordered">
-  <thead>
-    <tr>
-      <th>DTI</th>
-      <th>Value</th>
-      <th>Symbol</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Not present indication</td>
-      <td>0</td>
-      <td>-</td>
-    </tr>
-    <tr>
-      <td>Discardable indication</td>
-      <td>1</td>
-      <td>D</td>
-    </tr>
-    <tr>
-      <td>Switch indication</td>
-      <td>2</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <td>Required indication</td>
-      <td>3</td>
-      <td>R</td>
-    </tr>
-  </tbody>
-</table>
-
-<p class="caption">Table A.4. DTI values</p>
 
 <section>
 <h5 id="a621-l1t3-single-spatial-layer-with-3-temporal-layers">A.6.2.1 L1T3 Single Spatial Layer with 3 Temporal Layers</h5>
