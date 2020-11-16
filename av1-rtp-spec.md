@@ -315,7 +315,6 @@ The following packetization grouping would not be allowed, since it combines dat
 ## 6 MANE and SFM Behavior
 
 If a packet contains an OBU with an OBU extension header then the entire packet is considered associated with the layer identified by the temporal_id and spatial_id combination that are indicated in the extension header. If a packet does not contain any OBU with an OBU extension header, then it is considered to be associated with all operating points.
-{: .needs-tests }
 
 The general function of a MANE or SFM is to selectively forward packets to receivers. To make forwarding decisions a MANE may inspect the media payload, so that it may need to be able to parse the AV1 bitstream and if so, cannot function when end-to-end encryption is enabled. An SFM does not parse the AV1 bitstream and therefore needs to obtain the information relevant to selective forwarding by other means, such as the Dependency Descriptor described in Appendix A. In addition to enabling bitstream-independent forwarding and support for end-to-end encryption, the Dependency Descriptor also enables forwarding where the metadata OBU provided in the AV1 bitstream is not sufficient to express the structure of the stream.
 
@@ -329,7 +328,7 @@ When simulcast encodings are transported each on a separate RTP stream, each sim
 {:& untestable }
 
 When simulcast encodings are transported on a single RTP stream, RIDs are not used and the Sequence Header and Scalability Metadata OBUs (utilizing an 'S' mode) convey information relating to all encodings. This simulcast transport mode is possible since AV1 enables multiple simulcast encodings to be provided within a single bitstream. However, in this mode, RTCP feedback cannot be provided for each simulcast encoding, but only for the aggregate, since only a single SSRC is used. This mode of simulcast transport MAY be supported by SFMs.
-{: .needs-tests }
+{:& untestable }
 
 
 ### 6.1.1 Example
@@ -454,9 +453,9 @@ When AV1 is offered over RTP using SDP in an Offer/Answer model as described in 
 When AV1 over RTP is offered with SDP in a declarative style, as in Real Time Streaming Protocol (RTSP) [RFC2326] or Session Announcement Protocol (SAP) [RFC2974], the following considerations apply.
 
 * All parameters capable of indicating both stream properties and receiver capabilities are used to indicate only stream properties. In this case, the parameters **profile**, **level-idx** and **tier** declare only the values used by the stream, not the capabilities for receiving streams.
-{: .needs-tests }
+{:& untestable }
 * A receiver of the SDP is required to support all parameters and values of the parameters provided; otherwise, the receiver MUST reject (RTSP) or not participate in (SAP) the session. It falls on the creator of the session to use values that are expected to be supported by the receiving application.
-{: .needs-tests }
+{:& untestable }
 
 
 ### 7.3 Examples
@@ -643,7 +642,7 @@ Upon reception of an FIR, for every SSRC indicated in the FIR message,
 the AV1 sender MUST send a new coded video sequence as soon as possible.
 See section 7.5 of the [AV1 video codec][AV1] for the definition
 of a new coded video sequence.
-{: .needs-tests }
+{:& untestable }
 
 If simulcast encodings of the same source are transported on distinct SSRCs,
 then in addition to sending a new coded video sequence for each encoding
@@ -665,10 +664,10 @@ The Layer Refresh Request specified in [I-D.ietf-avtext-lrr] is designed to allo
                              Figure 4
 
 AV1 streams MUST use the Layer Refresh Request format defined for VP9 in Section 5.3 of [I-D.ietf-payload-vp9], with the high order bit of its three-bit SID field set to 0. Figure 4 shows the format for AV1 streams. Notice that SID here is two bits. SID is associated with AV1's spatial_id and TID is associated with AV1's temporal_id. See Sections 2, 5.3.3, and 6.2.3 of the AV1 bitstream specification [AV1] for details on the temporal_id and spatial_id fields.
-{: .needs-tests }
+{:& untestable }
 
 Identification of a layer refresh frame may be performed by examining the coding dependency structure of the coded video sequence it belongs to. This may be provided by the scalability metadata (Sections 5.8.5 and 6.7.5 of [AV1]), either in the form of a pre-defined scalability mode or through a scalability structure (Sections 5.8.6 and 6.7.6 of [AV1]). Alternatively, the Dependency Descriptor RTP header extension that is specified in Appendix A of this document may be used.
-{: .needs-tests }
+{:& untestable }
 
 
 ## 9 IANA Considerations
@@ -789,7 +788,7 @@ Referred frame
 
 Required indication
 : An indication for a frame, associated with a given Decode target, that it belongs to the Decode target and has neither a Discardable indication nor a Switch indication.
-{:& tested-in-demo }
+{:& https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L17 }
 
 **Note:** A frame belonging to more than one Decode target may be required for one Decode target and not required (either discardable or switch) for another.
 {:.alert .alert-info }
@@ -850,7 +849,7 @@ To facilitate the work of selectively forwarding portions of a scalable video bi
 * frame_number of the current frame
 * frame_number of each of the Referred frames
 * frame_number of last frame in each Chain
-{:& tested-in-demo }
+{: .needs-tests }
 
 
 ##### A.6.1 Templates
@@ -1177,19 +1176,19 @@ The semantics pertaining to the Dependency Descriptor syntax section above is de
 **Mandatory Descriptor Fields**
 
 * **start_of_frame**: MUST be set to 1 if the first payload byte of the RTP packet is the beginning of a new frame, and MUST be set to 0 otherwise. Note that this frame might not be the first frame of a temporal unit.
-{:& tested-in-demo }
+{: .needs-tests }
 
 * **end_of_frame**: MUST be set to 1 for the final RTP packet of a frame, and MUST be set to 0 otherwise. Note that, if spatial scalability is in use, more frames from the same temporal unit may follow.
-{:& tested-in-demo }
+{: .needs-tests }
 
 * **frame_number**: is represented using 16 bits and increases strictly monotonically in decode order. frame_number MAY start on a random number, and MUST wrap after reaching the maximum value. All packets of the same frame MUST have the same frame_number value.
-{:& tested-in-demo }
+{: .needs-tests }
 
 **Note:** frame_number is not the same as Frame ID in [AV1 specification][AV1].
 {:.alert .alert-info }
 
 * **frame_dependency_template_id**: ID of the Frame dependency template to use. MUST be in the range of template_id_offset to (template_id_offset + TemplateCnt - 1), inclusive. frame_dependency_template_id MUST be the same for all packets of the same frame.
-{:& tested-in-demo }
+{:& https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L222, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L310, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L426, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L556 }
 
 **Note:** values outside of the valid range may be caused by a change of the template dependency structure, that is a packet with the new template dependency structure was lost or delayed.
 {:.alert .alert-info }
@@ -1200,22 +1199,22 @@ The semantics pertaining to the Dependency Descriptor syntax section above is de
 **Extended Descriptor Fields**
 
 * **template_dependency_structure_present_flag**: indicates the presence the template_dependency_structure. When the template_dependency_structure_present_flag is set to 1, template_dependency_structure MUST be present; otherwise template_dependency_structure MUST NOT be present. template_dependency_structure_present_flag MUST be set to 1 for the first packet of a coded video sequence, and MUST be set to 0 otherwise.
-{:& tested-in-demo }
+{: .needs-tests }
 
 * **active_decode_targets_present_flag**: indicates the presence of active_decode_targets_bitmask. When set to 1, active_decode_targets_bitmask MUST be present, otherwise, active_decode_targets_bitmask MUST NOT be present.
-{:& tested-in-demo }
+{: .needs-tests }
 
 * **active_decode_targets_bitmask**: contains a bitmask that indicates which decode targets are available for decoding. Bit i is equal to 1 if decode target i is available for decoding, 0 otherwise.
 {:& https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/video_coding/codecs/av1/libaom_av1_encoder_unittest.cc?q=NoBitrateOnTopLayerRefecltedInActiveDecodeTargets }
 
 * **custom_dtis_flag**: indicates the presence of frame_dtis. When set to 1, frame_dtis MUST be present. Otherwise, frame_dtis MUST NOT be present.
-{:& tested-in-demo }
+{: .needs-tests }
 
 * **custom_fdiffs_flag**: indicates the presence of frame_fdiffs. When set to 1, frame_fdiffs MUST be present. Otherwise, frame_fdiffs MUST NOT be present.
-{:& tested-in-demo }
+{: .needs-tests }
 
 * **custom_chains_flag**: indicates the presence of frame_chain_fdiff. When set to 1, frame_chain_fdiff MUST be present. Otherwise, frame_chain_fdiff MUST NOT be present.
-{:& tested-in-demo }
+{: .needs-tests }
 
 **Template dependency structure**
 
@@ -1223,37 +1222,37 @@ The semantics pertaining to the Dependency Descriptor syntax section above is de
 {:& https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_sender_video_unittest.cc?q=SetDiffentVideoStructureAvoidsCollisionWithThePreviousStructure }
 
 * **dt_cnt_minus_one**: dt_cnt_minus_one + 1 indicates the number of Decode targets present in the coded video sequence.
-{:& tested-in-demo }
+{:& https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L222, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L310, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L426, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L556 }
 
 * **resolutions_present_flag**: indicates the presence of render_resolutions. When the resolutions_present_flag is set to 1, render_resolutions MUST be present; otherwise render_resolutions MUST NOT be present.
-{:& tested-in-demo }
+{: .needs-tests }
 
 * **next_layer_idc**: used to determine spatial ID and temporal ID for the next Frame dependency template. Table A.2 describes how the spatial ID and temporal ID values are determined. A next_layer_idc equal to 3 indicates that no more Frame dependency templates are present in the Frame dependency structure.
-{:& tested-in-demo }
+{: .needs-tests }
 
 * **max_render_width_minus_1[spatial_id]**: indicates the maximum render width minus 1 for frames with spatial ID equal to spatial_id.
-{:& tested-in-demo }
+{:& https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L426, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L556 }
 
 * **max_render_height_minus_1[spatial_id]**: indicates the maximum render height minus 1 for frames with spatial ID equal to spatial_id.
-{:& tested-in-demo }
+{:& https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L426, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L556 }
 
 * **chain_cnt**: indicates the number of Chains. When set to zero, the Frame dependency structure does not utilize protection with Chains.
 {:& https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/video_coding/codecs/av1/scalability_structure_unittest.cc?q=NumberOfDecodeTargetsAndChainsAreInRangeAndConsistent }
 
 * **decode_target_protected_by[dtIndex]**: the index of the Chain that protects Decode target with index equal to dtIndex. When chain_cnt > 0, each Decode target MUST be protected by exactly one Chain.
-{:& tested-in-demo }
+{:& https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L222, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L310, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L426, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L556 }
 
 * **template_dti[templateIndex][]**: an array of size dt_cnt_minus_one + 1 containing Decode Target Indications for the Frame dependency template having index value equal to templateIndex. Table A.1 contains a description of the Decode Target Indication values.
-{:& tested-in-demo }
+{:& https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L222, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L310, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L426, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L556 }
 
 * **template_chain_fdiff[templateIndex][]**: an array of size chain_cnt containing frame_chain_fdiff values for the Frame dependency template having index value equal to templateIndex. In a template, the values of frame_chain_fdiff can be in the range 0 to 15, inclusive.
-{:& tested-in-demo }
+{:& https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L222, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L310, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L426, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L556 }
 
 * **fdiff_follows_flag**: indicates the presence of a frame difference value. When the fdiff_follows_flag is set to 1, fdiff_minus_one MUST immediately follow; otherwise a value of 0 indicates no more frame difference values are present for the current Frame dependency template.
-{:& tested-in-demo }
+{: .needs-tests }
 
 * **fdiff_minus_one**: the difference between frame_number and the frame_number of the Referred frame minus one. The calculation is done modulo the size of the frame_number field.
-{:& tested-in-demo }
+{:& https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L222, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L310, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L426, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L556 }
 
 | DTI                    | Value | Symbol |                                                        |
 | ---------------------- | ----- | ------ | ------------------------------------------------------ |
@@ -1269,13 +1268,13 @@ Table A.1. Decode Target Indication (DTI) values.
 **Frame dependency defintion**
 
 * **next_fdiff_size**: indicates the size of following fdiff_minus_one syntax elements in 4-bit units. When set to a non-zero value, fdiff_minus_one MUST immediately follow; otherwise a value of 0 indicates no more frame difference values are present.
-{:& tested-in-demo }
+{: .needs-tests }
 
 * **frame_dti[dtIndex]**: Decode Target Indication describing the relationship between the current frame and the Decode target having index equal to dtIndex. Table A.2 contains a description of the Decode Target Indication values.
-{:& tested-in-demo }
+{:& https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L222, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L310, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L426, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L556 }
 
 * **frame_chain_fdiff[chainIdx]**: indicates the difference between the frame_number and the frame_number of the previous frame in the Chain having index equal to chainIdx. A value of 0 indicates no previous frames are needed for the Chain. For example, when a packet containing frame_chain_fdiff[chainIdx]=3 and frame_number=112 the previous frame in the Chain with index equal to chainIdx has frame_number=109. The calculation is done modulo the size of the frame_number field.
-{:& tested-in-demo }
+{:& https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L222, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L310, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L426, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L556 }
 
 | next_layer_idc | Next Spatial ID And Temporal ID Values                   |
 | -------------- | -------------------------------------------------------- |
@@ -1293,7 +1292,7 @@ Table A.2. Derivation Of Next Spatial ID And Temporal ID Values.
 #### A.7 Signaling (Setup) Information
 
 The URI for declaring this header extension in an extmap attribute is "https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension".
-{:& tested-in-demo }
+{: .needs-tests }
 
 
 #### A.8 Examples
