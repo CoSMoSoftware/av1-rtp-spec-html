@@ -63,7 +63,7 @@ Open Bitstream Unit (OBU)
 : A scalability mode in which multiple encodings are sent on the same SSRC. This includes the S2T1, S2T1h, S2T2, S2T2h, S2T3, S2T3h, S3T1, S3T1h, S3T2, S3T2h, S3T3 and S3T3h scalability modes defined in Section 6.7.5 of [AV1]. 
 
 Selective Forwarding Middlebox (SFM)
-: A middlebox that relays streams among transmitting and receiving clients by selectively forwarding packets without requiring access to the media ([RFC7667]).
+: A middlebox that relays streams among transmitting and receiving clients by selectively forwarding packets without accessing the media ([RFC7667]).
 
 Temporal unit
 : Defined by the AV1 specification: A temporal unit consists of all the OBUs that are associated with a specific, distinct time instant.
@@ -682,10 +682,7 @@ RTP packets using the payload format defined in this document are subject to the
 
 Note that the appropriate mechanism to ensure confidentiality and integrity of RTP packets and their payloads is very dependent on the application and on the transport and signaling protocols employed. Thus, although SRTP is given as an example above, other possible choices exist. See [RFC7202].
 
-Decoders MUST discard reserved OBU types and reserved metadata OBU types, and SHOULD filter out temporal delimiter and tile list OBUs carried within the RTP payload. Middle boxes SHOULD NOT parse OBUs they do not support. SFMs MUST NOT parse OBUs at all, but instead MUST make forwarding decisions based on the information within the RTP header and Dependency Descriptor RTP header extension.
-{:& untestable }
-
-When integrity protection is applied to a stream, care MUST be taken that the stream being transported may be scalable; hence a receiver may be able to access only part of the entire stream.
+Decoders MUST discard reserved OBU types and reserved metadata OBU types, and SHOULD filter out temporal delimiter and tile list OBUs carried within the RTP payload. Middle boxes SHOULD NOT parse OBUs they do not support. 
 {:& untestable }
 
 End-to-end security services such as authentication, integrity, or confidentiality protection could prevent an SFM or MANE from performing media-aware operations other than discarding complete packets. For example, repacketization requires that the MANE have access to the cleartext media payload. The Dependency Descriptor RTP extension described in Appendix A allows discarding of packets in a media-aware way even when confidentiality protection is used.
@@ -765,7 +762,7 @@ Decode target
 
 Decode Target Indication (DTI)
 : Describes the relationship of a frame to a Decode target. The DTI indicates four distinct relationships: 'not present', 'discardable', 'switch', and 'required'.
-{:& tested-in-demo }
+{:& https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L17 }
 
 Discardable indication
 : An indication for a frame, associated with a given Decode target, that it will not be a Referred frame for any frame belonging to that Decode target.
@@ -780,7 +777,7 @@ Frame dependency structure
 
 Frame dependency template
 : Contains frame description information that many frames have in common. Includes values for spatial ID, temporal ID, DTIs, frame dependencies, and Chain information.
-{:& tested-in-demo }
+{:& https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L222, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L310, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L426, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L556 }
 
 Not present indication
 : An indication for a frame, that it is not associated with a given Decode target.
@@ -807,16 +804,45 @@ Switch indication
 A bitstream conformant to this extension must adhere to the following statement(s).
 
 A frame for which all Referred frames are decodable MUST itself be decodable.
-{:& tested-in-demo }
+{:& https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L222, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L310, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L426, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L556 }
 
 **Note:** dependencies are not limited to motion compensated prediction, other relevant information such as entropy decoder state also constitute dependencies.
 {:.alert .alert-info }
 
 
-#### A.4 Dependency Descriptor Format
+#### A.4 Deciding Decodability using Chains
 
-To facilitate the work of selectively forwarding portions of a scalable video bitstream, as is done by a selective forwarding middlebox (SFM), for each packet, the following information is made available (even though not all elements are present in every packet).
-{:& tested-in-demo }
+Chains provide Instantaneous Decidability of Decodability (IDD). That is, the ability to decide, immediately upon receiving the very first packet after packet loss, if the lost packet(s) contained a packet that is needed to decode frames in packets that follow. The concept of Chains is a generalization of the TL0PICIDX field used in the RTP payload formats for scalable codecs such as H.264, VP8, and VP9. A chain defines a sequence of frames essential to decode Decode targets protected by that Chain. Frames in the Chain MUST be propagated and decoded. All other frames associated with the Decode target MAY be dropped, temporarily reducing Decode target fidelity. As long as all frames in the Chain are decoded, it should be possible to recover the Decode target’s full fidelity without requesting additional information from the sender (e.g., a key frame request).
+{:& https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L222, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L426 }
+
+The Frame dependency structure includes a mapping between Decode targets and Chains. The mapping gives an SFM the ability to determine the set of Chains it needs to track in order to ensure that the corresponding Decode targets remain decodable. Every packet includes, for every Chain, the frame_number for the previous frame in that Chain. An SFM can instantaneously detect a broken Chain by checking whether or not the previous frame in that Chain has been received. Due to the fact that Chain information for all Chains is present in all packets, an SFM can detect a broken Chain regardless of whether the first packet received after a loss is part of that Chain.
+
+In order to start/restart Chains, a Dependency Descriptor may reference the frame_number of the frame carried in the same RTP packet to indicate that no previous frames are needed for the Chain. Key frames are common cases for such '(re)start of Chain' indications.
+
+
+#### A.5 Switching
+
+An SFM may begin forwarding packets belonging to a new Decode target beginning with a decodable frame containing a Switch indication to that Decode target.
+
+An SFM may change which Decode targets it forwards. Similarly, a sender may change the Decode targets that are currently being produced. In both cases, not all Decode targets may be available for decoding. Such changes SHOULD be signaled to the receiver using the active_decode_targets_bitmask and SHOULD be signaled to the receiver in a reliable way.
+{: .needs-tests }
+
+When not all Decode targets are active, the active_decode_targets_bitmask MUST be sent in every packet where the template_dependency_structure_present_flag is equal to 1.
+{: .needs-tests }
+
+**Note:** One way to achieve reliable delivery is to include the active_decode_targets_bitmask in every packet until a receiver report acknowledges a packet containing the latest active_decode_targets_bitmask. Alternately, for many video streams, reliable delivery may be achieved by including the active_decode_targets_bitmask on every chain in the first packet after a change in active decode targets.
+{:.alert .alert-info }
+
+Chains protecting no active decode targets MUST be ignored.
+{: .needs-tests }
+
+**Note:** To increase the chance of using a predefined template, chains protecting no active decode targets may refer to any frame, including an RTP frame that was never produced.
+{:.alert .alert-info }
+
+
+#### A.6 Dependency Descriptor Format
+
+To facilitate the work of selectively forwarding portions of a scalable video bitstream, as is done by an SFM, for each packet, the following information is made available (even though not all elements are present in every packet).
 
 * spatial ID
 * temporal ID
@@ -827,7 +853,14 @@ To facilitate the work of selectively forwarding portions of a scalable video bi
 {:& tested-in-demo }
 
 
-##### A.4.1 Syntax
+##### A.6.1 Templates
+
+To reduce overhead, repetitive information can be predefined with templates and sent once. Subsequent packets refer to a template containing predefined information. In particular, when a video encoder uses an unchanging (static) prediction structure to encode a scalable bitstream, parameter values used to describe the bitstream repeat in a predictable way. The techniques described in this document provide means to send repeating information as predefined templates that can be referenced at future points of the bitstream. Since a reference index to a template requires fewer bits to convey than the associated structures themselves, header overhead can be substantially reduced.
+
+The techniques also provide ways to describe changing (dynamic) prediction structures. In cases where custom dependency information is required, parameter values are explicitly defined rather than referenced in a predefined template. Typically, even in dynamic structures the majority of frames still follow one of the predefined templates.
+
+
+##### A.6.2 Syntax
 
 The syntax for the descriptor is described in pseudo-code form in this section. Parameters read directly from the bitstream appear in bold.
 
@@ -850,6 +883,20 @@ read_bit() {
 </code></pre>
 
 **ns(n)** - non-symmetric unsigned encoded integer with maximum number of values n (i.e., output in range 0..n-1).
+
+This descriptor is similar to ceiling of the base 2 logarithm of the input n, but reduces wastage incurred when encoding non-power of two value ranges by encoding one fewer bits for the lower part of the value range. For example, when n is equal to five, the encodings are as follows (full binary encodings are also presented for comparison):
+
+| Value | Full binary encoding | ns(n) encoding |
+| ----- | -------------------- | -------------- |
+| 0     | 000                  | 00             |
+| 1     | 001                  | 01             |
+| 2     | 010                  | 10             |
+| 3     | 011                  | 110            |
+| 4     | 100                  | 111            |
+{:.table .table-sm .table-bordered }
+
+The parsing process for this descriptor is specified as:
+
 <pre><code>
 ns(n) {
   w = 0
@@ -866,6 +913,28 @@ ns(n) {
   return (v << 1) - m + extra_bit
 }
 </code></pre>
+
+The serialization proccess for this descriptor is specified as:
+{:& https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/dd.cpp#L41 }
+
+<pre><code>
+write_ns(n,v) {
+  if (n == 1) return
+  w = 0
+  x = n
+  while (x != 0) {
+    x = x >> 1
+    w++
+  }
+  m = (1 << w) - n
+  if (v < m)
+    write_f(w - 1, val);
+  else
+    write_f(w, v + m) 
+}
+</code></pre>
+
+where write_f(n,v) writes the bit stream representation of v using n bits.
 
 <pre><code>
 dependency_descriptor( sz ) {
@@ -900,11 +969,11 @@ extended_descriptor_fields() {
 
   if (template_dependency_structure_present_flag) {
     template_dependency_structure()
-    active_decode_targets_bitmask = (1 << DtisCnt) - 1
+    active_decode_targets_bitmask = (1 << DtCnt) - 1
   }
 
   if (active_decode_targets_present_flag) {
-    <b>active_decode_targets_bitmask</b> = f(DtisCnt)
+    <b>active_decode_targets_bitmask</b> = f(DtCnt)
   }
 }
 </code></pre>
@@ -920,12 +989,13 @@ no_extended_descriptor_fields() {
 <pre><code>
 template_dependency_structure() {
   <b>template_id_offset</b> = f(6)
-  <b>dtis_cnt_minus_one</b> = f(5)
-  DtisCnt = dtis_cnt_minus_one + 1
+  <b>dt_cnt_minus_one</b> = f(5)
+  DtCnt = dt_cnt_minus_one + 1
   template_layers()
   template_dtis()
   template_fdiffs()
   template_chains()
+  decode_target_layers()
   <b>resolutions_present_flag</b> = f(1)
   if (resolutions_present_flag) {
     render_resolutions()
@@ -936,7 +1006,7 @@ template_dependency_structure() {
 <pre><code>
 frame_dependency_definition() {
   templateIndex = (frame_dependency_template_id + 64 - template_id_offset) % 64
-  If (templateIndex >= TemplatesCnt) {
+  If (templateIndex >= TemplateCnt) {
     return  // error
   }
   FrameSpatialId = TemplateSpatialId[templateIndex]
@@ -951,7 +1021,7 @@ frame_dependency_definition() {
   if (custom_fdiffs_flag) {
     frame_fdiffs()
   } else {
-    FrameFdiffsCnt = TemplateFdiffsCnt[templateIndex]
+    FrameFdiffCnt = TemplateFdiffCnt[templateIndex]
     FrameFdiff = TemplateFdiff[templateIndex]
   }
 
@@ -972,12 +1042,12 @@ frame_dependency_definition() {
 template_layers() {
   temporalId = 0
   spatialId = 0
-  TemplatesCnt = 0;
+  TemplateCnt = 0;
   MaxTemporalId = 0
   do {
-    TemplateSpatialId[TemplatesCnt] = spatialId
-    TemplateTemporalId[TemplatesCnt] = temporalId
-    TemplatesCnt++
+    TemplateSpatialId[TemplateCnt] = spatialId
+    TemplateTemporalId[TemplateCnt] = temporalId
+    TemplateCnt++
     <b>next_layer_idc</b> = f(2)
     // next_layer_idc == 0 - same sid and tid
     if (next_layer_idc == 1) {
@@ -1005,10 +1075,10 @@ render_resolutions() {
 
 <pre><code>
 template_dtis() {
-  for (templateIndex = 0; templateIndex < TemplatesCnt; templateIndex++) {
-    for (dtiIndex = 0; dtiIndex < DtisCnt; dtiIndex++) {
+  for (templateIndex = 0; templateIndex < TemplateCnt; templateIndex++) {
+    for (dtIndex = 0; dtIndex < DtCnt; dtIndex++) {
       // See table A.1 below for meaning of DTI values.
-      <b>template_dti[templateIndex][dtiIndex]</b> = f(2)
+      <b>template_dti[templateIndex][dtIndex]</b> = f(2)
     }
   }
 }
@@ -1016,37 +1086,37 @@ template_dtis() {
 
 <pre><code>
 frame_dtis() {
-  for (dtiIndex = 0; dtiIndex < DtisCnt; dtiIndex++) {
+  for (dtIndex = 0; dtIndex < DtCnt; dtIndex++) {
     // See table A.1 below for meaning of DTI values.
-    <b>frame_dti[dtiIndex]</b> = f(2)
+    <b>frame_dti[dtIndex]</b> = f(2)
   }
 }
 </code></pre>
 
 <pre><code>
 template_fdiffs() {
-  for (templateIndex = 0; templateIndex < TemplatesCnt; templateIndex++) {
-    fdiffsCnt = 0
+  for (templateIndex = 0; templateIndex < TemplateCnt; templateIndex++) {
+    fdiffCnt = 0
     <b>fdiff_follows_flag</b> = f(1)
     while (fdiff_follows_flag) {
       <b>fdiff_minus_one</b> = f(4)
-      TemplateFdiff[templateIndex][fdiffsCnt] = fdiff_minus_one + 1
-      fdiffsCnt++
+      TemplateFdiff[templateIndex][fdiffCnt] = fdiff_minus_one + 1
+      fdiffCnt++
       <b>fdiff_follows_flag</b> = f(1)
     }
-    TemplateFdiffsCnt[templateIndex] = fdiffsCnt
+    TemplateFdiffCnt[templateIndex] = fdiffCnt
   }
 }
 </code></pre>
 
 <pre><code>
 frame_fdiffs() {
-  FrameFdiffsCnt = 0
+  FrameFdiffCnt = 0
   <b>next_fdiff_size</b> = f(2)
   while (next_fdiff_size) {
     <b>fdiff_minus_one</b> = f(4 * next_fdiff_size)
-    FrameFdiff[FrameFdiffsCnt] = fdiff_minus_one + 1
-    FrameFdiffsCnt++
+    FrameFdiff[FrameFdiffCnt] = fdiff_minus_one + 1
+    FrameFdiffCnt++
     <b>next_fdiff_size</b> = f(2)
   }
 }
@@ -1054,15 +1124,15 @@ frame_fdiffs() {
 
 <pre><code>
 template_chains() {
-  <b>chains_cnt</b> = ns(DtisCnt + 1)
-  if (chains_cnt == 0) {
+  <b>chain_cnt</b> = ns(DtCnt + 1)
+  if (chain_cnt == 0) {
     return
   }
-  for (dtiIndex = 0; dtiIndex < DtisCnt; dtiIndex++) {
-    <b>decode_target_protected_by[dtiIndex]</b> = ns(chains_cnt)
+  for (dtIndex = 0; dtIndex < DtCnt; dtIndex++) {
+    <b>decode_target_protected_by[dtIndex]</b> = ns(chain_cnt)
   }
-  for (templateIndex = 0; templateIndex < TemplatesCnt; templateIndex++) {
-    for (chainIndex = 0; chainIndex < chains_cnt; chainIndex++) {
+  for (templateIndex = 0; templateIndex < TemplateCnt; templateIndex++) {
+    for (chainIndex = 0; chainIndex < chain_cnt; chainIndex++) {
       <b>template_chain_fdiff[templateIndex][chainIndex]</b> = f(4)
     }
   }
@@ -1071,14 +1141,36 @@ template_chains() {
 
 <pre><code>
 frame_chains() {
-  for (chainIndex = 0; chainIndex < chains_cnt; chainIndex++) {
+  for (chainIndex = 0; chainIndex < chain_cnt; chainIndex++) {
     <b>frame_chain_fdiff[chainIndex]</b> = f(8)
   }
 }
 </code></pre>
 
 
-##### A.4.2 Semantics
+<pre><code>
+decode_target_layers() {
+  for (dtIndex = 0; dtIndex < dtCnt; dtIndex++) {
+    spatialId = 0
+    temporalId = 0
+    for (templateIndex = 0; templateIndex < TemplateCnt; templateIndex++) {
+      if (template_dti[templateIndex][dtIndex] != 0) {
+        if (TemplateSpatialId[templateIndex] > spatialId) {
+          spatialId = TemplateSpatialId[templateIndex]
+        }
+        if (TemplateTemporalId[templateIndex] > temporalId) {
+          temporalId = TemplateTemporalId[templateIndex]
+        }
+      }
+    }
+    DecodeTargetSpatialId[dtIndex] = spatialId
+    DecodeTargetTemporalId[dtIndex] = temporalId
+  }
+}
+</code></pre>
+
+
+##### A.6.3 Semantics
 
 The semantics pertaining to the Dependency Descriptor syntax section above is described in this section.
 
@@ -1096,7 +1188,7 @@ The semantics pertaining to the Dependency Descriptor syntax section above is de
 **Note:** frame_number is not the same as Frame ID in [AV1 specification][AV1].
 {:.alert .alert-info }
 
-* **frame_dependency_template_id**: ID of the Frame dependency template to use. MUST be in the range of template_id_offset to (template_id_offset + TemplatesCnt - 1), inclusive. frame_dependency_template_id MUST be the same for all packets of the same frame.
+* **frame_dependency_template_id**: ID of the Frame dependency template to use. MUST be in the range of template_id_offset to (template_id_offset + TemplateCnt - 1), inclusive. frame_dependency_template_id MUST be the same for all packets of the same frame.
 {:& tested-in-demo }
 
 **Note:** values outside of the valid range may be caused by a change of the template dependency structure, that is a packet with the new template dependency structure was lost or delayed.
@@ -1127,10 +1219,10 @@ The semantics pertaining to the Dependency Descriptor syntax section above is de
 
 **Template dependency structure**
 
-* **template_id_offset**: indicates the value of the frame_dependency_template_id having templateIndex=0. The value of template_id_offset SHOULD be chosen so that the valid frame_dependency_template_id range, template_id_offset to template_id_offset + TemplatesCnt - 1, inclusive, of a new template_dependency_structure, does not overlap the valid frame_dependency_template_id range for the existing template_dependency_structure. When template_id_offset of a new template_dependency_structure is the same as in the existing template_dependency_structure, all fields in both template_dependency_structures MUST have identical values.
+* **template_id_offset**: indicates the value of the frame_dependency_template_id having templateIndex=0. The value of template_id_offset SHOULD be chosen so that the valid frame_dependency_template_id range, template_id_offset to template_id_offset + TemplateCnt - 1, inclusive, of a new template_dependency_structure, does not overlap the valid frame_dependency_template_id range for the existing template_dependency_structure. When template_id_offset of a new template_dependency_structure is the same as in the existing template_dependency_structure, all fields in both template_dependency_structures MUST have identical values.
 {:& https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_sender_video_unittest.cc?q=SetDiffentVideoStructureAvoidsCollisionWithThePreviousStructure }
 
-* **dtis_cnt_minus_one**: dtis_cnt_minus_one + 1 indicates the number of Decode targets present in the coded video sequence.
+* **dt_cnt_minus_one**: dt_cnt_minus_one + 1 indicates the number of Decode targets present in the coded video sequence.
 {:& tested-in-demo }
 
 * **resolutions_present_flag**: indicates the presence of render_resolutions. When the resolutions_present_flag is set to 1, render_resolutions MUST be present; otherwise render_resolutions MUST NOT be present.
@@ -1145,16 +1237,16 @@ The semantics pertaining to the Dependency Descriptor syntax section above is de
 * **max_render_height_minus_1[spatial_id]**: indicates the maximum render height minus 1 for frames with spatial ID equal to spatial_id.
 {:& tested-in-demo }
 
-* **chains_cnt**: indicates the number of Chains. When set to zero, the Frame dependency structure does not utilize protection with Chains.
+* **chain_cnt**: indicates the number of Chains. When set to zero, the Frame dependency structure does not utilize protection with Chains.
 {:& https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/video_coding/codecs/av1/scalability_structure_unittest.cc?q=NumberOfDecodeTargetsAndChainsAreInRangeAndConsistent }
 
-* **decode_target_protected_by[dtIndex]**: the index of the Chain that protects the Decode target, dtIndex. When chains_cnt > 0, each Decode target MUST be protected by exactly one Chain.
+* **decode_target_protected_by[dtIndex]**: the index of the Chain that protects Decode target with index equal to dtIndex. When chain_cnt > 0, each Decode target MUST be protected by exactly one Chain.
 {:& tested-in-demo }
 
-* **template_dti[templateIndex][]**: an array of size dtis_cnt_minus_one + 1 containing Decode Target Indications for the Frame dependency template having index value equal to templateIndex. Table A.1 contains a description of the Decode Target Indication values.
+* **template_dti[templateIndex][]**: an array of size dt_cnt_minus_one + 1 containing Decode Target Indications for the Frame dependency template having index value equal to templateIndex. Table A.1 contains a description of the Decode Target Indication values.
 {:& tested-in-demo }
 
-* **template_chain_fdiff[templateIndex][]**: an array of size chains_cnt containing chain-FDIFF values for the Frame dependency template having index value equal to templateIndex. In a template, the values of chain-FDIFF can be in the range 0 to 15, inclusive.
+* **template_chain_fdiff[templateIndex][]**: an array of size chain_cnt containing frame_chain_fdiff values for the Frame dependency template having index value equal to templateIndex. In a template, the values of frame_chain_fdiff can be in the range 0 to 15, inclusive.
 {:& tested-in-demo }
 
 * **fdiff_follows_flag**: indicates the presence of a frame difference value. When the fdiff_follows_flag is set to 1, fdiff_minus_one MUST immediately follow; otherwise a value of 0 indicates no more frame difference values are present for the current Frame dependency template.
@@ -1179,7 +1271,7 @@ Table A.1. Decode Target Indication (DTI) values.
 * **next_fdiff_size**: indicates the size of following fdiff_minus_one syntax elements in 4-bit units. When set to a non-zero value, fdiff_minus_one MUST immediately follow; otherwise a value of 0 indicates no more frame difference values are present.
 {:& tested-in-demo }
 
-* **frame_dti[dtiIndex]**: Decode Target Indication describing the relationship between the current frame and the Decode target having index equal to dtiIndex. Table A.2 contains a description of the Decode Target Indication values.
+* **frame_dti[dtIndex]**: Decode Target Indication describing the relationship between the current frame and the Decode target having index equal to dtIndex. Table A.2 contains a description of the Decode Target Indication values.
 {:& tested-in-demo }
 
 * **frame_chain_fdiff[chainIdx]**: indicates the difference between the frame_number and the frame_number of the previous frame in the Chain having index equal to chainIdx. A value of 0 indicates no previous frames are needed for the Chain. For example, when a packet containing frame_chain_fdiff[chainIdx]=3 and frame_number=112 the previous frame in the Chain with index equal to chainIdx has frame_number=109. The calculation is done modulo the size of the frame_number field.
@@ -1197,56 +1289,20 @@ Table A.2. Derivation Of Next Spatial ID And Temporal ID Values.
 {: .caption }
 
 
-##### A.4.3 Deciding Decodability using Chains
 
-Chains provide Instantaneous Decidability of Decodability (IDD). That is, the ability to decide, immediately upon receiving the very first packet after packet loss, if the lost packet(s) contained a packet that is needed to decode frames in packets that follow. The concept of Chains is a generalization of the TL0PICIDX field used in the RTP payload formats for scalable codecs such as H.264, VP8, and VP9. A chain defines a sequence of frames essential to decode Decode targets protected by that Chain. Frames in the Chain MUST be propagated and decoded. All other frames associated with the Decode target MAY be dropped, temporarily reducing Decode target fidelity. As long as all frames in the Chain are decoded, it should be possible to recover the Decode target’s full fidelity without requesting additional information from the sender (e.g., a key frame request).
-{:& tested-in-demo }
-
-The Frame dependency structure includes a mapping between Decode targets and Chains. The mapping gives an SFM the ability to determine the set of Chains it needs to track in order to ensure that the corresponding Decode targets remain decodable. Every packet includes, for every Chain, the frame_number for the previous frame in that Chain. An SFM can instantaneously detect a broken Chain by checking whether or not the previous frame in that Chain has been received. Due to the fact that Chain information for all Chains is present in all packets, an SFM can detect a broken Chain regardless of whether the first packet received after a loss is part of that Chain.
-
-In order to start/restart Chains, a Dependency Descriptor may reference the frame_number of the frame carried in the same RTP packet to indicate that no previous frames are needed for the Chain. Key frames are common cases for such '(re)start of Chain' indications.
-
-
-##### A.4.4 Switching
-
-An SFM may begin forwarding packets belonging to a new Decode target beginning with a decodable frame containing a Switch indication to that Decode target.
-
-An SFM may change which Decode targets it forwards. Similarly, a sender may change the Decode targets that are currently being produced. In both cases, not all Decode targets may be available for decoding. Such changes SHOULD be signaled to the receiver using the active_decode_targets_bitmask and SHOULD be signaled to the receiver in a reliable way.
-{:& tested-in-demo }
-
-When not all Decode targets are active, the active_decode_targets_bitmask MUST be sent in every packet where the template_dependency_structure_present_flag is equal to 1.
-{:& tested-in-demo }
-
-**Note:** One way to achieve reliable delivery is to include the active_decode_targets_bitmask in every packet until a receiver report acknowledges a packet containing the latest active_decode_targets_bitmask. Alternately, for many video streams, reliable delivery may be achieved by including the active_decode_targets_bitmask on every chain in the first packet after a change in active decode targets.
-{:.alert .alert-info }
-
-Chains protecting no active decode targets MUST be ignored.
-{:& https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_dependency_descriptor_extension_unittest.cc?q=TemplateMatchingSkipsInactiveChains, https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_dependency_descriptor_extension_unittest.cc?q=AcceptsInvalidChainDiffForInactiveChainWhenChainsAreCustom }
-
-**Note:** To increase the chance of using a predefined template, chains protecting no active decode targets may refer to any frame, including an RTP frame that was never produced.
-{:.alert .alert-info }
-
-
-##### A.4.5 Templates
-
-To facilitate selective forwarding portions of a scalable video stream to each endpoint in a video conference, as is done by a Selective Forwarding Middlebox (SFM), for each packet, several pieces of information are required. To reduce overhead, repetitive information can be predefined and sent once. Subsequent packets refer to a template containing predefined information. In particular, when a video encoder uses an unchanging (static) prediction structure to encode a scalable bitstream, parameter values used to describe the bitstream repeat in a predictable way. The techniques described in this document provide means to send repeating information as predefined templates that can be referenced at future points of the bitstream. Since a reference index to a template requires fewer bits to convey than the associated structures themselves, header overhead can be substantially reduced.
-
-The techniques also provide ways to describe changing (dynamic) prediction structures. In cases where custom dependency information is required, parameter values are explicitly defined rather than referenced in a predefined template. Typically, even in dynamic structures the majority of frames still follow one of the predefined templates.
-
-
-#### A.5 Signaling (Setup) Information
+#### A.7 Signaling (Setup) Information
 
 The URI for declaring this header extension in an extmap attribute is "https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension".
 {:& tested-in-demo }
 
 
-#### A.6 Examples
+#### A.8 Examples
 
 
-#### A.6.1 Scenarios
+#### A.8.1 Scenarios
 
 
-##### A.6.1.1 Decode targets, Decode Target Indications, and Chains
+##### A.8.1.1 Decode targets, Decode Target Indications, and Chains
 In the following example, the concepts of Decode targets, Chains, and DTI are discussed in the context of the L2T3 scalability structure from the perspective of frame_number=5 (F5).
 
 ![L2T3](assets/images/L2T3.svg)
@@ -1304,7 +1360,7 @@ The DT2 client would track Chain0. From the DD received with F5, the client woul
 The DT3 client would track Chain1. From the DD received with F5, the client would detect that the last essential frame is F2. Thus it is not safe to start decoding F5. Due to the fact that frames must be decoded in decode order and F2 is essential for all HD frames, decoding F5 before F2 would prevent the decoding of F2 and all subsequent HD frames. The client therefore should wait for F2. The client may send a Generic NACK per [RFC4585] in order to notify the sender that packets have been missed since the receipt of F1, or may send a Layer Refresh Request (LRR) per [I-D.ietf-avtext-lrr] in order to refresh the media substream.
 
 
-##### A.6.1.2 Spatial Upswitch
+##### A.8.1.2 Spatial Upswitch
 In the following example, spatial upswitch is discussed in the context of the L2T1 scalability structure.
 
 <figure style="display: block;" align="center">
@@ -1360,7 +1416,7 @@ Another way to notify the receiver is to set a Switch indication in F106 and res
 The two ways of notifying the receiver as shown above demonstrate that Decode Target Indications and Chains can be set differently even though the stream structure and frame dependencies are the same.
 
 
-##### A.6.1.3 Dynamic Prediction Structure
+##### A.8.1.3 Dynamic Prediction Structure
 In the following example, the sender encodes two quality layers, S0 and S1 (i.e., layers with the same resolution but different qualities).
 
 <figure style="display: block;" align="center">
@@ -1425,7 +1481,7 @@ Another way to signal this dynamic prediction structure would be to define a lar
 The first way uses fewer templates and therefore requires fewer bits in the first packet of the key frame, while the second way uses more templates but requires fewer bits in all packets of F105 to F108.
 
 
-#### A.6.2 Scalability structure examples
+#### A.8.2 Scalability structure examples
 
 Each example in this section contains a prediction structure figure and a table describing the associated Frame dependency structure. The Frame dependency structure table column headings have the meanings listed below. For the DTI- related columns, Table A.1 shows the symbol used to represent each DTI value.
 
@@ -1437,7 +1493,7 @@ Each example in this section contains a prediction structure figure and a table 
   * DTI - **template_dti[Idx]**
 
 
-##### A.6.2.1 L1T3 Single Spatial Layer with 3 Temporal Layers
+##### A.8.2.1 L1T3 Single Spatial Layer with 3 Temporal Layers
 
 This example uses one Chain, which includes frames with temporal ID equal to 0.
 
@@ -1445,7 +1501,7 @@ This example uses one Chain, which includes frames with temporal ID equal to 0.
 
 <table class="table-sm table-bordered" style="margin-bottom: 1.5em;">
 <tbody><tr>
-<th colspan='1' rowspan='2' >Idx</th><th colspan='1' rowspan='2' >S</th><th colspan='1' rowspan='2' >T</th><th colspan='1' rowspan='2' >Fdiffs</th><th colspan='1' rowspan='2' >Chain</th><th colspan='3' rowspan='1' >DTI</th>
+<th colspan='1' rowspan='2' >Idx</th><th colspan='1' rowspan='2' >S</th><th colspan='1' rowspan='2' >T</th><th colspan='1' rowspan='2' >Fdiffs</th><th colspan='1' rowspan='2' >Chain</th><th colspan='3' rowspan='1' >Decode Targets</th>
 </tr>
 <tr>
 <th colspan='1' rowspan='1' >30 fps</th><th colspan='1' rowspan='1' >15 fps</th><th colspan='1' rowspan='1' >7.5 fps</th>
@@ -1471,7 +1527,7 @@ This example uses one Chain, which includes frames with temporal ID equal to 0.
 </tbody></table>
 
 
-##### A.6.2.2 L3T3 Full SVC
+##### A.8.2.2 L3T3 Full SVC
 
 This example uses three Chains. Chain 0 includes frames with spatial ID equal to 0 and temporal ID equal to 0. Chain 1 includes frames with spatial ID equal to 0 or 1 and temporal ID equal to 0. Chain 2 includes all frames with temporal ID equal to 0.
 
@@ -1479,7 +1535,7 @@ This example uses three Chains. Chain 0 includes frames with spatial ID equal to
 
 <table class="table-sm table-bordered" style="margin-bottom: 1.5em;">
 <tbody><tr>
-<th colspan='1' rowspan='2' >Idx</th><th colspan='1' rowspan='2' >S</th><th colspan='1' rowspan='2' >T</th><th colspan='1' rowspan='2' >Fdiffs</th><th colspan='3' rowspan='1' >Chains</th><th colspan='9' rowspan='1' >DTI</th>
+<th colspan='1' rowspan='2' >Idx</th><th colspan='1' rowspan='2' >S</th><th colspan='1' rowspan='2' >T</th><th colspan='1' rowspan='2' >Fdiffs</th><th colspan='3' rowspan='1' >Chains</th><th colspan='9' rowspan='1' >Decode Targets</th>
 </tr>
 <tr>
 <th colspan='1' rowspan='1' >0</th><th colspan='1' rowspan='1' >1</th><th colspan='1' rowspan='1' >2</th><th colspan='1' rowspan='1' >HD30 fps</th><th colspan='1' rowspan='1' >HD15 fps</th><th colspan='1' rowspan='1' >HD7.5 fps</th><th colspan='1' rowspan='1' >VGA30 fps</th><th colspan='1' rowspan='1' >VGA15 fps</th><th colspan='1' rowspan='1' >VGA7.5fps</th><th colspan='1' rowspan='1' >QVGA30 fps</th><th colspan='1' rowspan='1' >QVGA15 fps</th><th colspan='1' rowspan='1' >QVGA7.5 fps</th>
@@ -1535,7 +1591,7 @@ This example uses three Chains. Chain 0 includes frames with spatial ID equal to
 </tbody></table>
 
 
-##### A.6.2.3 L3T3 K-SVC with Temporal Shift
+##### A.8.2.3 L3T3 K-SVC with Temporal Shift
 
 This example uses three Chains. Chain 0 includes frames with spatial ID equal to 0 and temporal ID equal to 0. Chain 1 includes frame 100 and frames with spatial ID equal to 1 and temporal ID equal to 0. Chain 2 includes frames 100, 101, and frames with spatial ID equal to 2 and temporal ID equal to 0.
 
@@ -1543,7 +1599,7 @@ This example uses three Chains. Chain 0 includes frames with spatial ID equal to
 
 <table class="table-sm table-bordered" style="margin-bottom: 1.5em;">
 <tbody><tr>
-<th colspan='1' rowspan='2' >Idx</th><th colspan='1' rowspan='2' >S</th><th colspan='1' rowspan='2' >T</th><th colspan='1' rowspan='2' >Fdiffs</th><th colspan='3' rowspan='1' >Chains</th><th colspan='9' rowspan='1' >DTI</th>
+<th colspan='1' rowspan='2' >Idx</th><th colspan='1' rowspan='2' >S</th><th colspan='1' rowspan='2' >T</th><th colspan='1' rowspan='2' >Fdiffs</th><th colspan='3' rowspan='1' >Chains</th><th colspan='9' rowspan='1' >Decode Targets</th>
 </tr>
 <tr>
 <th colspan='1' rowspan='1' >0</th><th colspan='1' rowspan='1' >1</th><th colspan='1' rowspan='1' >2</th><th colspan='1' rowspan='1' >HD 30 fps</th><th colspan='1' rowspan='1' >HD 15 fps</th><th colspan='1' rowspan='1' >HD 7.5 fps</th><th colspan='1' rowspan='1' >VGA 30 fps</th><th colspan='1' rowspan='1' >VGA 15 fps</th><th colspan='1' rowspan='1' >VGA 7.5 fps</th><th colspan='1' rowspan='1' >QVGA 30 fps</th><th colspan='1' rowspan='1' >QVGA 15 fps</th><th colspan='1' rowspan='1' >QVGA 7.5 fps</th>
@@ -1617,10 +1673,10 @@ This example uses three Chains. Chain 0 includes frames with spatial ID equal to
 </tbody></table>
 
 
-#### A.7 References
+#### A.9 References
 
 
-##### A.7.1 Normative References
+##### A.9.1 Normative References
 
 * [RFC2119] **Key words for use in RFCs to Indicate Requirement Levels**, S. Bradner, March 1997.
 
@@ -1630,7 +1686,7 @@ This example uses three Chains. Chain 0 includes frames with spatial ID equal to
 
 
 
-##### A.7.2 Informative References
+##### A.9.2 Informative References
 
 * [AV1] **AV1 Bitstream & Decoding Process Specification, Version 1.0.0 with Errata 1**, January 2019.
 
