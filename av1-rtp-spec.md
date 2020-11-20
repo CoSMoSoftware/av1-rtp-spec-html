@@ -824,7 +824,7 @@ In order to start/restart Chains, a Dependency Descriptor may reference the fram
 An SFM may begin forwarding packets belonging to a new Decode target beginning with a decodable frame containing a Switch indication to that Decode target.
 
 An SFM may change which Decode targets it forwards. Similarly, a sender may change the Decode targets that are currently being produced. In both cases, not all Decode targets may be available for decoding. Such changes SHOULD be signaled to the receiver using the active_decode_targets_bitmask and SHOULD be signaled to the receiver in a reliable way.
-{: .needs-tests }
+{:& https://github.com/medooze/media-server/blob/a5c994a9303d9727d8f3d2cb466f49ce5afe29a6/test/ddls.cpp#L556 }
 
 When not all Decode targets are active, the active_decode_targets_bitmask MUST be sent in every packet where the template_dependency_structure_present_flag is equal to 1.
 {: .needs-tests }
@@ -1198,7 +1198,7 @@ The semantics pertaining to the Dependency Descriptor syntax section above is de
 
 **Extended Descriptor Fields**
 
-* **template_dependency_structure_present_flag**: indicates the presence the template_dependency_structure. When the template_dependency_structure_present_flag is set to 1, template_dependency_structure MUST be present; otherwise template_dependency_structure MUST NOT be present. template_dependency_structure_present_flag MUST be set to 1 for the first packet of a coded video sequence, and MUST be set to 0 otherwise.
+* **template_dependency_structure_present_flag**: indicates the presence of the template_dependency_structure. When the template_dependency_structure_present_flag is set to 1, template_dependency_structure MUST be present; otherwise template_dependency_structure MUST NOT be present. template_dependency_structure_present_flag MUST be set to 1 for the first packet of a coded video sequence, and MUST be set to 0 otherwise.
 {: .needs-tests }
 
 * **active_decode_targets_present_flag**: indicates the presence of active_decode_targets_bitmask. When set to 1, active_decode_targets_bitmask MUST be present, otherwise, active_decode_targets_bitmask MUST NOT be present.
