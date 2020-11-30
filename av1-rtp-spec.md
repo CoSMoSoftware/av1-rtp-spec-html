@@ -111,7 +111,7 @@ The Dependency Descriptor and AV1 aggregation header are described in this docum
 +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
 |         0x100         |  0x0  |       extensions length       |
 +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-|   0x1(ID)     |  hdr_length   |                               |
+|      ID       |  hdr_length   |                               |
 +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+                               |
 |                                                               |
 |          dependency descriptor (hdr_length #bytes)            |
@@ -129,11 +129,13 @@ The Dependency Descriptor and AV1 aggregation header are described in this docum
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 </code></pre>
 
+**Note:** The ID used to identify the Dependency Descriptor is signaled as defined in Section A.7 of this specification. Some examples are provided in Sections 7.2 and 7.3.
+{:.alert .alert-info }
 
 ### 4.2 RTP Header Marker Bit (M)
 
 The RTP header Marker bit MUST be set equal to 0 if the packet is not the last packet of the temporal unit, it SHOULD be set equal to 1 otherwise.
-{: .needs-tests }
+{:& https://bugs.chromium.org/p/webrtc/issues/detail?id=12167 }
 
 **Note:** It is possible for a receiver to receive the last packet of a temporal unit without the marker bit being set equal to 1, and a receiver should be able to handle this case. The last packet of a temporal unit is also indicated by the next packet, in RTP sequence number order, having an incremented timestamp.
 {:.alert .alert-info }
@@ -322,13 +324,13 @@ The general function of a MANE or SFM is to selectively forward packets to recei
 ### 6.1 Simulcast
 
 The RTP payload defined in this specification supports two distinct modes for transport of simulcast encodings. In either mode, simulcast transport MUST only be used to convey multiple encodings from the same source. Also, in either mode, a sequence header OBU SHOULD be aggregated with each spatial layer. Both modes MUST be supported by implementations of this specification.
-{:& untestable }
+{: .needs-tests }
 
 When simulcast encodings are transported each on a separate RTP stream, each simulcast encoding utilizes a distinct bitstream containing its own distinct Sequence Header and Scalability Metadata OBUs. This mode utilizes distinct SSRCs and Restriction Identifiers (RIDs) for each encoding as described in [I-D.ietf-avtext-rid] and, as a result, RTCP feedback can be provided for each simulcast encoding. This mode of simulcast transport, which MUST be supported by SFMs, utilizes Session Description Protocol (SDP) signaling as described in [I-D.ietf-mmusic-sdp-simulcast] and [I-D.ietf-mmusic-rid].
-{:& untestable }
+{: .needs-tests }
 
 When simulcast encodings are transported on a single RTP stream, RIDs are not used and the Sequence Header and Scalability Metadata OBUs (utilizing an 'S' mode) convey information relating to all encodings. This simulcast transport mode is possible since AV1 enables multiple simulcast encodings to be provided within a single bitstream. However, in this mode, RTCP feedback cannot be provided for each simulcast encoding, but only for the aggregate, since only a single SSRC is used. This mode of simulcast transport MAY be supported by SFMs.
-{:& untestable }
+{: .needs-tests }
 
 
 ### 6.1.1 Example
@@ -347,68 +349,68 @@ This section specifies the parameters that MAY be used to select optional featur
 
 * Type name:
   * **video**
-  {: .needs-tests }
+  {:& https://github.com/medooze/media-server/blob/0f5832e6aa8bc4bdb98535897f312466d1c49a06/include/codecs.h#L107 }
 * Subtype name:
   * **AV1**
-  {: .needs-tests }
+  {:& https://github.com/medooze/media-server/blob/0f5832e6aa8bc4bdb98535897f312466d1c49a06/include/codecs.h#L107 }
 * Required parameters:
   * None.
   {:.no-test-needed }
 * Optional parameters:
-  * These parameters are used to signal the capabilities of a receiver implementation. If the implementation is willing to receive media, **profile** and **level-idx** parameters MUST be provided. These parameters MUST NOT be used for any other purpose.
-  {: .needs-tests }
-    * **profile**: The value of **profile** is an integer indicating the highest AV1 profile supported by the receiver. The range of possible values is identical to the **seq_profile** syntax element specified in [AV1]
-    {: .needs-tests }
-    * **level-idx**: The value of **level-idx** is an integer indicating the highest AV1 level supported by the receiver. The range of possible values is identical to the **seq_level_idx** syntax element specified in [AV1]
-    {: .needs-tests }
-    * **tier**: The value of **tier** is an integer indicating tier of the indicated level. The range of possible values is identical to the **seq_tier** syntax element specified in [AV1]. If parameter is not present, level's tier is to be assumed equal to 0
-    {: .needs-tests }
-
+ * None.
 * Encoding considerations:
   * This media type is framed in RTP and contains binary data; see Section 4.8 of [RFC6838].
 * Security considerations:
-  * See Section 10.
+  * See Section 10 of https://aomediacodec.github.io/av1-rtp-spec/.
 * Interoperability considerations:
   * None.
 * Published specification:
-  * [AV1 video codec][AV1]
+  * https://aomediacodec.github.io/av1-rtp-spec/
 * Applications which use this media type:
-  * Video over IP, video conferencing.
+  * Video over IP, video conferencing, video streaming.
 * Fragment identifier considerations:
   * N/A.
 * Additional information:
   * None.
 * Person & email address to contact for further information:
-  * TODO
+  * Name: Alliance for Open Media
+  * Email: registrations@aomedia.org
 * Intended usage:
   * COMMON
 * Restrictions on usage:
-  * This media type depends on RTP framing, and hence is only defined for transfer via RTP [RFC3550].
+  * This media type depends on RTP framing, and hence is only defined for transfer via RTP [RFC3550].  Transfer within other framing protocols is not defined at this time.
 * Author:
-  * TODO
+  * RTC Subgroup of the AV1 Codec Working Group of the Alliance for Open Media (http://aomedia.org)
 * Change controller:
-  * AoMedia Codec Group, RTC sub-group
+  * AV1 Codec Working Group of the Alliance for Open Media (http://aomedia.org/)
 
 
 ### 7.2 SDP Parameters
-The receiver MUST ignore any fmtp parameter not specified in this document.
+The parameters for AV1 are **profile**, **level-idx**, and **tier**. These parameters indicate the profile, level, and tier of the bitstream carried by the RTP stream, or a specific set of the profile, level, and tier that the receiver supports. 
+
+The **profile** parameter is an integer indicating the highest AV1 profile that may have been used to generate the bitstream or that the receiver supports. The range of possible values is identical to the **seq_profile** syntax element specified in [AV1]. If the parameter is not present, it MUST be inferred to be 0 (“Main” profile).
 {: .needs-tests }
 
+The **level-idx** parameter is an integer indicating the highest AV1 level that may have been used to generate the bitstream or that the receiver supports. The range of possible values is identical to the **seq_level_idx** syntax element specified in [AV1]. If the parameter is not present, it MUST be inferred to be 5 (level 3.1).
+{: .needs-tests }
+
+The **tier** parameter is an integer indicating the highest tier that may have been used to generate the bitstream or that the receiver supports. The range of possible values is identical to the **seq_tier** syntax element specified in [AV1]. If the parameter is not present, the tier MUST be inferred to be 0.
+{: .needs-tests }
 
 #### 7.2.1 Mapping of Media Subtype Parameters to SDP
 The media type video/AV1 string is mapped to fields in the Session Description Protocol (SDP) per [RFC4566] as follows:
 
 * The media name in the "m=" line of SDP MUST be video.
-{: .needs-tests }
+{:& https://github.com/medooze/semantic-sdp-js/blob/master/lib/SDPInfo.js }
 * The encoding name in the "a=rtpmap" line of SDP MUST be AV1 (the media subtype).
-{: .needs-tests }
+{:& https://github.com/medooze/semantic-sdp-js/blob/master/lib/SDPInfo.js }
 * The clock rate in the "a=rtpmap" line MUST be 90000.
-{: .needs-tests }
-* The parameters "**profile**", and "**level-idx**", MUST be included in the "a=fmtp" line of SDP if SDP is used to declare receiver capabilities. These parameters are expressed as a media subtype string, in the form of a semicolon separated list of parameter=value pairs.
-{: .needs-tests }
-* Parameter "**tier**" MAY be included alongside "**profile**" and "**level-idx** parameters in "a=fmtp" line if the indicated level supports a non-zero tier.
+{:& https://github.com/medooze/semantic-sdp-js/blob/master/lib/SDPInfo.js }
+* The parameters "**profile**", "**level-idx**", and "**tier**" MAY be included in the "a=fmtp" line of SDP. These parameters are expressed as a media subtype string, in the form of a semicolon separated list of parameter=value pairs.
 {:& untestable }
 
+The receiver MUST ignore any fmtp parameter not specified in this document.
+{:& https://github.com/medooze/semantic-sdp-js/blob/master/lib/SDPInfo.js }
 
 ### 7.2.2 RID Restrictions Mapping for AV1
 
@@ -437,15 +439,10 @@ If during the SDP negotiation process both parties acknowledge restrictions, the
 
 When AV1 is offered over RTP using SDP in an Offer/Answer model as described in [RFC3264] for negotiation for unicast usage, the following limitations and rules apply:
 
-* The media format configuration is identified by **level-idx**, **profile** and **tier**. The answerer SHOULD maintain all parameters. These media configuration parameters are asymmetrical and the answerer MAY declare its own media configuration if the answerer capabilities are different from the offerer.
+* The media format configuration is identified by **level-idx**, **profile** and **tier**. These media configuration parameters are asymmetrical and the answerer MAY declare its own media configuration if the answerer receiving capabilities are different from the offerer.
 {: .needs-tests }
-
-  * The profile to use in the offerer-to-answerer direction MUST be lesser or equal to the profile the answerer supports for receiving, and the profile to use in the answerer-to-offerer direction MUST be lesser or equal to the profile the offerer supports for receiving.
-  {: .needs-tests }
-  * The level to use in the offerer-to-answerer direction MUST be lesser or equal to the level the answerer supports for receiving, and the level to use in the answerer-to-offerer direction MUST be lesser or equal to the level the offerer supports for receiving.
-  {: .needs-tests }
-  * The tier to use in the offerer-to-answerer direction MUST be lesser or equal to the tier the answerer supports for receiving, and the tier to use in the answerer-to-offerer direction MUST be lesser or equal to the tier the offerer supports for receiving.
-  {: .needs-tests }
+* The AV1 stream sent by either the offerer or the answerer MUST be encoded with a profile, level and tier, lesser or equal to the values of the **level-idx**, **profile** and **tier** declared in the SDP by the receiving agent.
+{: .needs-tests }
 
 
 #### 7.2.4 Usage in Declarative Session Descriptions
@@ -1198,7 +1195,7 @@ The semantics pertaining to the Dependency Descriptor syntax section above is de
 
 **Extended Descriptor Fields**
 
-* **template_dependency_structure_present_flag**: indicates the presence of the template_dependency_structure. When the template_dependency_structure_present_flag is set to 1, template_dependency_structure MUST be present; otherwise template_dependency_structure MUST NOT be present. template_dependency_structure_present_flag MUST be set to 1 for the first packet of a coded video sequence, and MUST be set to 0 otherwise.
+* **template_dependency_structure_present_flag**: indicates the presence the template_dependency_structure. When the template_dependency_structure_present_flag is set to 1, template_dependency_structure MUST be present; otherwise template_dependency_structure MUST NOT be present. template_dependency_structure_present_flag MUST be set to 1 for the first packet of a coded video sequence, and MUST be set to 0 otherwise.
 {:& implemented-SFM }
 
 * **active_decode_targets_present_flag**: indicates the presence of active_decode_targets_bitmask. When set to 1, active_decode_targets_bitmask MUST be present, otherwise, active_decode_targets_bitmask MUST NOT be present.
@@ -1289,10 +1286,13 @@ Table A.2. Derivation Of Next Spatial ID And Temporal ID Values.
 
 
 
-#### A.7 Signaling (Setup) Information
+#### A.7 Signaling (SDP) Information
 
-The URI for declaring this header extension in an extmap attribute is "https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension".
+When the use of this header extension is signaled in SDP using an extmap attribute, the URI MUST be "https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension".
 {:& implemented-SFM }
+
+For example:
+* a=extmap:4 https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension
 
 
 #### A.8 Examples
