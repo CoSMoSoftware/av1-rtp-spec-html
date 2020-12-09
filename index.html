@@ -445,11 +445,11 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 <section>
 <h3 id="simulcast">6.1 Simulcast</h3>
 
-<p class="needs-tests">The RTP payload defined in this specification supports two distinct modes for transport of simulcast encodings. In either mode, simulcast transport MUST only be used to convey multiple encodings from the same source. Also, in either mode, a sequence header OBU SHOULD be aggregated with each spatial layer. Both modes MUST be supported by implementations of this specification.</p>
+<p class="untestable">The RTP payload defined in this specification supports two distinct modes for transport of simulcast encodings. In either mode, simulcast transport MUST only be used to convey multiple encodings from the same source. Also, in either mode, a sequence header OBU SHOULD be aggregated with each spatial layer. Both modes MUST be supported by implementations of this specification.</p>
 
-<p class="needs-tests">When simulcast encodings are transported each on a separate RTP stream, each simulcast encoding utilizes a distinct bitstream containing its own distinct Sequence Header and Scalability Metadata OBUs. This mode utilizes distinct SSRCs and Restriction Identifiers (RIDs) for each encoding as described in <a href="https://tools.ietf.org/html/draft-ietf-avtext-rid">I-D.ietf-avtext-rid</a> and, as a result, RTCP feedback can be provided for each simulcast encoding. This mode of simulcast transport, which MUST be supported by SFMs, utilizes Session Description Protocol (SDP) signaling as described in <a href="https://tools.ietf.org/html/draft-ietf-mmusic-sdp-simulcast">I-D.ietf-mmusic-sdp-simulcast</a> and <a href="https://tools.ietf.org/html/draft-ietf-mmusic-rid">I-D.ietf-mmusic-rid</a>.</p>
+<p>When simulcast encodings are transported each on a separate RTP stream, each simulcast encoding utilizes a distinct bitstream containing its own distinct Sequence Header and Scalability Metadata OBUs. This mode utilizes distinct SSRCs and Restriction Identifiers (RIDs) for each encoding as described in <a href="https://tools.ietf.org/html/draft-ietf-avtext-rid">I-D.ietf-avtext-rid</a> and, as a result, RTCP feedback can be provided for each simulcast encoding. This mode of simulcast transport, which MUST be supported by SFMs, utilizes Session Description Protocol (SDP) signaling as described in <a href="https://tools.ietf.org/html/draft-ietf-mmusic-sdp-simulcast">I-D.ietf-mmusic-sdp-simulcast</a> and <a href="https://tools.ietf.org/html/draft-ietf-mmusic-rid">I-D.ietf-mmusic-rid</a>.</p>
 
-<p class="needs-tests">When simulcast encodings are transported on a single RTP stream, RIDs are not used and the Sequence Header and Scalability Metadata OBUs (utilizing an ‘S’ mode) convey information relating to all encodings. This simulcast transport mode is possible since AV1 enables multiple simulcast encodings to be provided within a single bitstream. However, in this mode, RTCP feedback cannot be provided for each simulcast encoding, but only for the aggregate, since only a single SSRC is used. This mode of simulcast transport MAY be supported by SFMs.</p>
+<p class="untestable">When simulcast encodings are transported on a single RTP stream, RIDs are not used and the Sequence Header and Scalability Metadata OBUs (utilizing an ‘S’ mode) convey information relating to all encodings. This simulcast transport mode is possible since AV1 enables multiple simulcast encodings to be provided within a single bitstream. However, in this mode, RTCP feedback cannot be provided for each simulcast encoding, but only for the aggregate, since only a single SSRC is used. This mode of simulcast transport MAY be supported by SFMs.</p>
 
 </section>
 
@@ -596,29 +596,35 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 
 <p>The RID specification declares the set of codec-agnostic restrictions for media streams. All the restrictions are optional and are subject to negotiation based on the SDP Offer/Answer rules described in Section 6 in <a href="https://tools.ietf.org/html/draft-ietf-mmusic-rid">I-D.ietf-mmusic-rid</a>. When these restrictions are applied to the AV1 codec, they MUST have the following interpretation:</p>
 
-<ul class="needs-tests">
+<ul class="untestable">
   <li><strong>max-width</strong>, maximum width of the frame in units of samples. The meaning of the restriction is the same as variable <strong>MaxHSize</strong> of the levels table from Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.</li>
 </ul>
-<ul class="needs-tests">
+
+<ul class="untestable">
   <li><strong>max-height</strong>, maximum height of the frame in units of samples. The meaning of the restriction is the same as variable <strong>MaxVSize</strong> of the levels table from Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.</li>
 </ul>
-<ul class="needs-tests">
+
+<ul class="untestable">
   <li><strong>max-fps</strong>, maximum number of temporal units per second.</li>
 </ul>
-<ul class="needs-tests">
+
+<ul class="untestable">
   <li><strong>max-fs</strong>, maximum size of the frame in units of samples. The meaning of the restriction is the same as variable <strong>MaxPicSize</strong> of the levels table from Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.</li>
 </ul>
-<ul class="needs-tests">
+
+<ul class="untestable">
   <li><strong>max-br</strong>, maximum bit rate in units bits per second. The meaning of the restriction is the same as variable <strong>MaxBitrate</strong> defined in Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.</li>
 </ul>
-<ul class="needs-tests">
+
+<ul class="untestable">
   <li><strong>max-pps</strong>, maximum decode rate in units of samples per second. The meaning of the restriction is the same as variable <strong>MaxDecodeRate</strong> of the levels table from Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.</li>
 </ul>
-<ul class="needs-tests">
+
+<ul class="untestable">
   <li><strong>max-bpp</strong>, maximum number of bits per pixel of any given coded frame, calculated as a ratio between <strong>CompressedSize</strong> variable defined Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a> and expressed in bits, and number of samples in frame.</li>
 </ul>
 
-<p class="needs-tests">If during the SDP negotiation process both parties acknowledge restrictions, then the transported media stream MUST have at least one operating point with the negotiated restrictions.</p>
+<p class="untestable">If during the SDP negotiation process both parties acknowledge restrictions, then the transported media stream MUST have at least one operating point with the negotiated restrictions.</p>
 
 <section>
 <h4 id="usage-with-the-sdp-offeranswer-model">7.2.3 Usage with the SDP Offer/Answer Model</h4>
@@ -1108,7 +1114,7 @@ new coded video sequences for other encodings from the same source(s).</p>
 
 <p>To facilitate the work of selectively forwarding portions of a scalable video bitstream, as is done by an SFM, for each packet, the following information is made available (even though not all elements are present in every packet).</p>
 
-<ul class="untestable">
+<ul>
   <li>spatial ID</li>
   <li>temporal ID</li>
   <li>DTIs</li>

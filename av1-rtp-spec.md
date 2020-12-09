@@ -324,13 +324,12 @@ The general function of a MANE or SFM is to selectively forward packets to recei
 ### 6.1 Simulcast
 
 The RTP payload defined in this specification supports two distinct modes for transport of simulcast encodings. In either mode, simulcast transport MUST only be used to convey multiple encodings from the same source. Also, in either mode, a sequence header OBU SHOULD be aggregated with each spatial layer. Both modes MUST be supported by implementations of this specification.
-{: .needs-tests }
+{:& untestable }
 
 When simulcast encodings are transported each on a separate RTP stream, each simulcast encoding utilizes a distinct bitstream containing its own distinct Sequence Header and Scalability Metadata OBUs. This mode utilizes distinct SSRCs and Restriction Identifiers (RIDs) for each encoding as described in [I-D.ietf-avtext-rid] and, as a result, RTCP feedback can be provided for each simulcast encoding. This mode of simulcast transport, which MUST be supported by SFMs, utilizes Session Description Protocol (SDP) signaling as described in [I-D.ietf-mmusic-sdp-simulcast] and [I-D.ietf-mmusic-rid].
-{: .needs-tests }
 
 When simulcast encodings are transported on a single RTP stream, RIDs are not used and the Sequence Header and Scalability Metadata OBUs (utilizing an 'S' mode) convey information relating to all encodings. This simulcast transport mode is possible since AV1 enables multiple simulcast encodings to be provided within a single bitstream. However, in this mode, RTCP feedback cannot be provided for each simulcast encoding, but only for the aggregate, since only a single SSRC is used. This mode of simulcast transport MAY be supported by SFMs.
-{: .needs-tests }
+{:& untestable }
 
 
 ### 6.1.1 Example
@@ -417,22 +416,22 @@ The receiver MUST ignore any fmtp parameter not specified in this document.
 The RID specification declares the set of codec-agnostic restrictions for media streams. All the restrictions are optional and are subject to negotiation based on the SDP Offer/Answer rules described in Section 6 in [I-D.ietf-mmusic-rid]. When these restrictions are applied to the AV1 codec, they MUST have the following interpretation:
 
 * **max-width**, maximum width of the frame in units of samples. The meaning of the restriction is the same as variable **MaxHSize** of the levels table from Section A.3 of [AV1].
-{: .needs-tests }
+{:& untestable }
 * **max-height**, maximum height of the frame in units of samples. The meaning of the restriction is the same as variable **MaxVSize** of the levels table from Section A.3 of [AV1].
-{: .needs-tests }
+{:& untestable }
 * **max-fps**, maximum number of temporal units per second.
-{: .needs-tests }
+{:& untestable }
 * **max-fs**, maximum size of the frame in units of samples. The meaning of the restriction is the same as variable **MaxPicSize** of the levels table from Section A.3 of [AV1].
-{: .needs-tests }
+{:& untestable }
 * **max-br**, maximum bit rate in units bits per second. The meaning of the restriction is the same as variable **MaxBitrate** defined in Section A.3 of [AV1]. 
-{: .needs-tests }
+{:& untestable }
 * **max-pps**, maximum decode rate in units of samples per second. The meaning of the restriction is the same as variable **MaxDecodeRate** of the levels table from Section A.3 of [AV1].
-{: .needs-tests }
+{:& untestable }
 * **max-bpp**, maximum number of bits per pixel of any given coded frame, calculated as a ratio between **CompressedSize** variable defined Section A.3 of [AV1] and expressed in bits, and number of samples in frame.
-{: .needs-tests }
+{:& untestable }
   
 If during the SDP negotiation process both parties acknowledge restrictions, then the transported media stream MUST have at least one operating point with the negotiated restrictions.
-{: .needs-tests }
+{:& untestable }
 
 
 #### 7.2.3 Usage with the SDP Offer/Answer Model
@@ -846,7 +845,6 @@ To facilitate the work of selectively forwarding portions of a scalable video bi
 * frame_number of the current frame
 * frame_number of each of the Referred frames
 * frame_number of last frame in each Chain
-{:& untestable }
 
 
 ##### A.6.1 Templates
