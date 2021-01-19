@@ -265,13 +265,13 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 ## 5 Packetization Rules
 
 Each RTP packet MUST NOT contain OBUs that belong to different temporal units.
-{: .needs-tests }
+{:& untestable }
 
 The temporal delimiter OBU, if present, SHOULD be removed when transmitting, and MUST be ignored by receivers. Tile list OBUs are not supported. They SHOULD be removed when transmitted, and MUST be ignored by receivers.
 {:& https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/rtp_rtcp/source/rtp_packetizer_av1_unittest.cc?q=DiscardsTemporalDelimiterAndTileListObu }
 
 If a sequence header OBU is present in an RTP packet and operating_points_cnt_minus_1 > 0 then for any number i where 0 <= i < operating_points_cnt_minus_1 the following MUST be true: (operating_point_idc[i] & operating_point_idc[i+1]) == operating_point_idc[i+1].
-{: .needs-tests }
+{:& untestable }
 
 A sender MAY produce a sequence header with operating_points_cnt_minus_1 = 0 and operating_point_idc[0] = 0xFFF and seq_level_idx[0] = 0. In such case, seq_level_idx[0] does not reflect the level of the operating point.
 {:& untestable }
@@ -280,13 +280,13 @@ A sender MAY produce a sequence header with operating_points_cnt_minus_1 = 0 and
 {:.alert .alert-info }
 
 If more than one OBU contained in an RTP packet has an OBU extension header, then the values of the temporal_id and spatial_id MUST be the same in all such OBUs in the RTP packet.
-{: .needs-tests }
+{:& untestable }
 
 If a sequence header OBU is present in an RTP packet, then it	SHOULD be the first OBU in the packet. OBUs that are not associated with a particular layer (and thus do not have an OBU extension header) SHOULD be in the beginning of a packet, following the sequence header OBU if present.
-{: .needs-tests }
+{:& untestable }
 
 A sequence header OBU SHOULD be included in the base layer when scalable encoding is used. When simulcast encodings are transported on the same SSRC (an "S" mode), a sequence header OBU SHOULD be aggregated with each spatial layer. This ensures that if an intermediary removes simulcast encodings from the bitstream before forwarding, the modified bitstream will still be decodable.
-{: .needs-tests }
+{:& untestable }
 
 
 ### 5.1 Examples
@@ -324,9 +324,11 @@ The general function of a MANE or SFM is to selectively forward packets to recei
 ### 6.1 Simulcast
 
 The RTP payload defined in this specification supports two distinct modes for transport of simulcast encodings. In either mode, simulcast transport MUST only be used to convey multiple encodings from the same source. Also, in either mode, a sequence header OBU SHOULD be aggregated with each spatial layer. Both modes MUST be supported by implementations of this specification.
-{:& untestable }
+{: .needs-tests }
+{: .needs-tests }
 
 When simulcast encodings are transported each on a separate RTP stream, each simulcast encoding utilizes a distinct bitstream containing its own distinct Sequence Header and Scalability Metadata OBUs. This mode utilizes distinct SSRCs and Restriction Identifiers (RIDs) for each encoding as described in [I-D.ietf-avtext-rid] and, as a result, RTCP feedback can be provided for each simulcast encoding. This mode of simulcast transport, which MUST be supported by SFMs, utilizes Session Description Protocol (SDP) signaling as described in [I-D.ietf-mmusic-sdp-simulcast] and [I-D.ietf-mmusic-rid].
+{: .needs-tests }
 
 When simulcast encodings are transported on a single RTP stream, RIDs are not used and the Sequence Header and Scalability Metadata OBUs (utilizing an 'S' mode) convey information relating to all encodings. This simulcast transport mode is possible since AV1 enables multiple simulcast encodings to be provided within a single bitstream. However, in this mode, RTCP feedback cannot be provided for each simulcast encoding, but only for the aggregate, since only a single SSRC is used. This mode of simulcast transport MAY be supported by SFMs.
 {:& untestable }
@@ -356,7 +358,7 @@ This section specifies the parameters that MAY be used to select optional featur
   * None.
   {:.no-test-needed }
 * Optional parameters:
- * None.
+  * None.
 * Encoding considerations:
   * This media type is framed in RTP and contains binary data; see Section 4.8 of [RFC6838].
 * Security considerations:
@@ -373,7 +375,7 @@ This section specifies the parameters that MAY be used to select optional featur
   * None.
 * Person & email address to contact for further information:
   * Name: Alliance for Open Media
-  * Email: registrations@aomedia.org
+  * Email: registration@aomedia.org
 * Intended usage:
   * COMMON
 * Restrictions on usage:
@@ -388,13 +390,13 @@ This section specifies the parameters that MAY be used to select optional featur
 The parameters for AV1 are **profile**, **level-idx**, and **tier**. These parameters indicate the profile, level, and tier of the bitstream carried by the RTP stream, or a specific set of the profile, level, and tier that the receiver supports. 
 
 The **profile** parameter is an integer indicating the highest AV1 profile that may have been used to generate the bitstream or that the receiver supports. The range of possible values is identical to the **seq_profile** syntax element specified in [AV1]. If the parameter is not present, it MUST be inferred to be 0 (“Main” profile).
-{: .needs-tests }
+{:& untestable }
 
 The **level-idx** parameter is an integer indicating the highest AV1 level that may have been used to generate the bitstream or that the receiver supports. The range of possible values is identical to the **seq_level_idx** syntax element specified in [AV1]. If the parameter is not present, it MUST be inferred to be 5 (level 3.1).
-{: .needs-tests }
+{:& untestable }
 
 The **tier** parameter is an integer indicating the highest tier that may have been used to generate the bitstream or that the receiver supports. The range of possible values is identical to the **seq_tier** syntax element specified in [AV1]. If the parameter is not present, the tier MUST be inferred to be 0.
-{: .needs-tests }
+{:& untestable }
 
 #### 7.2.1 Mapping of Media Subtype Parameters to SDP
 The media type video/AV1 string is mapped to fields in the Session Description Protocol (SDP) per [RFC4566] as follows:
@@ -406,7 +408,7 @@ The media type video/AV1 string is mapped to fields in the Session Description P
 * The clock rate in the "a=rtpmap" line MUST be 90000.
 {:& https://github.com/medooze/semantic-sdp-js/blob/master/lib/SDPInfo.js }
 * The parameters "**profile**", "**level-idx**", and "**tier**" MAY be included in the "a=fmtp" line of SDP. These parameters are expressed as a media subtype string, in the form of a semicolon separated list of parameter=value pairs.
-{:& untestable }
+{:& https://webrtc-review.googlesource.com/c/src/+/198782 }
 
 The receiver MUST ignore any fmtp parameter not specified in this document.
 {:& https://github.com/medooze/semantic-sdp-js/blob/master/lib/SDPInfo.js }
@@ -439,9 +441,9 @@ If during the SDP negotiation process both parties acknowledge restrictions, the
 When AV1 is offered over RTP using SDP in an Offer/Answer model as described in [RFC3264] for negotiation for unicast usage, the following limitations and rules apply:
 
 * The media format configuration is identified by **level-idx**, **profile** and **tier**. These media configuration parameters are asymmetrical and the answerer MAY declare its own media configuration if the answerer receiving capabilities are different from the offerer.
-{: .needs-tests }
+{:& https://webrtc-review.googlesource.com/c/src/+/198782 }
 * The AV1 stream sent by either the offerer or the answerer MUST be encoded with a profile, level and tier, lesser or equal to the values of the **level-idx**, **profile** and **tier** declared in the SDP by the receiving agent.
-{: .needs-tests }
+{:& https://webrtc-review.googlesource.com/c/src/+/198782 }
 
 
 #### 7.2.4 Usage in Declarative Session Descriptions
@@ -805,37 +807,102 @@ A frame for which all Referred frames are decodable MUST itself be decodable.
 {:.alert .alert-info }
 
 
-#### A.4 Deciding Decodability using Chains
+#### A.4 Active Decode Targets
 
-Chains provide Instantaneous Decidability of Decodability (IDD). That is, the ability to decide, immediately upon receiving the very first packet after packet loss, if the lost packet(s) contained a packet that is needed to decode frames in packets that follow. The concept of Chains is a generalization of the TL0PICIDX field used in the RTP payload formats for scalable codecs such as H.264, VP8, and VP9. A chain defines a sequence of frames essential to decode Decode targets protected by that Chain. Frames in the Chain MUST be propagated and decoded. All other frames associated with the Decode target MAY be dropped, temporarily reducing Decode target fidelity. As long as all frames in the Chain are decoded, it should be possible to recover the Decode target’s full fidelity without requesting additional information from the sender (e.g., a key frame request).
+When an SFM changes the set of forwarded Decode targets or an encoder changes the set of produced Decode targets, some Decode targets may become unavailable for decoding. Whenever the set of active Decode targets changes, the sender MUST signal the new set of active Decode targets to the receiver.
 {:& https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L222, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L426 }
 
-The Frame dependency structure includes a mapping between Decode targets and Chains. The mapping gives an SFM the ability to determine the set of Chains it needs to track in order to ensure that the corresponding Decode targets remain decodable. Every packet includes, for every Chain, the frame_number for the previous frame in that Chain. An SFM can instantaneously detect a broken Chain by checking whether or not the previous frame in that Chain has been received. Due to the fact that Chain information for all Chains is present in all packets, an SFM can detect a broken Chain regardless of whether the first packet received after a loss is part of that Chain.
+Active Decode targets are signaled either explicitly, when active_decode_targets_present_flag is equal to 1, or implicitly, when template_dependency_structure_present_flag is equal to 1 and active_decode_targets_present_flag is equal to 0, in which case all Decode targets are active.
 
-In order to start/restart Chains, a Dependency Descriptor may reference the frame_number of the frame carried in the same RTP packet to indicate that no previous frames are needed for the Chain. Key frames are common cases for such '(re)start of Chain' indications.
+When an update to the set of active decode targets is received it is valid until the next update in RTP packet sequence number order.
+
+The sender SHOULD signal updates in such a way that a receiver, even after packet loss, will immediately either know the new set of active Decode targets or if the set of active Decode targets is lost, ensure that at least one Chain will break.
+{:& https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L222, https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L426 }
+
+<div class="alert alert-info">
+  <strong>Note:</strong> The following example techniques may be used to signal a set of active Decode targets:
+  <ul>
+    <li>Send a new keyframe when the set of active Decode targets has been updated.</li>
+    <li>Send the active_decode_targets_bitmask in every packet.</li>
+    <li>Send the active_decode_targets_bitmask in every packet until one of those packets has been acknowledged by a receiver report.</li>
+  </ul>
+</div>
 
 
-#### A.5 Switching
+#### A.5 Chains
 
-An SFM may begin forwarding packets belonging to a new Decode target beginning with a decodable frame containing a Switch indication to that Decode target.
+A Chain defines a sequence of frames essential to decode Decode targets protected by that Chain. Every packet includes, for every Chain, the frame_number of the previous frame in that Chain. The Chain is intact as long as every frame in the Chain is received, otherwise it is broken. A decodable frame with frame_chain_fdiff equal to 0 indicates that the Chain is intact.
 
-An SFM may change which Decode targets it forwards. Similarly, a sender may change the Decode targets that are currently being produced. In both cases, not all Decode targets may be available for decoding. Such changes SHOULD be signaled to the receiver using the active_decode_targets_bitmask and SHOULD be signaled to the receiver in a reliable way.
-{:& https://github.com/medooze/media-server/blob/a5c994a9303d9727d8f3d2cb466f49ce5afe29a6/test/ddls.cpp#L556 }
-
-When not all Decode targets are active, the active_decode_targets_bitmask MUST be sent in every packet where the template_dependency_structure_present_flag is equal to 1.
-{:& implemented-SFM }
-
-**Note:** One way to achieve reliable delivery is to include the active_decode_targets_bitmask in every packet until a receiver report acknowledges a packet containing the latest active_decode_targets_bitmask. Alternately, for many video streams, reliable delivery may be achieved by including the active_decode_targets_bitmask on every chain in the first packet after a change in active decode targets.
+**Note:** The concept of Chains is a generalization of the TL0PICIDX field used in the RTP payload formats for scalable codecs such as VP8 and VP9.
 {:.alert .alert-info }
 
-Chains protecting no active decode targets MUST be ignored.
-{:& implemented-SFM }
+A sender MUST construct Chains such that a receiver having received all frames in the Chain, and having missed one or more frames not in the Chain, need not request additional information (e.g., NACK or FIR) from the sender in order to resume decoding at full fidelity of the Decode target protected by the Chain.
+{: .needs-tests }
 
-**Note:** To increase the chance of using a predefined template, chains protecting no active decode targets may refer to any frame, including an RTP frame that was never produced.
+**Note:** Not decoding a frame associated with a Decode target that is also not present in the Chain will result in a temporary reduction of fidelity. A frame that is not present in the Chain may be dropped even if the Decode Target Indication for that frame is not Discardable.
+{:.alert .alert-info }
+
+The Frame dependency structure includes a mapping between Decode targets and Chains. The mapping gives an SFM the ability to determine the set of Chains it needs to track in order to ensure that the corresponding Decode targets remain decodable. Chains protecting no active Decode targets MUST be ignored.
+{: .needs-tests }
+
+**Note:** To increase the chance of using a predefined template, chains protecting no active Decode targets may refer to any frame, including an RTP frame that was never produced.
 {:.alert .alert-info }
 
 
-#### A.6 Dependency Descriptor Format
+#### A.6 Instantaneous Decidability of Decodability (IDD)
+
+Chains provide the IDD property. That is, the ability to decide immediately upon receiving the very first packet after packet loss, if any of the lost packets are required for the Decode target to remain decodable.
+
+Due to the fact that Chain information is present in all packets, an SFM can detect a broken Chain regardless of whether the first packet received after a loss is part of that Chain or not.
+
+In the event of packet loss within the frame that is currently being received, it may be helpful to determine if that frame is part of the Chain by using the following example function.
+
+<pre><code>
+PartOfActiveChain(chainIdx) {
+  if (!ChainHasActiveDecodeTarget(chainIdx)) {
+    return false
+  }
+  for (i = 0; i < DtCnt; ++i) {
+    if (decode_target_protected_by[i] != chainIdx) {
+      continue
+    }
+    if (frame_dti[i] == 0 || frame_dti[i] == 1) {
+      return false
+    }
+  }
+  return true
+}
+</code></pre>
+
+<pre><code>
+ChainHasActiveDecodeTarget(chainIdx) {
+  for (i = 0; i < DtCnt; ++i) {
+    if (decode_target_protected_by[i] != chainIdx) {
+      continue
+    }
+    if ((active_decode_targets_bitmask >> i) & 1) {
+      return true
+    }
+  }
+  return false
+}
+
+</code></pre>
+
+**Note:** The variables <code>DtCnt</code>, <code>decode_target_protected_by</code>, <code>frame_dti</code> and <code>active_decode_targets_bitmask</code> used in the example above are read or derived from the dependency descriptor as described in Section A.8. 
+{:.alert .alert-info }
+
+#### A.7 Switching
+
+An SFM MAY begin forwarding packets belonging to a new Decode target beginning with a decodable frame containing a Switch indication to that Decode target.
+
+When Chains are used, an SFM MAY switch to a Decode target at any point if the Chain tracking that Decode target is intact.
+
+**Note:** Every Decode target is associated with a spatial and temporal layer, which the SFM may use to select which Decode target to forward.
+{:.alert .alert-info }
+
+
+#### A.8 Dependency Descriptor Format
 
 To facilitate the work of selectively forwarding portions of a scalable video bitstream, as is done by an SFM, for each packet, the following information is made available (even though not all elements are present in every packet).
 
@@ -847,18 +914,18 @@ To facilitate the work of selectively forwarding portions of a scalable video bi
 * frame_number of last frame in each Chain
 
 
-##### A.6.1 Templates
+##### A.8.1 Templates
 
 To reduce overhead, repetitive information can be predefined with templates and sent once. Subsequent packets refer to a template containing predefined information. In particular, when a video encoder uses an unchanging (static) prediction structure to encode a scalable bitstream, parameter values used to describe the bitstream repeat in a predictable way. The techniques described in this document provide means to send repeating information as predefined templates that can be referenced at future points of the bitstream. Since a reference index to a template requires fewer bits to convey than the associated structures themselves, header overhead can be substantially reduced.
 
 The techniques also provide ways to describe changing (dynamic) prediction structures. In cases where custom dependency information is required, parameter values are explicitly defined rather than referenced in a predefined template. Typically, even in dynamic structures the majority of frames still follow one of the predefined templates.
 
 
-##### A.6.2 Syntax
+##### A.8.2 Syntax
 
 The syntax for the descriptor is described in pseudo-code form in this section. Parameters read directly from the bitstream appear in bold.
 
-**f(n)** - unsigned n-bit number appearing directly in the bitstream.
+**f(n)** - unsigned n-bit number appearing directly in the bitstream. The bits are read from high to low order.
 <pre><code>
 f(n) {
   x = 0
@@ -1164,7 +1231,7 @@ decode_target_layers() {
 </code></pre>
 
 
-##### A.6.3 Semantics
+##### A.8.3 Semantics
 
 The semantics pertaining to the Dependency Descriptor syntax section above is described in this section.
 
@@ -1199,7 +1266,7 @@ The semantics pertaining to the Dependency Descriptor syntax section above is de
 * **active_decode_targets_present_flag**: indicates the presence of active_decode_targets_bitmask. When set to 1, active_decode_targets_bitmask MUST be present, otherwise, active_decode_targets_bitmask MUST NOT be present.
 {:& implemented-SFM }
 
-* **active_decode_targets_bitmask**: contains a bitmask that indicates which decode targets are available for decoding. Bit i is equal to 1 if decode target i is available for decoding, 0 otherwise.
+* **active_decode_targets_bitmask**: contains a bitmask that indicates which Decode targets are available for decoding. Bit i is equal to 1 if Decode target i is available for decoding, 0 otherwise. The least significant bit corresponds to Decode target 0.
 {:& https://source.chromium.org/chromium/chromium/src/+/master:third_party/webrtc/modules/video_coding/codecs/av1/libaom_av1_encoder_unittest.cc?q=NoBitrateOnTopLayerRefecltedInActiveDecodeTargets }
 
 * **custom_dtis_flag**: indicates the presence of frame_dtis. When set to 1, frame_dtis MUST be present. Otherwise, frame_dtis MUST NOT be present.
@@ -1284,7 +1351,7 @@ Table A.2. Derivation Of Next Spatial ID And Temporal ID Values.
 
 
 
-#### A.7 Signaling (SDP) Information
+#### A.9 Signaling (SDP) Information
 
 When the use of this header extension is signaled in SDP using an extmap attribute, the URI MUST be "https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension".
 {:& implemented-SFM }
@@ -1293,13 +1360,13 @@ For example:
 * a=extmap:4 https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension
 
 
-#### A.8 Examples
+#### A.10 Examples
 
 
-#### A.8.1 Scenarios
+#### A.10.1 Scenarios
 
 
-##### A.8.1.1 Decode targets, Decode Target Indications, and Chains
+##### A.10.1.1 Decode targets, Decode Target Indications, and Chains
 In the following example, the concepts of Decode targets, Chains, and DTI are discussed in the context of the L2T3 scalability structure from the perspective of frame_number=5 (F5).
 
 ![L2T3](assets/images/L2T3.svg)
@@ -1357,7 +1424,7 @@ The DT2 client would track Chain0. From the DD received with F5, the client woul
 The DT3 client would track Chain1. From the DD received with F5, the client would detect that the last essential frame is F2. Thus it is not safe to start decoding F5. Due to the fact that frames must be decoded in decode order and F2 is essential for all HD frames, decoding F5 before F2 would prevent the decoding of F2 and all subsequent HD frames. The client therefore should wait for F2. The client may send a Generic NACK per [RFC4585] in order to notify the sender that packets have been missed since the receipt of F1, or may send a Layer Refresh Request (LRR) per [I-D.ietf-avtext-lrr] in order to refresh the media substream.
 
 
-##### A.8.1.2 Spatial Upswitch
+##### A.10.1.2 Spatial Upswitch
 In the following example, spatial upswitch is discussed in the context of the L2T1 scalability structure.
 
 <figure style="display: block;" align="center">
@@ -1413,7 +1480,7 @@ Another way to notify the receiver is to set a Switch indication in F106 and res
 The two ways of notifying the receiver as shown above demonstrate that Decode Target Indications and Chains can be set differently even though the stream structure and frame dependencies are the same.
 
 
-##### A.8.1.3 Dynamic Prediction Structure
+##### A.10.1.3 Dynamic Prediction Structure
 In the following example, the sender encodes two quality layers, S0 and S1 (i.e., layers with the same resolution but different qualities).
 
 <figure style="display: block;" align="center">
@@ -1478,7 +1545,7 @@ Another way to signal this dynamic prediction structure would be to define a lar
 The first way uses fewer templates and therefore requires fewer bits in the first packet of the key frame, while the second way uses more templates but requires fewer bits in all packets of F105 to F108.
 
 
-#### A.8.2 Scalability structure examples
+#### A.10.2 Scalability structure examples
 
 Each example in this section contains a prediction structure figure and a table describing the associated Frame dependency structure. The Frame dependency structure table column headings have the meanings listed below. For the DTI- related columns, Table A.1 shows the symbol used to represent each DTI value.
 
@@ -1490,7 +1557,7 @@ Each example in this section contains a prediction structure figure and a table 
   * DTI - **template_dti[Idx]**
 
 
-##### A.8.2.1 L1T3 Single Spatial Layer with 3 Temporal Layers
+##### A.10.2.1 L1T3 Single Spatial Layer with 3 Temporal Layers
 
 This example uses one Chain, which includes frames with temporal ID equal to 0.
 
@@ -1524,7 +1591,7 @@ This example uses one Chain, which includes frames with temporal ID equal to 0.
 </tbody></table>
 
 
-##### A.8.2.2 L3T3 Full SVC
+##### A.10.2.2 L3T3 Full SVC
 
 This example uses three Chains. Chain 0 includes frames with spatial ID equal to 0 and temporal ID equal to 0. Chain 1 includes frames with spatial ID equal to 0 or 1 and temporal ID equal to 0. Chain 2 includes all frames with temporal ID equal to 0.
 
@@ -1588,7 +1655,7 @@ This example uses three Chains. Chain 0 includes frames with spatial ID equal to
 </tbody></table>
 
 
-##### A.8.2.3 L3T3 K-SVC with Temporal Shift
+##### A.10.2.3 L3T3 K-SVC with Temporal Shift
 
 This example uses three Chains. Chain 0 includes frames with spatial ID equal to 0 and temporal ID equal to 0. Chain 1 includes frame 100 and frames with spatial ID equal to 1 and temporal ID equal to 0. Chain 2 includes frames 100, 101, and frames with spatial ID equal to 2 and temporal ID equal to 0.
 
@@ -1670,10 +1737,10 @@ This example uses three Chains. Chain 0 includes frames with spatial ID equal to
 </tbody></table>
 
 
-#### A.9 References
+#### A.11 References
 
 
-##### A.9.1 Normative References
+##### A.11.1 Normative References
 
 * [RFC2119] **Key words for use in RFCs to Indicate Requirement Levels**, S. Bradner, March 1997.
 
@@ -1683,7 +1750,7 @@ This example uses three Chains. Chain 0 includes frames with spatial ID equal to
 
 
 
-##### A.9.2 Informative References
+##### A.11.2 Informative References
 
 * [AV1] **AV1 Bitstream & Decoding Process Specification, Version 1.0.0 with Errata 1**, January 2019.
 
