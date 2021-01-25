@@ -325,7 +325,6 @@ The general function of a MANE or SFM is to selectively forward packets to recei
 
 The RTP payload defined in this specification supports two distinct modes for transport of simulcast encodings. In either mode, simulcast transport MUST only be used to convey multiple encodings from the same source. Also, in either mode, a sequence header OBU SHOULD be aggregated with each spatial layer. Both modes MUST be supported by implementations of this specification.
 {: .needs-tests }
-{: .needs-tests }
 
 When simulcast encodings are transported each on a separate RTP stream, each simulcast encoding utilizes a distinct bitstream containing its own distinct Sequence Header and Scalability Metadata OBUs. This mode utilizes distinct SSRCs and Restriction Identifiers (RIDs) for each encoding as described in [I-D.ietf-avtext-rid] and, as a result, RTCP feedback can be provided for each simulcast encoding. This mode of simulcast transport, which MUST be supported by SFMs, utilizes Session Description Protocol (SDP) signaling as described in [I-D.ietf-mmusic-sdp-simulcast] and [I-D.ietf-mmusic-rid].
 {: .needs-tests }
@@ -408,7 +407,7 @@ The media type video/AV1 string is mapped to fields in the Session Description P
 * The clock rate in the "a=rtpmap" line MUST be 90000.
 {:& https://github.com/medooze/semantic-sdp-js/blob/master/lib/SDPInfo.js }
 * The parameters "**profile**", "**level-idx**", and "**tier**" MAY be included in the "a=fmtp" line of SDP. These parameters are expressed as a media subtype string, in the form of a semicolon separated list of parameter=value pairs.
-{:& https://webrtc-review.googlesource.com/c/src/+/198782 }
+{:& untestable }
 
 The receiver MUST ignore any fmtp parameter not specified in this document.
 {:& https://github.com/medooze/semantic-sdp-js/blob/master/lib/SDPInfo.js }
@@ -837,13 +836,13 @@ A Chain defines a sequence of frames essential to decode Decode targets protecte
 {:.alert .alert-info }
 
 A sender MUST construct Chains such that a receiver having received all frames in the Chain, and having missed one or more frames not in the Chain, need not request additional information (e.g., NACK or FIR) from the sender in order to resume decoding at full fidelity of the Decode target protected by the Chain.
-{: .needs-tests }
+{:& https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L222 }
 
 **Note:** Not decoding a frame associated with a Decode target that is also not present in the Chain will result in a temporary reduction of fidelity. A frame that is not present in the Chain may be dropped even if the Decode Target Indication for that frame is not Discardable.
 {:.alert .alert-info }
 
 The Frame dependency structure includes a mapping between Decode targets and Chains. The mapping gives an SFM the ability to determine the set of Chains it needs to track in order to ensure that the corresponding Decode targets remain decodable. Chains protecting no active Decode targets MUST be ignored.
-{: .needs-tests }
+{:& https://github.com/medooze/media-server/blob/9d32f5511673e9098f1ed1d03149aae767613a03/test/ddls.cpp#L556 }
 
 **Note:** To increase the chance of using a predefined template, chains protecting no active Decode targets may refer to any frame, including an RTP frame that was never produced.
 {:.alert .alert-info }
