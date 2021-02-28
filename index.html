@@ -119,7 +119,7 @@
           <li><a href="#a3-media-stream-requirements" id="markdown-toc-a3-media-stream-requirements">A.3 Media Stream Requirements</a></li>
           <li><a href="#a4-active-decode-targets" id="markdown-toc-a4-active-decode-targets">A.4 Active Decode Targets</a></li>
           <li><a href="#a5-chains" id="markdown-toc-a5-chains">A.5 Chains</a></li>
-          <li><a href="#a6-instantaneous-decidability-of-decodability-idd" id="markdown-toc-a6-instantaneous-decidability-of-decodability-idd">A.6 Instantaneous Decidability of Decodability (IDD)</a></li>
+          <li><a href="#a6-usage-of-chains-after-packet-loss" id="markdown-toc-a6-usage-of-chains-after-packet-loss">A.6 Usage of Chains After Packet Loss</a></li>
           <li><a href="#a7-switching" id="markdown-toc-a7-switching">A.7 Switching</a></li>
           <li><a href="#a8-dependency-descriptor-format" id="markdown-toc-a8-dependency-descriptor-format">A.8 Dependency Descriptor Format</a>            <ul>
               <li><a href="#a81-templates" id="markdown-toc-a81-templates">A.8.1 Templates</a></li>
@@ -449,7 +449,7 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 
 <p class="needs-tests">The RTP payload defined in this specification supports two distinct modes for transport of simulcast encodings. In either mode, simulcast transport MUST only be used to convey multiple encodings from the same source. Also, in either mode, a sequence header OBU SHOULD be aggregated with each spatial layer. Both modes MUST be supported by implementations of this specification.</p>
 
-<p class="needs-tests">When simulcast encodings are transported each on a separate RTP stream, each simulcast encoding utilizes a distinct bitstream containing its own distinct Sequence Header and Scalability Metadata OBUs. This mode utilizes distinct SSRCs and Restriction Identifiers (RIDs) for each encoding as described in <a href="https://tools.ietf.org/html/draft-ietf-avtext-rid">I-D.ietf-avtext-rid</a> and, as a result, RTCP feedback can be provided for each simulcast encoding. This mode of simulcast transport, which MUST be supported by SFMs, utilizes Session Description Protocol (SDP) signaling as described in <a href="https://tools.ietf.org/html/draft-ietf-mmusic-sdp-simulcast">I-D.ietf-mmusic-sdp-simulcast</a> and <a href="https://tools.ietf.org/html/draft-ietf-mmusic-rid">I-D.ietf-mmusic-rid</a>.</p>
+<p class="needs-tests">When simulcast encodings are transported each on a separate RTP stream, each simulcast encoding utilizes a distinct bitstream containing its own distinct Sequence Header and Scalability Metadata OBUs. This mode utilizes distinct SSRCs and Restriction Identifiers (RIDs) for each encoding as described in <a href="https://tools.ietf.org/html/rfc8852">RFC8852</a> and, as a result, RTCP feedback can be provided for each simulcast encoding. This mode of simulcast transport, which MUST be supported by SFMs, utilizes Session Description Protocol (SDP) signaling as described in <a href="https://tools.ietf.org/html/rfc8851">RFC8851</a> and <a href="https://tools.ietf.org/html/rfc8853">RFC8853</a>.</p>
 
 <p class="untestable">When simulcast encodings are transported on a single RTP stream, RIDs are not used and the Sequence Header and Scalability Metadata OBUs (utilizing an ‘S’ mode) convey information relating to all encodings. This simulcast transport mode is possible since AV1 enables multiple simulcast encodings to be provided within a single bitstream. However, in this mode, RTCP feedback cannot be provided for each simulcast encoding, but only for the aggregate, since only a single SSRC is used. This mode of simulcast transport MAY be supported by SFMs.</p>
 
@@ -474,7 +474,7 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 <section>
 <h3 id="media-type-definition">7.1 Media Type Definition</h3>
 
-<p>The AV1 media type is registered with IANA for signaling the transfer of AV1 via RTP at https://www.iana.org/assignments/media-types/video/AV1.</p>
+<p>The AV1 media type used for signaling the transfer of AV1 via RTP is registered at https://www.iana.org/assignments/media-types/video/AV1.</p>
 
 </section>
 
@@ -517,7 +517,7 @@ OBU element 2 data        = 303 - 1 - (2 + 200) = 100 bytes
 <section>
 <h3 id="rid-restrictions-mapping-for-av1">7.2.2 RID Restrictions Mapping for AV1</h3>
 
-<p>The RID specification declares the set of codec-agnostic restrictions for media streams. All the restrictions are optional and are subject to negotiation based on the SDP Offer/Answer rules described in Section 6 in <a href="https://tools.ietf.org/html/draft-ietf-mmusic-rid">I-D.ietf-mmusic-rid</a>. When these restrictions are applied to the AV1 codec, they MUST have the following interpretation:</p>
+<p>The RID specification declares the set of codec-agnostic restrictions for media streams. All the restrictions are optional and are subject to negotiation based on the SDP Offer/Answer rules described in Section 6 in <a href="https://tools.ietf.org/html/rfc8851">RFC8851</a>. When these restrictions are applied to the AV1 codec, they MUST have the following interpretation:</p>
 
 <ul class="untestable">
   <li><strong>max-width</strong>, maximum width of the frame in units of samples. The meaning of the restriction is the same as variable <strong>MaxHSize</strong> of the levels table from Section A.3 of <a href="https://aomediacodec.github.io/av1-spec/av1-spec.pdf">AV1</a>.</li>
@@ -829,14 +829,14 @@ new coded video sequences for other encodings from the same source(s).</p>
 <section>
 <h2 id="iana-considerations">9 IANA Considerations</h2>
 
-<p>Upon publication, a new media type, as specified in Section 7.1 of this document, will be registered with IANA.</p>
+<p>The AV1 media type is registered with IANA for signaling the transfer of AV1 via RTP at https://www.iana.org/assignments/media-types/video/AV1.</p>
 
 </section>
 
 <section>
 <h2 id="security-considerations">10 Security Considerations</h2>
 
-<p>RTP packets using the payload format defined in this document are subject to the security considerations discussed in the RTP specification <a href="https://tools.ietf.org/html/rfc3550">RFC3550</a> and in any appropriate RTP profile. This implies that confidentiality of the media streams is achieved by encryption, for example, through the application of SRTP <a href="https://tools.ietf.org/html/rfc3711">RFC3711</a>. A potential denial-of-service threat exists for data encodings using compression techniques that have non-uniform receiver-end computational load. The attacker can inject pathological datagrams into the stream that are complex to decode and that cause the receiver to be overloaded. Therefore, the usage of data origin authentication and data integrity protection of at least the RTP packet is RECOMMENDED, for example, with SRTP <a href="https://tools.ietf.org/html/rfc3711">RFC3711</a>. Encryption of RTP Header Extensions such as the Dependency Descriptor is also RECOMMENDED, using techniques such as [RFC6904] or successor specifications.</p>
+<p>RTP packets using the payload format defined in this document are subject to the security considerations discussed in the RTP specification <a href="https://tools.ietf.org/html/rfc3550">RFC3550</a> and in any appropriate RTP profile. This implies that confidentiality of the media streams is achieved by encryption, for example, through the application of SRTP <a href="https://tools.ietf.org/html/rfc3711">RFC3711</a>. A potential denial-of-service threat exists for data encodings using compression techniques that have non-uniform receiver-end computational load. The attacker can inject pathological datagrams into the stream that are complex to decode and that cause the receiver to be overloaded. Therefore, the usage of data origin authentication and data integrity protection of at least the RTP packet is RECOMMENDED, for example, with SRTP <a href="https://tools.ietf.org/html/rfc3711">RFC3711</a>. Encryption of RTP Header Extensions such as the Dependency Descriptor is also RECOMMENDED, using techniques such as <a href="https://tools.ietf.org/html/rfc6904">RFC6904</a> or successor specifications.</p>
 
 <p>Note that the appropriate mechanism to ensure confidentiality and integrity of RTP packets and their payloads is very dependent on the application and on the transport and signaling protocols employed. Thus, although SRTP is given as an example above, other possible choices exist. See <a href="https://tools.ietf.org/html/rfc7202">RFC7202</a>.</p>
 
@@ -863,28 +863,28 @@ new coded video sequences for other encodings from the same source(s).</p>
     <p><a href="https://tools.ietf.org/html/rfc5104">RFC5104</a> <strong>Codec Control Messages in the RTP Audio-Visual Profile with Feedback (AVPF)</strong>, S. Wenger, U. Chandra, M. Westerlund, and B. Burman, February 2008.</p>
   </li>
   <li>
-    <p>[RFC6904] <strong>Encryption of Header Extensions in the Secure Real-time Transport Protocol (SRTP)</strong>, J. Lennox, April 2013.</p>
-  </li>
-  <li>
-    <p><a href="https://tools.ietf.org/html/rfc8285">RFC8285</a> <strong>A General Mechanism for RTP Header Extensions for generic RTP header extensions</strong>, D. Singer, H. Desineni, and R. Even, October 2017.</p>
+    <p><a href="https://tools.ietf.org/html/rfc6904">RFC6904</a> <strong>Encryption of Header Extensions in the Secure Real-time Transport Protocol (SRTP)</strong>, J. Lennox, April 2013.</p>
   </li>
   <li>
     <p><a href="https://tools.ietf.org/html/rfc7667">RFC7667</a> <strong>RTP Topologies</strong>, M. Westerlund and S. Wenger, November 2015.</p>
   </li>
   <li>
+    <p><a href="https://tools.ietf.org/html/rfc8285">RFC8285</a> <strong>A General Mechanism for RTP Header Extensions for generic RTP header extensions</strong>, D. Singer, H. Desineni, and R. Even, October 2017.</p>
+  </li>
+  <li>
+    <p><a href="https://tools.ietf.org/html/rfc8851">RFC8851</a> <strong>RTP Payload Format Restrictions</strong>, A. Roach, January 2021.</p>
+  </li>
+  <li>
+    <p><a href="https://tools.ietf.org/html/rfc8852">RFC8852</a> <strong>RTP Stream Identifier Source Description (SDES)</strong>, A. Roach, S. Nandakumar and P. Thatcher, January 2021.</p>
+  </li>
+  <li>
+    <p><a href="https://tools.ietf.org/html/rfc8853">RFC8853</a> <strong>Using Simulcast in SDP and RTP Sessions</strong>, B. Burman, M. Westerlund, S. Nandakumar and M. Zanaty, January 2021.</p>
+  </li>
+  <li>
     <p><a href="https://tools.ietf.org/html/draft-ietf-avtext-lrr-07">I-D.ietf-avtext-lrr</a> <strong>The Layer Refresh Request (LRR) RTCP Feedback Message</strong>, J. Lennox, D. Hong, J. Uberti, S. Holmer, and M. Flodman, June 29, 2017.</p>
   </li>
   <li>
-    <p><a href="https://tools.ietf.org/html/draft-ietf-avtext-rid">I-D.ietf-avtext-rid</a> <strong>RTP Stream Identifier Source Description (SDES)</strong>, A. Roach, S. Nandakumar and P. Thatcher, October 06, 2016.</p>
-  </li>
-  <li>
-    <p><a href="https://tools.ietf.org/html/draft-ietf-mmusic-rid">I-D.ietf-mmusic-rid</a> <strong>RTP Payload Format Restrictions</strong>, A. Roach, May 15, 2018.</p>
-  </li>
-  <li>
-    <p><a href="https://tools.ietf.org/html/draft-ietf-mmusic-sdp-simulcast">I-D.ietf-mmusic-sdp-simulcast</a> <strong>Using Simulcast in SDP and RTP Sessions</strong>, B. Burman, M. Westerlund, S. Nandakumar and M. Zanaty, March 5, 2019.</p>
-  </li>
-  <li>
-    <p><a href="https://tools.ietf.org/html/draft-ietf-payload-vp9">I-D.ietf-payload-vp9</a> <strong>RTP Payload Format for VP9 Video</strong>, J. Uberti, S. Holmer, M. Flodman, D. Hong, and J. Lennox, January 2020.</p>
+    <p><a href="https://tools.ietf.org/html/draft-ietf-payload-vp9">I-D.ietf-payload-vp9</a> <strong>RTP Payload Format for VP9 Video</strong>, J. Uberti, S. Holmer, M. Flodman, D. Hong, and J. Lennox, February 2021.</p>
   </li>
 </ul>
 
@@ -924,12 +924,14 @@ new coded video sequences for other encodings from the same source(s).</p>
 
 <p>The DD uses the concept of Decode targets, each of which represents a subset of a scalable video stream necessary to decode the stream at a certain temporal and spatial fidelity. A frame may be associated with several Decode targets. This concept is used to facilitate selective forwarding, as is done by a Selective Forwarding Middlebox (SFM). Typically an SFM would select one Decode target for each endpoint, and forward all frames associated with that target.</p>
 
-<p>The DD describes the decodability of the current frame and provides information about whether current and past frames are required for decoding future frames associated with the Decode target. Specifically, the DD contains</p>
+<p>The DD also uses the concept of Instantaneous Decidability or Decodability (IDD).  The IDD property is the ability to decide immediately whether a received or missed packet is needed to decode a received bitstream. This property allows an SFM to determine whether it has to forward a packet to one or more downstream endpoints or attempt to recover essential missed packets.</p>
+
+<p>The property is satisfied when the receiver is able to determine whether:</p>
 
 <ul>
-  <li>a list of Referred frames that can be used to deduce the decodability of the current frame,</li>
-  <li>Decode Target Indications that communicate how current and past frames are required for decoding future frames associated with the Decode target (e.g., Discardable, Switch), and</li>
-  <li>Chains to communicate whether or not missed frames are required for decoding future frames associated with the Decode target.</li>
+  <li>The packet belongs to a frame which is required for the endpoint’s Decode target. This is determined from the Decode Target Indication (DTI) values (see Section A.4).</li>
+  <li>All frames referenced by the current frame have been forwarded to the endpoint. This is determined from the frame difference values (see Section A.8.3).</li>
+  <li>Upon receiving the very first packet after an RTP sequence number gap, if any of the missed packets are required for the Decode target to remain decodable. This is determined from the Chain information (see Section A.6).</li>
 </ul>
 
 <p>To reduce overhead, the DD uses templates to avoid sending repetitive information. Subsequent packets refer to a template containing predefined information, which may be overridden with custom dependencies. In this way, the typical DD payload requires three bytes. Dynamic structures whose information is not known in advance can be described using additional bytes.</p>
@@ -1045,11 +1047,11 @@ new coded video sequences for other encodings from the same source(s).</p>
 </section>
 
 <section>
-<h4 id="a6-instantaneous-decidability-of-decodability-idd">A.6 Instantaneous Decidability of Decodability (IDD)</h4>
+<h4 id="a6-usage-of-chains-after-packet-loss">A.6 Usage of Chains After Packet Loss</h4>
 
-<p>Chains provide the IDD property. That is, the ability to decide immediately upon receiving the very first packet after packet loss, if any of the lost packets are required for the Decode target to remain decodable.</p>
+<p>Chains provide the ability to decide immediately upon receiving the very first packet after packet loss, if any of the lost packets are required for the Decode target to remain decodable.</p>
 
-<p>Due to the fact that Chain information is present in all packets, an SFM can detect a broken Chain regardless of whether the first packet received after a loss is part of that Chain or not.</p>
+<p>Due to the fact that the Chain information is present in all packets, an SFM can detect a broken Chain regardless of whether the first packet received after a loss is part of that Chain or not.</p>
 
 <p>In the event of packet loss within the frame that is currently being received, it may be helpful to determine if that frame is part of the Chain by using the following example function.</p>
 
